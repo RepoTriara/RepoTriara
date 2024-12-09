@@ -36,11 +36,10 @@ class RegisteredUserController extends Controller
             'phone' => ['nullable', 'string', 'max:32'],
             'address' => ['nullable', 'string'],
             'notify' => ['nullable', 'boolean'],
-            'level' => ['required', 'boolean'],
             'user' => ['required', 'string', 'max:60'], // Validación del campo user
 
         ]);
-        
+
 
         $user = User::create([
             'name' => $request->name,
@@ -49,11 +48,11 @@ class RegisteredUserController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'notify' => $request->notify ?? false,
-            'level' => $request->level,
+            'level' => 0,
             'user' => $request->user, // Asignar el nombre de usuario
 
         ]);
-        
+
 
         event(new Registered($user));
 
