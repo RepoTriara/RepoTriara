@@ -9,20 +9,36 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
+    public $timestamps = false;
+    protected $table = 'tbl_users'; // Cambia 'users' por el nombre de tu tabla si es diferente
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
+
     protected $fillable = [
+        'user',
+        'password',
         'name',
         'email',
-        'password',
+        'level',
+        'timestamp',
+        'address',
+        'phone',
+        'notify',
+        'contact',
+        'created_by',
+        'active',
+        'account_requested',
+        'account_denied',
+        'max_file_size',
     ];
+    /*public function downloads(){     return $this->hasMany(TblDownload::class, 'user_id', 'id'); }*/
+    
 
+    /*public function fileRelations(){     return $this->hasMany(TblFileRelation::class, 'client_id', 'id'); }*/
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -45,4 +61,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    
 }
