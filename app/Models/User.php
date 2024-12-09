@@ -35,10 +35,9 @@ class User extends Authenticatable
         'account_denied',
         'max_file_size',
     ];
-    /*public function downloads(){     return $this->hasMany(TblDownload::class, 'user_id', 'id'); }*/
+    public function downloads(){     return $this->hasMany(TblDownload::class, 'user_id', 'id'); }
     
 
-    /*public function fileRelations(){     return $this->hasMany(TblFileRelation::class, 'client_id', 'id'); }*/
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -61,5 +60,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+   
+    public function fileRelations(){     return $this->hasMany(TblFileRelation::class, 'client_id', 'id');}
+
+
 }

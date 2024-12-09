@@ -28,6 +28,6 @@ class Groups extends Model
         'public_token',
     ];
 
-    /*public function fileRelations(){     return $this->hasMany(TblFileRelation::class, 'group_id', 'id'); }*/
+    public function fileRelations(){     return $this->hasMany(TblFileRelation::class, 'group_id', 'id'); }
 
 }

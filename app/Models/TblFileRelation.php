@@ -62,7 +62,7 @@ class TblFileRelation extends Model
      */
     public function client(): BelongsTo
     {
-        return $this->belongsTo(TblUser::class, 'client_id', 'id');
+        return $this->belongsTo(User::class, 'client_id', 'id');
     }
 
     /**
@@ -71,7 +71,7 @@ class TblFileRelation extends Model
      */
     public function group(): BelongsTo
     {
-        return $this->belongsTo(TblGroup::class, 'group_id', 'id');
+        return $this->belongsTo(Groups::class, 'group_id', 'id');
     }
 
     /**
@@ -80,7 +80,7 @@ class TblFileRelation extends Model
      */
     public function folder(): BelongsTo
     {
-        return $this->belongsTo(TblFolder::class, 'folder_id', 'id');
+        return $this->belongsTo(Folder::class, 'folder_id', 'id');
     }
 }
 

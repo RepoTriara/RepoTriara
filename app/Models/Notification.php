@@ -33,10 +33,10 @@ class Notification extends Model
      */
 
     // Relación con el archivo (si existe un modelo File)
-    /*public function file()
+    public function file()
     {
-        return $this->belongsTo(File::class, 'file_id'); // Relación con el modelo File
-    }*/
+        return $this->belongsTo(TblFile::class, 'file_id'); // Relación con el modelo File
+    }
 
     // Relación con el cliente (si existe un modelo Client)
     public function client()

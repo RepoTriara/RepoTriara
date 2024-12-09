@@ -53,6 +53,6 @@ class Folder extends Model
     {
         return $this->belongsTo(Groups::class, 'group_id');
     }
-   /* public function fileRelations(){     return $this->hasMany(TblFileRelation::class, 'folder_id', 'id'); }*/
+    public function fileRelations(){     return $this->hasMany(TblFileRelation::class, 'folder_id', 'id'); }
  
 }

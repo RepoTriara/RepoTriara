@@ -51,7 +51,7 @@ class TblActionsLog extends Model
      */
     public function owner()
     {
-        return $this->belongsTo(TblUser::class, 'owner_id', 'id');
+        return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 
     /**
@@ -69,7 +69,7 @@ class TblActionsLog extends Model
      */
     public function affectedAccount()
     {
-        return $this->belongsTo(TblAccount::class, 'affected_account', 'id');
+        return $this->belongsTo(TblActionsLog::class, 'affected_account', 'id');
     }
 }
 
