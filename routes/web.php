@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 // Ruta de bienvenida
-Route::get('/', function () {
+Route::get('/welcome', function () {
     return view('welcome');
-});
+    
+})->name('welcome');
 
 // Ruta genérica del dashboard protegida por autenticación
 Route::get('/dashboard', function () {

@@ -1,47 +1,107 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!doctype html>
+<html lang="es_CO">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+	<title>Inicie Sesi&oacute;n &raquo; Repositorio</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico')}}" />
+    <link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png')}}" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png')}}" sizes="152x152">
+	<script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+	<!--[if lt IE 9]>
+		<script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
+		<script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
+	<![endif]-->
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+			<link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" />
+			<link rel="stylesheet" media="all" type="text/css" href="{{asset('css/social-login.css')}}" />
+			<link rel="stylesheet" media="all" type="text/css" href="{{asset('includes/js/chosen/chosen.min.css')}}" />
+			<link rel="stylesheet" media="all" type="text/css" href="{{asset('includes/js/chosen/chosen.bootstrap.css')}}" />
+			<link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" />
+			<link rel="stylesheet" media="all" type="text/css" href="{{asset('css/main.min.css')}}" />
+			<link rel="stylesheet" media="all" type="text/css" href="{{asset('css/mobile.min.css')}}" />
+</head>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+<body class="body login backend">
+	<div class="container-custom">
+		<header id="header" class="navbar navbar-static-top navbar-fixed-top header_unlogged">
+			<div class="navbar-header text-center">
+				<span class="navbar-brand">
+					Repositorio				</span>
+			</div>
+		</header>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+		<div class="main_content_unlogged">
+			<div class="container-fluid">
+				<div class="row"><div class="col-xs-12 col-sm-12 col-lg-4 col-lg-offset-4">
+
+	<div class="row">
+					<div class="col-xs-12 branding_unlogged">
+						<img src="{{asset('img/custom/logo/logo-claro.png')}}" alt="Repositorio" />
+					</div>
+				</div>
+	<div class="white-box">
+		<div class="white-box-interior">
+			<div class="ajax_response alert">
+			</div>
+
+
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+				<input type="hidden" name="do" value="login">
+				<fieldset>
+					<div class="form-group">
+						<label for="username">E-Mail</label>
+						<input type="text" name="email" id="email" value="" class="form-control" autofocus />
+					</div>
+
+					<div class="form-group">
+						<label for="password">Contraseña</label>
+						<input type="password" name="password" id="password" class="form-control"/>
+					</div>
+
+
+					<div class="inside_form_buttons">
+						<button type="submit" id="submit" class="btn btn-wide btn-primary">Ingresar</button>
+					</div>
+
+
+				</fieldset>
+			</form>
+
+			<div class="login_form_links">
+				<p id="reset_pass_link">Olvidó su contraseña? <a href="{{route('password.request')}}">Cámbiela aquí.</a></p>
+                <p >Regresar al <a href="{{route('welcome')}}">inicio.</a></p>
+						<p>Si necesitas una cuenta, por favor radica tu solicitud a través de nuestros canales de soporte técnico</p>
+							</div>
+
+		</div>
+	</div>
+</div>
+
+					</div> <!-- row -->
+				</div> <!-- container-fluid -->
+
+					<footer>
+		<div id="footer">
+			Claro Colombia		</div>
+	</footer>
+			<script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
+			<script src="{{asset('includes/js/jquery.validations.js')}}"></script>
+			<script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>
+			<script src="{{asset('includes/js/jen/jen.js')}}"></script>
+			<script src="{{asset('includes/js/js.cookie.js')}}"></script>
+			<script src="{{asset('includes/js/main.js')}}"></script>
+			<script src="{{asset('includes/js/js.functions.php')}}"></script>
+			<script src="{{asset('includes/js/chosen/chosen.jquery.min.js')}}"></script>
+			</div> <!-- main_content -->
+		</div> <!-- container-custom -->
+
+	</body>
+</html>

@@ -41,7 +41,7 @@ class AuthenticatedSessionController extends Controller
         case 7:
             return redirect()->route('dashboard.level7');
         default:
-            return redirect()->route('dashboard.user');
+            return redirect()->route('dashboard');
     }
 }
 
