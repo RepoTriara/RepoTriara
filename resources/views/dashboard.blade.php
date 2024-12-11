@@ -39,7 +39,7 @@
 					<span> Cristian Camilo Diaz Ramirez</span>
 				</li>
 				<li>
-					<a href="{{route('profile.edit')}}" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
+					<a href="{{ route('profile.edit') }}" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
 				</li>
 				<li>
 					<a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -61,15 +61,15 @@
 <li class="separator"></li><li class="has_dropdown ">
 	<a href="#" class="nav_top_level"><i class="fa fa-file fa-fw" aria-hidden="true"></i><span class="menu_label">Archivos</span></a>
 	<ul class="dropdown_content">
-		<li class="">
-			<a href="https://repo.triara.co/repositorio/upload-from-computer.php"><span class="submenu_label">Subir</span></a>
+		<li>
+		<a href="{{ route('upload') }}"><span class="submenu_label">Subir</span></a>
 		</li>
 		<li class="divider"></li>
 		<li class="">
-			<a href="https://repo.triara.co/repositorio/manage-files.php"><span class="submenu_label">Administrar archivos</span></a>
+			<a href="{{ route('file_manager') }}"><span class="submenu_label">Administrar archivos</span></a>
 		</li>
 		<li class="">
-			<a href="https://repo.triara.co/repositorio/upload-import-orphans.php"><span class="submenu_label">Buscar archivos huerfanos</span></a>
+			<a href="{{ route('search_orphan_files') }}"><span class="submenu_label">Buscar archivos huerfanos</span></a>
 		</li>
 		<li class="divider"></li>
 		<li class="">
@@ -84,7 +84,7 @@
 			<a href="https://repo.triara.co/repositorio/clients-add.php"><span class="submenu_label">Añadir nuevo cliente</span></a>
 		</li>
 		<li class="">
-			<a href="https://repo.triara.co/repositorio/clients.php"><span class="submenu_label">Administración de clientes</span></a>
+			<a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
 		</li>
 		<li class="divider"></li>
 	</ul>

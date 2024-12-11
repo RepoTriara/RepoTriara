@@ -42,6 +42,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/user', function () {
         return view('dashboard_user');
     })->name('dashboard.user');
+
+    
+    Route::get('/upload', function () {
+        return view('files.upload');  
+    })->name('upload');
+
+    Route::get('/file_manager', function () {
+        return view('files.file_manager');  
+    })->name('file_manager');
+
+    Route::get('/search_orphan_files', function () {
+        return view('files.search_orphan_files');  
+    })->name('search_orphan_files');
+
+    Route::get('/customer_manager', function () {
+        return view('customers.customer_manager');  
+    })->name('customer_manager');
+    
 });
 
 // Incluir las rutas de autenticación
