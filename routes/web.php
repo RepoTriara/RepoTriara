@@ -7,20 +7,24 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Ruta de bienvenida
 Route::get('/welcome', function () {
     return view('welcome');
-    
 })->name('welcome');
 
-// Ruta genérica del dashboard protegida por autenticación
+// Ruta genérica del dashboard protegida por autenticación (para niveles 8 y 10)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Rutas protegidas por el middleware de autenticación
+// Ruta específica para nivel 0
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard/level0', function () {
+        return view('dashboard_level0');
+    })->name('dashboard.level0');
+
     // Rutas para el perfil de usuario
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+<<<<<<< HEAD
 
     // Rutas específicas para cada nivel de usuario
     Route::get('/dashboard/level10', function () {
@@ -60,6 +64,8 @@ Route::middleware('auth')->group(function () {
         return view('customers.customer_manager');  
     })->name('customer_manager');
     
+=======
+>>>>>>> cf0998bc85e8cce675c44ba6994b8190a1e59a4c
 });
 
 // Incluir las rutas de autenticación
