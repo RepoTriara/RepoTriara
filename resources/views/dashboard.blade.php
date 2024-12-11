@@ -101,6 +101,7 @@
 		<li class="divider"></li>
 	</ul>
 </li>
+
 <li class="has_dropdown ">
 	<a href="#" class="nav_top_level"><i class="fa fa-users fa-fw" aria-hidden="true"></i><span class="menu_label">Usuarios del Sistema</span></a>
 	<ul class="dropdown_content">
@@ -266,26 +267,7 @@ var d37 = [[1732597200000,1],[1732683600000,0],[1732770000000,0],[1732856400000,
 					</div>
 	</div>
 
-				<div class="col-sm-4 container_widget_actions_log">
-						<div class="widget">
-			<h4>Actividades recientes</h4>
-			<div class="widget_int">
-				<div class="log_change_action">
-												<a href="#" class="log_action btn btn-sm btn-default btn-inverse" data-action="">
-								Todas las actividades							</a>
-												<a href="#" class="log_action btn btn-sm btn-default " data-action="1">
-								Inicios de sesión							</a>
-												<a href="#" class="log_action btn btn-sm btn-default " data-action="8">
-								Descargas							</a>
-									</div>
-				<ul class="activities_log">
-				</ul>
-				<div class="view_full_log">
-					<a href="actions-log.php" class="btn btn-primary btn-wide">Ver todos</a>
-				</div>
-			</div>
-		</div>
-			</div>
+				
 
 	<script type="text/javascript">
 		$(document).ready(function(){
