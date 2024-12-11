@@ -102,17 +102,27 @@
 	</ul>
 </li>
 
-<li class="has_dropdown ">
-	<a href="#" class="nav_top_level"><i class="fa fa-users fa-fw" aria-hidden="true"></i><span class="menu_label">Usuarios del Sistema</span></a>
-	<ul class="dropdown_content">
-		<li class="">
-			<a href="https://repo.triara.co/repositorio/users-add.php"><span class="submenu_label">Añadir nuevo usuario</span></a>
-		</li>
-		<li class="">
-			<a href="https://repo.triara.co/repositorio/users.php"><span class="submenu_label">Administrar usuarios</span></a>
-		</li>
-	</ul>
-</li>
+@if(Auth::user()->level != 8)
+    <li class="has_dropdown">
+        <a href="#" class="nav_top_level">
+            <i class="fa fa-users fa-fw" aria-hidden="true"></i>
+            <span class="menu_label">Usuarios del Sistema</span>
+        </a>
+        <ul class="dropdown_content">
+            <li class="">
+                <a href="https://repo.triara.co/repositorio/users-add.php">
+                    <span class="submenu_label">Añadir nuevo usuario</span>
+                </a>
+            </li>
+            <li class="">
+                <a href="https://repo.triara.co/repositorio/users.php">
+                    <span class="submenu_label">Administrar usuarios</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+@endif
+
 <li class="separator"></li><li class="separator"></li></ul>
 		</div>
 

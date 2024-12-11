@@ -33,15 +33,12 @@ class AuthenticatedSessionController extends Controller
     // Redirigir según el nivel del usuario
     switch ($user->level) {
         case 10:
-            return redirect()->route('dashboard.level10');
-        case 9:
-            return redirect()->route('dashboard.level9');
-        case 8:
-            return redirect()->route('dashboard.level8');
-        case 7:
-            return redirect()->route('dashboard.level7');
-        default:
-            return redirect()->route('dashboard');
+            case 8:
+                return redirect()->route('dashboard');
+            case 0:
+                return redirect()->route('dashboard.level0');
+            default:
+                return redirect()->route('dashboard');
     }
 }
 
