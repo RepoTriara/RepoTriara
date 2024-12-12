@@ -41,10 +41,16 @@
 					<span> user</span>
 				</li>
 				<li>
-					<a href="https://repo.triara.co/repositorio/users-edit.php?id=628" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
+					<a href="{{ route('profile.edit') }}" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
 				</li>
 				<li>
-					<a href="https://repo.triara.co/repositorio/process.php?do=logout" ><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</a>
+					<a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Cerrar Sesión
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
 				</li>
 			</ul>
 		</header>
@@ -88,9 +94,9 @@
 <li class="has_dropdown ">
 	<a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
 	<ul class="dropdown_content">
-		<li class="">
-			<a href="https://repo.triara.co/repositorio/groups-add.php"><span class="submenu_label">Añadir nueva compañia</span></a>
-		</li>
+	<li class="">
+    <a href="{{ route('companies.add') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
+</li>
 		<li class="">
 			<a href="https://repo.triara.co/repositorio/groups.php"><span class="submenu_label">Administrar Compañias</span></a>
 		</li>

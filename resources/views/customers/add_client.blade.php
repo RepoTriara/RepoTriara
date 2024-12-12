@@ -100,7 +100,9 @@
                         <i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span>
                     </a>
 					<ul class="dropdown_content">
-						<li><a href="https://repo.triara.co/repositorio/groups-add.php"><span class="submenu_label">Añadir nueva compañia</span></a></li>
+					<li class="">
+    <a href="{{ route('companies.add') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
+</li>
 						<li><a href="https://repo.triara.co/repositorio/groups.php"><span class="submenu_label">Administrar Compañias</span></a></li>
 						<li class="divider"></li>
 					</ul>
