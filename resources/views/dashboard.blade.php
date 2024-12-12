@@ -56,55 +56,6 @@
 
 		<div class="main_side_menu">
 			<ul class="main_menu" role="menu">
-<<<<<<< HEAD
-				<li class="current_nav">
-					<a href="https://repo.triara.co/repositorio/home.php" class="nav_top_level"><i class="fa fa-tachometer fa-fw" aria-hidden="true"></i><span class="menu_label">Tablero</span></a>
-				</li>
-				<li class="separator"></li>
-				<li class="has_dropdown ">
-					<a href="#" class="nav_top_level"><i class="fa fa-file fa-fw" aria-hidden="true"></i><span class="menu_label">Archivos</span></a>
-					<ul class="dropdown_content">
-						<li>
-							<a href="{{ route('upload') }}"><span class="submenu_label">Subir</span></a>
-						</li>
-						<li class="divider"></li>
-						<li class="">
-							<a href="{{ route('file_manager') }}"><span class="submenu_label">Administrar archivos</span></a>
-						</li>
-						<li class="">
-							<a href="{{ route('search_orphan_files') }}"><span class="submenu_label">Buscar archivos huerfanos</span></a>
-						</li>
-						<li class="divider"></li>
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/categories.php"><span class="submenu_label">Categorías</span></a>
-						</li>
-					</ul>
-				</li>
-				<li class="has_dropdown ">
-					<a href="#" class="nav_top_level"><i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span></a>
-					<ul class="dropdown_content">
-						<li class="">
-							<a href="{{ route('add_client') }}"><span class="submenu_label">Añadir nuevo cliente</span></a>
-						</li>
-						<li class="current_page">
-							<a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
-						</li>
-						<li class="divider"></li>
-					</ul>
-				</li>
-				<li class="has_dropdown ">
-					<a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
-					<ul class="dropdown_content">
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/groups-add.php"><span class="submenu_label">Añadir nueva compañia</span></a>
-						</li>
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/groups.php"><span class="submenu_label">Administrar Compañias</span></a>
-						</li>
-						<li class="divider"></li>
-					</ul>
-				</li>
-=======
 <li class="current_nav">
 	<a href="https://repo.triara.co/repositorio/home.php" class="nav_top_level"><i class="fa fa-tachometer fa-fw" aria-hidden="true"></i><span class="menu_label">Tablero</span></a>
 </li>
@@ -151,7 +102,6 @@
 		<li class="divider"></li>
 	</ul>
 </li>
->>>>>>> 9a9bc567e73f904c9c7f633faeaca8cb98e15022
 
 				@if(Auth::user()->level != 8)
 				<li class="has_dropdown">
