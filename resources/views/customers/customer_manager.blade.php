@@ -9,8 +9,9 @@
     <title>Administraci&oacute;n de Clientes &raquo; Repositorio</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico')}}" />
     <link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png')}}" sizes="152x152">
-    <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
     <link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png')}}" sizes="32x32">
+    <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
+
     <!--[if lt IE 9]>
 		<script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
 		<script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
@@ -78,10 +79,10 @@
                 <a href="#" class="nav_top_level"><i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span></a>
                 <ul class="dropdown_content">
                     <li class="">
-                        <a href="https://repo.triara.co/repositorio/clients-add.php"><span class="submenu_label">Añadir nuevo cliente</span></a>
+                        <a href="{{ route('add_client') }}"><span class="submenu_label">Añadir nuevo cliente</span></a>
                     </li>
                     <li class="current_page">
-                        <a href="https://repo.triara.co/repositorio/clients.php"><span class="submenu_label">Administración de clientes</span></a>
+                        <a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
                     </li>
                     <li class="divider"></li>
                 </ul>

@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-<<<<<<< HEAD
+
 
     // Rutas específicas para cada nivel de usuario
     Route::get('/dashboard/level10', function () {
@@ -63,9 +63,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/customer_manager', function () {
         return view('customers.customer_manager');  
     })->name('customer_manager');
+
+    Route::get('/add_client', function () {
+        return view('customers.add_client');  
+    })->name('add_client');
     
-=======
->>>>>>> cf0998bc85e8cce675c44ba6994b8190a1e59a4c
+
 });
 
 // Incluir las rutas de autenticación

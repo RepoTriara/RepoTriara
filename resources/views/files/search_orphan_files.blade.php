@@ -81,10 +81,10 @@
                     <a href="#" class="nav_top_level"><i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span></a>
                     <ul class="dropdown_content">
                         <li class="">
-                            <a href="https://repo.triara.co/repositorio/clients-add.php"><span class="submenu_label">Añadir nuevo cliente</span></a>
+                            <a href="{{ route('add_client') }}"><span class="submenu_label">Añadir nuevo cliente</span></a>
                         </li>
                         <li class="">
-                        <a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
+                            <a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
                         </li>
                         <li class="divider"></li>
                     </ul>
