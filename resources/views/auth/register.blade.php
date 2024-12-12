@@ -141,14 +141,12 @@
 
 
 								<div class="login_form_links">
-									<p><a href="{{ route('welcome') }}" target="_self">Regrese al sitio de inicio</a></p> {{ __('Register') }}
-
 								</div>
 							</div>
-						</div> 
-					</div> 
-				</div> 
-			</div> 
+						</div>
+					</div>
+				</div>
+			</div>
 
 			<footer>
 				<div id="footer">Claro Colombia 2024</div>
@@ -165,8 +163,8 @@
 			<script src="{{asset('includes/js/main.js')}}"></script>
 			<script src="{{asset('includes/js/js.functions.php')}}"></script>
 			<script src="{{asset('includes/js/chosen/chosen.jquery.min.js')}}"></script>
-		</div> 
-	</div> 
+		</div>
+	</div>
 </body>
 
 </html>

@@ -5,9 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 // Ruta de bienvenida
-Route::get('/welcome', function () {
-    return view('welcome');
-})->name('welcome');
+//Route::get('/', function () {
+  //  return view('welcome');
+//})->name('welcome');
+
+Route::redirect('/', '/login');
+
 
 // Ruta genérica del dashboard protegida por autenticación (para niveles 8 y 10)
 Route::get('/dashboard', function () {
@@ -24,7 +27,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-<<<<<<< HEAD
 
     // Rutas específicas para cada nivel de usuario
     Route::get('/dashboard/level10', function () {
@@ -47,25 +49,23 @@ Route::middleware('auth')->group(function () {
         return view('dashboard_user');
     })->name('dashboard.user');
 
-    
+
     Route::get('/upload', function () {
-        return view('files.upload');  
+        return view('files.upload');
     })->name('upload');
 
     Route::get('/file_manager', function () {
-        return view('files.file_manager');  
+        return view('files.file_manager');
     })->name('file_manager');
 
     Route::get('/search_orphan_files', function () {
-        return view('files.search_orphan_files');  
+        return view('files.search_orphan_files');
     })->name('search_orphan_files');
 
     Route::get('/customer_manager', function () {
-        return view('customers.customer_manager');  
+        return view('customers.customer_manager');
     })->name('customer_manager');
-    
-=======
->>>>>>> cf0998bc85e8cce675c44ba6994b8190a1e59a4c
+
 });
 
 // Incluir las rutas de autenticación

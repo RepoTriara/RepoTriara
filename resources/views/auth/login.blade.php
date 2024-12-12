@@ -77,7 +77,6 @@
 
 			<div class="login_form_links">
 				<p id="reset_pass_link">Olvidó su contraseña? <a href="{{route('password.request')}}">Cámbiela aquí.</a></p>
-                <p >Regresar al <a href="{{route('welcome')}}">inicio.</a></p>
 						<p>Si necesitas una cuenta, por favor radica tu solicitud a través de nuestros canales de soporte técnico</p>
 							</div>
 
