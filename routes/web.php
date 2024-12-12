@@ -50,13 +50,13 @@ Route::middleware('auth')->group(function () {
         return view('customers.add_client');  
     })->name('add_client');
 
-    Route::get('/companies/add', function () {
+    Route::get('/add_company', function () {
         return view('companies.add_company');
-    })->name('companies.add');
+    })->name('add_company');
 
-    Route::get('/companies/manage', function () {
+    Route::get('/manage_company', function () {
         return view('companies.manage_company');
-    })->name('companies.manage');
+    })->name('manage_company');
     
 });
 

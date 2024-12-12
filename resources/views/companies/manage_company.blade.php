@@ -86,7 +86,7 @@
 	<a href="#" class="nav_top_level"><i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span></a>
 	<ul class="dropdown_content">
     <li class="">
-			<a href="https://repo.triara.co/repositorio/clients-add.php"><span class="submenu_label">Añadir nuevo cliente</span></a>
+			<a href="{{ route('add_client') }}"><span class="submenu_label">Añadir nuevo cliente</span></a>
 		</li>
 
 		<li class="">
@@ -100,10 +100,10 @@
 	<a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
 	<ul class="dropdown_content">
     <li class="">
-    <a href="{{ route('companies.add') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
+    <a href="{{ route('add_company') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
 </li>
 		<li class="current_page">
-			<a href="companies.manage"><span class="submenu_label">Administrar Compañias</span></a>
+			<a href="{{ route('manage_company') }}"><span class="submenu_label">Administrar Compañias</span></a>
 		</li>
 		<li class="divider"></li>
 	</ul>

@@ -44,19 +44,19 @@
                     <span> user</span>
                 </li>
                 <li>
-					<a href="{{ route('profile.edit') }}" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
-				</li>
+                    <a href="{{ route('profile.edit') }}" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
+                </li>
                 <li>
-					<a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Cerrar Sesión
                     </a>
 
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
-				</li>
-			</ul>
-		</header>
+                </li>
+            </ul>
+        </header>
 
         <div class="main_side_menu">
             <ul class="main_menu" role="menu">
@@ -98,17 +98,28 @@
                 <li class="has_dropdown ">
                     <a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
                     <ul class="dropdown_content">
-                    <li class="">
-    <a href="{{ route('companies.add') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
-</li>
                         <li class="">
-                            <a href="https://repo.triara.co/repositorio/groups.php"><span class="submenu_label">Administrar Compañias</span></a>
+                            <a href="{{ route('add_company') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
+                        </li>
+                        <li class="">
+                            <a href="{{ route('manage_company')}} "><span class="submenu_label">Administrar Compañias</span></a>
                         </li>
                         <li class="divider"></li>
+
                     </ul>
                 </li>
                 <li class="separator"></li>
-                <li class="separator"></li>
+                <li class="has_dropdown ">
+					<a href="#" class="nav_top_level"><i class="fa fa-users fa-fw" aria-hidden="true"></i><span class="menu_label">Usuarios del Sistema</span></a>
+					<ul class="dropdown_content">
+						<li class="">
+							<a href="https://repo.triara.co/repositorio/users-add.php"><span class="submenu_label">Añadir nuevo usuario</span></a>
+						</li>
+						<li class="">
+							<a href="https://repo.triara.co/repositorio/users.php"><span class="submenu_label">Administrar usuarios</span></a>
+						</li>
+                    </ul>
+                </li>
             </ul>
         </div>
 
