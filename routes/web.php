@@ -45,6 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/customer_manager', function () {
         return view('customers.customer_manager');
     })->name('customer_manager');
+    
+    Route::get('/add_client', function () {
+        return view('customers.add_client');  
+    })->name('add_client');
 
     Route::get('/companies/add', function () {
         return view('companies.add_company');
