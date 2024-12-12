@@ -5,9 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 // Ruta de bienvenida
-Route::get('/welcome', function () {
-    return view('welcome');
-})->name('welcome');
+//Route::get('/', function () {
+  //  return view('welcome');
+//})->name('welcome');
+
+Route::redirect('/', '/login');
+
 
 // Ruta genérica del dashboard protegida por autenticación (para niveles 8 y 10)
 Route::get('/dashboard', function () {
@@ -28,19 +31,19 @@ Route::middleware('auth')->group(function () {
     
     
     Route::get('/upload', function () {
-        return view('files.upload');  
+        return view('files.upload');
     })->name('upload');
 
     Route::get('/file_manager', function () {
-        return view('files.file_manager');  
+        return view('files.file_manager');
     })->name('file_manager');
 
     Route::get('/search_orphan_files', function () {
-        return view('files.search_orphan_files');  
+        return view('files.search_orphan_files');
     })->name('search_orphan_files');
 
     Route::get('/customer_manager', function () {
-        return view('customers.customer_manager');  
+        return view('customers.customer_manager');
     })->name('customer_manager');
 
     Route::get('/companies/add', function () {
