@@ -107,7 +107,44 @@
 					</ul>
 				</li>
 				<li class="separator"></li>
+<<<<<<< HEAD
 				<li class="separator"></li>
+=======
+                <!-- Clientes -->
+				<li class="has_dropdown">
+					<a href="#" class="nav_top_level">
+                        <i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span>
+                    </a>
+					<ul class="dropdown_content">
+						<li><a href="https://repo.triara.co/repositorio/clients-add.php"><span class="submenu_label">Añadir nuevo cliente</span></a></li>
+						<li><a href="https://repo.triara.co/repositorio/clients.php"><span class="submenu_label">Administración de clientes</span></a></li>
+						<li class="divider"></li>
+					</ul>
+				</li>
+                <!-- Compañias -->
+                <li class="has_dropdown">
+					<a href="#" class="nav_top_level">
+                        <i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span>
+                    </a>
+					<ul class="dropdown_content">
+					<li class="">
+    <a href="{{ route('companies.add') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
+</li>
+						<li><a href="https://repo.triara.co/repositorio/groups.php"><span class="submenu_label">Administrar Compañias</span></a></li>
+						<li class="divider"></li>
+					</ul>
+				</li>
+                <!-- Usuarios del Sistema -->
+                <li class="has_dropdown">
+					<a href="#" class="nav_top_level">
+                        <i class="fa fa-users fa-fw" aria-hidden="true"></i><span class="menu_label">Usuarios del Sistema</span>
+                    </a>
+					<ul class="dropdown_content">
+						<li><a href="https://repo.triara.co/repositorio/users-add.php"><span class="submenu_label">Añadir nuevo usuario</span></a></li>
+						<li><a href="https://repo.triara.co/repositorio/users.php"><span class="submenu_label">Administrar usuarios</span></a></li>
+					</ul>
+				</li>
+>>>>>>> 9a9bc567e73f904c9c7f633faeaca8cb98e15022
 			</ul>
 		</div>
 

@@ -43,16 +43,27 @@
 					<span> user</span>
 				</li>
 				<li>
-					<a href="https://repo.triara.co/repositorio/users-edit.php?id=628" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
+					<a href="{{ route('profile.edit') }}" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
 				</li>
 				<li>
+<<<<<<< HEAD
 					<a href="https://repo.triara.co/repositorio/process.php?do=logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</a>
+=======
+					<a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Cerrar Sesión
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+>>>>>>> 9a9bc567e73f904c9c7f633faeaca8cb98e15022
 				</li>
 			</ul>
 		</header>
 
 		<div class="main_side_menu">
 			<ul class="main_menu" role="menu">
+<<<<<<< HEAD
 				<li class="">
 					<a href="https://repo.triara.co/repositorio/home.php" class="nav_top_level"><i class="fa fa-tachometer fa-fw" aria-hidden="true"></i><span class="menu_label">Tablero</span></a>
 				</li>
@@ -103,6 +114,55 @@
 				<li class="separator"></li>
 				<li class="separator"></li>
 			</ul>
+=======
+<li class="">
+	<a href="https://repo.triara.co/repositorio/home.php" class="nav_top_level"><i class="fa fa-tachometer fa-fw" aria-hidden="true"></i><span class="menu_label">Tablero</span></a>
+</li>
+<li class="separator"></li><li class="has_dropdown current_nav">
+	<a href="#" class="nav_top_level"><i class="fa fa-file fa-fw" aria-hidden="true"></i><span class="menu_label">Archivos</span></a>
+	<ul class="dropdown_content">
+    <li>
+		<a href="{{ route('upload') }}"><span class="submenu_label">Subir</span></a>
+		</li>
+		<li class="divider"></li>
+		<li class="">
+			<a href="{{ route('file_manager') }}"><span class="submenu_label">Administrar archivos</span></a>
+		</li>
+		<li class="">
+			<a href="{{ route('search_orphan_files') }}"><span class="submenu_label">Buscar archivos huerfanos</span></a>
+		</li>
+		<li class="divider"></li>
+		<li class="">
+			<a href="https://repo.triara.co/repositorio/categories.php"><span class="submenu_label">Categorías</span></a>
+		</li>
+	</ul>
+</li>
+<li class="has_dropdown ">
+	<a href="#" class="nav_top_level"><i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span></a>
+	<ul class="dropdown_content">
+		<li class="">
+			<a href="https://repo.triara.co/repositorio/clients-add.php"><span class="submenu_label">Añadir nuevo cliente</span></a>
+		</li>
+		<li class="">
+		<a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
+		</li>
+		<li class="divider"></li>
+	</ul>
+</li>
+<li class="has_dropdown ">
+	<a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
+	<ul class="dropdown_content">
+	<li class="">
+    <a href="{{ route('companies.add') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
+</li>
+<li class="">
+        <a href="{{ route('companies.manage') }}"><span class="submenu_label">Administrar Compañias</span></a>
+		</li>
+		<li class="divider"></li>
+	</ul>
+</li>
+<li class="separator"></li><li class="separator"></li></ul>
+>>>>>>> 9a9bc567e73f904c9c7f633faeaca8cb98e15022
 		</div>
 
 		<div class="main_content">
