@@ -74,7 +74,7 @@
 						<li class="divider"></li>
 					</ul>
 				</li>
-                <li class="has_dropdown current_nav">
+                <li class="has_dropdown">
 					<a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
 					<ul class="dropdown_content">
 						<li class="">
