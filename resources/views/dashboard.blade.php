@@ -17,38 +17,10 @@
 
 <body class="home logged-in logged-as-admin dashboard hide_title menu_hidden backend">
 	<div class="container-custom">
-		<header id="header" class="navbar navbar-static-top navbar-fixed-top">
-			<ul class="nav pull-left nav_toggler">
-				<li>
-					<a href="#" class="toggle_main_menu"><i class="fa fa-bars" aria-hidden="true"></i><span>Menú alternativo</span></a>
-				</li>
-			</ul>
 
-			<div class="navbar-header">
-				<span class="navbar-brand"><a href="https://www.projectsend.org/" target="_blank"></a> Repositorio</span>
-			</div>
-
-			<ul class="nav pull-right nav_account">
-				<li id="header_welcome">
-					<span> {{ auth()->user()->user }} </span>
-				</li>
-				<li>
-					<a href="{{ route('profile.edit') }}" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
-				</li>
-				<li>
-					<a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        Cerrar Sesión
-                    </a>
-
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-				</li>
-			</ul>
-		</header>
 
 		<div class="main_content">
-            @include('layouts.menu')
+            @include('layouts.app')
 			<div class="container-fluid">
 
 				<div class="row">
