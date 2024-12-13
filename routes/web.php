@@ -57,6 +57,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/manage_company', function () {
         return view('companies.manage_company');
     })->name('manage_company');
+
+    Route::get('/add_user', function () {
+        return view('system_users.add_user');
+    })->name('add_user');
     
 });
 
