@@ -6,18 +6,17 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-
-	<title>Tablero &raquo; Repositorio</title>
-	<link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico')}}" />
-	<link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png')}}" sizes="152x152">
-	<link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png')}}" sizes="32x32">
+	<title>Subir archivos &raquo; Repositorio</title>
+	<link rel="shortcut icon" type="image/x-icon" href="{{asset('favicon.ico')}}" />
+	<link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png" sizes="32x32')}}">
+	<link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png" sizes="152x152')}}">
 	<script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
+
 	<!--[if lt IE 9]>
 		<script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
 		<script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
 	<![endif]-->
-	<link rel="stylesheet" media="all" type="text/css" href="{{asset('includes/js/chosen/chosen.bootstrap.css')}}" />
-	<link rel="stylesheet" media="all" type="text/css" href="{{asset('includes/js/chosen/chosen.min.css')}}" />
+
 	<link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" />
 	<link rel="stylesheet" media="all" type="text/css" href="{{asset('includes/plupload/js/jquery.plupload.queue/css/jquery.plupload.queue.css')}}" />
 	<link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" />
@@ -27,23 +26,13 @@
 
 <body class="upload-from-computer logged-in logged-as-admin menu_hidden backend">
 	<div class="container-custom">
-		
-	
 
+
+		
 		<div class="main_content">
 		@include('layouts.app')
-
+         
 			<div class="container-fluid">
-				<div class="system_msg update_msg">
-					<div class="row">
-						<div class="col-sm-8">
-							<strong>Actualización disponible</strong> ProjectSend 1720 has been released
-						</div>
-						<div class="col-sm-4 text-right">
-							<a href="https://www.projectsend.org/download/13240/?tmstv=1733934438" class="btn btn-default btn-xs" target="_blank">Descarga</a> <a href="https://www.projectsend.org/change-log-detail/projectsend-r1720/" target="_blank" class="btn btn-default btn-xs">Changelog</a>
-						</div>
-					</div>
-				</div>
 
 				<div class="row">
 					<div id="section_title">
@@ -68,7 +57,7 @@
 									$.ajax({
 										type: 'GET',
 										cache: false,
-										url: 'public/includes/ajax-keep-alive.php',
+										url: 'includes/ajax-keep-alive.php',
 										data: 'timestamp=' + timestamp,
 										success: function(result) {
 											var dummy = result;
@@ -182,14 +171,15 @@
 			<script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
 			<script src="{{asset('includes/js/jquery.validations.js')}}"></script>
 			<script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>
-			<script src="{{asset( 'includes/js/jen/jen.js')}}"></script>
+			<script src="{{asset('includes/js/jen/jen.js')}}"></script>
 			<script src="{{asset('includes/js/js.cookie.js')}}"></script>
 			<script src="{{asset('includes/js/main.js')}}"></script>
 			<script src="{{asset('includes/js/js.functions.php')}}"></script>
-			<script src="{{asset('includes/js/flot/jquery.flot.min.js')}}"></script>
-			<script src="{{asset('includes/js/flot/jquery.flot.resize.min.js')}}"></script>
-			<script src="{{asset('includes/js/chosen/chosen.jquery.min.js')}}"></script>
-		</div> <!-- container-custom -->
+			<script src="{{asset('includes/js/browserplus-min.js')}}"></script>
+			<script src="{{asset('includes/plupload/js/plupload.full.js')}}"></script>
+			<script src="{{asset('includes/plupload/js/jquery.plupload.queue/jquery.plupload.queue.js')}}"></script>
+		</div> <!-- main_content -->
+	</div> <!-- container-custom -->
 
 </body>
 
