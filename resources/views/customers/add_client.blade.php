@@ -32,113 +32,14 @@
 
 <body class="clients-add logged-in logged-as-admin menu_hidden backend">
 	<div class="container-custom">
-		<header id="header" class="navbar navbar-static-top navbar-fixed-top">
-			<ul class="nav pull-left nav_toggler">
-				<li>
-					<a href="#" class="toggle_main_menu"><i class="fa fa-bars" aria-hidden="true"></i><span>Menú alternativo</span></a>
-				</li>
-			</ul>
-
-			<div class="navbar-header">
-				<span class="navbar-brand"><a href="https://www.projectsend.org/" target="_blank"></a> Repositorio</span>
-			</div>
-
-			<ul class="nav pull-right nav_account">
-				<li id="header_welcome">
-					<span> user</span>
-				</li>
-				<li>
-					<a href="https://repo.triara.co/repositorio/users-edit.php?id=628" class="my_account"><i class="fa fa-user-circle" aria-hidden="true"></i> Mi cuenta</a>
-				</li>
-				<li>
-					<a href="https://repo.triara.co/repositorio/process.php?do=logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</a>
-				</li>
-			</ul>
-		</header>
-
-		<div class="main_side_menu">
-			<ul class="main_menu" role="menu">
-				<li class="">
-					<a href="https://repo.triara.co/repositorio/home.php" class="nav_top_level"><i class="fa fa-tachometer fa-fw" aria-hidden="true"></i><span class="menu_label">Tablero</span></a>
-				</li>
-				<li class="separator"></li>
-				<li class="has_dropdown ">
-					<a href="#" class="nav_top_level"><i class="fa fa-file fa-fw" aria-hidden="true"></i><span class="menu_label">Archivos</span></a>
-					<ul class="dropdown_content">
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/upload-from-computer.php"><span class="submenu_label">Subir</span></a>
-						</li>
-						<li class="divider"></li>
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/manage-files.php"><span class="submenu_label">Administrar archivos</span></a>
-						</li>
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/upload-import-orphans.php"><span class="submenu_label">Buscar archivos huerfanos</span></a>
-						</li>
-						<li class="divider"></li>
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/categories.php"><span class="submenu_label">Categorías</span></a>
-						</li>
-					</ul>
-				</li>
-				<li class="has_dropdown current_nav">
-					<a href="#" class="nav_top_level"><i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span></a>
-					<ul class="dropdown_content">
-						<li class="">
-							<a href="{{ route('add_client') }}"><span class="submenu_label">Añadir nuevo cliente</span></a>
-						</li>
-						<li class="current_page">
-							<a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
-						</li>
-						<li class="divider"></li>
-						<li class="divider"></li>
-					</ul>
-				</li>
-				<li class="has_dropdown ">
-					<a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
-					<ul class="dropdown_content">
-						<li class="">
-							<a href="{{ route('add_client') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
-						</li>
-						<li class="">
-							<a href="{{ route('customer_manager') }}"><span class="submenu_label">Administrar Compañias</span></a>
-						</li>
-						<li class="divider"></li>
-					</ul>
-				</li>
-				<li class="separator"></li>
 
 
-				<li class="divider"></li>
-				<!-- Usuarios del Sistema -->
-				<li class="has_dropdown ">
-					<a href="#" class="nav_top_level"><i class="fa fa-users fa-fw" aria-hidden="true"></i><span class="menu_label">Usuarios del Sistema</span></a>
-					<ul class="dropdown_content">
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/users-add.php"><span class="submenu_label">Añadir nuevo usuario</span></a>
-						</li>
-						<li class="">
-							<a href="https://repo.triara.co/repositorio/users.php"><span class="submenu_label">Administrar usuarios</span></a>
-						</li>
-					</ul>
-				</li>
-			</ul>
-			</li>
 
-			</ul>
-		</div>
 
 		<div class="main_content">
+            @include('layouts.app')
 			<div class="container-fluid">
-				<div class="system_msg update_msg">
-					<div class="row">
-						<div class="col-sm-8">
-							<strong>Actualización disponible</strong> ProjectSend 1720 has been released
-						</div>
-						<div class="col-sm-4 text-right">
-							<a href="https://www.projectsend.org/download/13240/?tmstv=1734008137" class="btn btn-default btn-xs" target="_blank">Descarga</a> <a href="https://www.projectsend.org/change-log-detail/projectsend-r1720/" target="_blank" class="btn btn-default btn-xs">Changelog</a>
-						</div>
-					</div>
+
 				</div>
 
 				<div class="row">
