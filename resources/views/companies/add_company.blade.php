@@ -111,10 +111,10 @@
 					<a href="#" class="nav_top_level"><i class="fa fa-users fa-fw" aria-hidden="true"></i><span class="menu_label">Usuarios del Sistema</span></a>
 					<ul class="dropdown_content">
 						<li class="">
-							<a href="https://repo.triara.co/repositorio/users-add.php"><span class="submenu_label">Añadir nuevo usuario</span></a>
+							<a href="{{route('add_user')}}"><span class="submenu_label">Añadir nuevo usuario</span></a>
 						</li>
 						<li class="">
-							<a href="https://repo.triara.co/repositorio/users.php"><span class="submenu_label">Administrar usuarios</span></a>
+							<a href="{{route('manage_users')}}"><span class="submenu_label">Administrar usuarios</span></a>
 						</li>
 					</ul>
 				</li>

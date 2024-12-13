@@ -61,6 +61,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/add_user', function () {
         return view('system_users.add_user');
     })->name('add_user');
+
+    Route::get('/manage_users', function () {
+        return view('system_users.manage_users');
+    })->name('manage_users');
     
 });
 
