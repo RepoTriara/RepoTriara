@@ -63,31 +63,31 @@
             </ul>
         </li>
         <li class="has_dropdown ">
-                    <a href="#" class="nav_top_level"><i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span></a>
-                    <ul class="dropdown_content">
-                        <li class="">
-                            <a href="{{ route('add_client') }}"><span class="submenu_label">Añadir nuevo cliente</span></a>
-                        </li>
-                        <li class="">
-                            <a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
-                        </li>
-                        <li class="divider"></li>
-                    </ul>
-                </li>
-                <li class="has_dropdown current_nav">
-                    <a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
-                    <ul class="dropdown_content">
-                        <li class="">
-                            <a href="{{ route('add_company') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
-                        </li>
- 
-                        <li class="">
-                            <a href="{{ route('manage_company') }}"><span class="submenu_label">Administrar Compañias</span></a>
-                        </li>
-                        <li class="divider"></li>
-                    </ul>
-                </li>
- 
+					<a href="#" class="nav_top_level"><i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span></a>
+					<ul class="dropdown_content">
+						<li class="">
+							<a href="{{ route('add_client') }}"><span class="submenu_label">Añadir nuevo cliente</span></a>
+						</li>
+						<li class="">
+							<a href="{{ route('customer_manager') }}"><span class="submenu_label">Administración de clientes</span></a>
+						</li>
+						<li class="divider"></li>
+					</ul>
+				</li>
+                <li class="has_dropdown">
+					<a href="#" class="nav_top_level"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañias</span></a>
+					<ul class="dropdown_content">
+						<li class="">
+							<a href="{{ route('add_company') }}"><span class="submenu_label">Añadir nueva compañia</span></a>
+						</li>
+
+						<li class="">
+							<a href="{{ route('manage_company') }}"><span class="submenu_label">Administrar Compañias</span></a>
+						</li>
+						<li class="divider"></li>
+					</ul>
+				</li>
+
         @if(Auth::user()->level != 8)
         <li class="has_dropdown">
             <a href="#" class="nav_top_level">
