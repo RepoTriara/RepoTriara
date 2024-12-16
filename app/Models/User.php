@@ -110,4 +110,9 @@ class User extends Authenticatable
     {
         return $this->level == $level;
     }
+
+    public function members()
+{
+    return $this->hasMany(Members::class, 'client_id');
+}
 }

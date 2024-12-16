@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\UserSystemController;
+use App\Http\Controllers\CompanyController;
 
 // Ruta de bienvenida
 //Route::get('/', function () {
@@ -67,6 +68,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/manage_users', function () {
         return view('system_users.manage_users');
     })->name('manage_users');
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/add_company', [CompanyController::class, 'create'])->name('add_company');
+        Route::post('/add_company', [CompanyController::class, 'store'])->name('company.store');
+    });
 
 });
 
