@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\UserSystemController;
 
 // Ruta de bienvenida
 //Route::get('/', function () {
@@ -28,8 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    
-    
+
+
     Route::get('/upload', function () {
         return view('files.upload');
     })->name('upload');
@@ -45,9 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/customer_manager', function () {
         return view('customers.customer_manager');
     })->name('customer_manager');
-    
+
     Route::get('/add_client', function () {
-        return view('customers.add_client');  
+        return view('customers.add_client');
     })->name('add_client');
 
     Route::get('/add_company', function () {
@@ -58,15 +59,17 @@ Route::middleware('auth')->group(function () {
         return view('companies.manage_company');
     })->name('manage_company');
 
-    Route::get('/add_user', function () {
-        return view('system_users.add_user');
-    })->name('add_user');
+
+    Route::get('/add_user', [UserSystemController::class, 'create'])->name('add_user');
+
+    Route::post('/add_user', [UserSystemController::class, 'store'])->name('users.store');
 
     Route::get('/manage_users', function () {
         return view('system_users.manage_users');
     })->name('manage_users');
-    
+
 });
 
 // Incluir las rutas de autenticación
 require __DIR__.'/auth.php';
+
