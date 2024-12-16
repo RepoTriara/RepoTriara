@@ -54,7 +54,7 @@ class CompanyController extends Controller
                 Members::create([
                     'group_id' => $group->id,
                     'client_id' => $memberId,
-                    'added_by' => $userId,
+                    'added_by' => auth()->user()->name,
                 ]);
             }
             \Log::info('Miembros asociados al grupo exitosamente');
