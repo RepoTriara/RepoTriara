@@ -53,18 +53,29 @@
                                         @csrf <!-- Token CSRF necesario para formularios POST -->
 
                                         <div class="form-group">
-                                            <label for="add_group_form_name" class="col-sm-4 control-label">Nombre de la compañía</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="add_group_form_name" id="add_group_form_name" class="form-control required" value="" />
-                                            </div>
-                                        </div>
+    <label for="add_group_form_name" class="col-sm-4 control-label">Nombre de la compañía</label>
+    <div class="col-sm-8">
+        <input type="text" name="add_group_form_name" id="add_group_form_name" class="form-control required" 
+               value="{{ old('add_group_form_name') }}" />
+        @error('add_group_form_name')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+</div>
 
-                                        <div class="form-group">
-                                            <label for="add_group_form_description" class="col-sm-4 control-label">Descripción</label>
-                                            <div class="col-sm-8">
-                                                <textarea name="add_group_form_description" id="add_group_form_description" class="ckeditor form-control"></textarea>
-                                            </div>
-                                        </div>
+
+<div class="form-group">
+    <label for="add_group_form_description" class="col-sm-4 control-label">Descripción</label>
+    <div class="col-sm-8">
+        <textarea name="add_group_form_description" id="add_group_form_description" class="ckeditor form-control">
+            {{ old('add_group_form_description') }}
+        </textarea>
+        @error('add_group_form_description')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+</div>
+
 
                                         <div class="form-group assigns">
                                             <label for="add_group_form_members" class="col-sm-4 control-label">Integrantes</label>
