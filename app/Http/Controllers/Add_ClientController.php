@@ -1,26 +1,22 @@
 <?php
-
 namespace App\Http\Controllers;
-
-use App\Models\Groups;
 use Illuminate\Http\Request;
-use App\Models\User; // Asegúrate de tener este modelo
-use Illuminate\Support\Facades\Log;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User; 
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\View\View;
-use Exception;
 
 class Add_ClientController extends Controller
 {
     public function create()
-    {   
-        $groups = Groups::all(); // Asegúrate de importar el modelo correspondiente.
-       return view('add_client', compact('groups'));
-        // Muestra la vista del formulario
+    {
+        return view('add_client', compact('groups'));
+        
+    }
+    public function index()
+    {
+        // Obtener todos los usuarios (puedes agregar filtros o paginación si es necesario)
+        $users = User::all();  // O puedes usar paginate() para paginación
+
+        return view('customers_manage', compact('users'));
     }
 
     public function store(Request $request)
@@ -28,7 +24,7 @@ class Add_ClientController extends Controller
         // Validar los datos del formulario
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'user' => ['required', 'string', 'max:60', 'unique:tbl_users'], // Validación del campo user
+            'user' => ['required', 'string', 'max:60', 'unique:tbl_users'], 
             'password' => ['required', 'string', 'min:8'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'address' => ['nullable', 'string'],
@@ -36,8 +32,8 @@ class Add_ClientController extends Controller
             'contact' => ['nullable', 'string', 'max:255'],
             'max_file_size' => ['nullable', 'integer', 'min:0'],
             /*'group_request' => ['nullable', 'array'],*/
-            /*'active' => ['nullable', 'boolean'],*/
-            /*'notify' => ['nullable', 'boolean'],*/
+            'active' => ['nullable', 'boolean'],
+            'notify' => ['nullable', 'boolean'],
         ]);
 
         try {
@@ -51,15 +47,13 @@ class Add_ClientController extends Controller
                 'contact' => $request->contact,
                 'max_file_size' => $request->max_file_size,
                 'level' => 0,
-
-                /*'active' => $request->active,*/
-                /*'notify' => $request->notify,*/
+                'active' => $request->active,
+                'notify' => $request->notify,
                 /*'group_request' => $request->group_request,*/
             ]);
             session()->flash('success', 'cliente registrado correctamente');
         } catch (\Exception $e) {
-            // Si algo falla, mostramos un mensaje de error
-            session()->flash('error', 'Hubo un problema al registrar el usuario. Inténtalo nuevamente.');
+            session()->flash('error', 'Hubo un problema al registrar el clientye. Inténtalo nuevamente.');
         }
         return back();
     }
