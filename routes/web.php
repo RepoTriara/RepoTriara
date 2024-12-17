@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\Add_ClientController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -16,6 +16,11 @@ Route::redirect('/', '/login');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/add_client', [Add_ClientController::class, 'create'])->name('add_client');
+
+Route::post('/add_client', [Add_ClientController::class, 'store'])->name('add_client');
+
 
 // Ruta específica para nivel 0
 Route::middleware('auth')->group(function () {

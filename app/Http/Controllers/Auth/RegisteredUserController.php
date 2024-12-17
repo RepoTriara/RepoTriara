@@ -49,7 +49,7 @@ class RegisteredUserController extends Controller
             'address' => $request->address,
             'notify' => $request->notify ?? false,
             'level' => 0,
-            'user' => $request->user, // Asignar el nombre de usuario
+            'user' => $request->user, 
 
         ]);
 
