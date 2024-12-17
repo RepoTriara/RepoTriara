@@ -34,7 +34,7 @@
         @include('layouts.app')
 
             <div class="container-fluid">
-              
+
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">

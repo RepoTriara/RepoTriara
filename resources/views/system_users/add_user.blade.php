@@ -11,12 +11,6 @@
     <link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png" sizes="32x32')}}">
     <link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png" sizes="152x152')}}">
     <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
-
-    <!--[if lt IE 9]>
-		<script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
-		<script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
-	<![endif]-->
-
     <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/main.min.css')}}" />
@@ -25,10 +19,6 @@
 
 <body class="users-add logged-in logged-as-admin menu_hidden backend">
     <div class="container-custom">
-
-
-       
-
         <div class="main_content">
         @include('layouts.app')
 
@@ -41,7 +31,21 @@
                         </div>
                     </div>
                 </div>
+                @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-lg-6">
                         <div class="white-box">
@@ -49,48 +53,26 @@
 
 
 
-                                <script type="text/javascript">
-                                    $(document).ready(function() {
-                                        $("form").submit(function() {
-                                            clean_form(this);
+                                <form method="POST" action="{{ route('users.store') }}" class="form-horizontal">
+                                    @csrf
 
-                                            is_complete(this.add_user_form_name, 'Llene el nombre');
-                                            is_complete(this.add_user_form_user, 'Complete el usuario');
-                                            is_complete(this.add_user_form_email, 'Llene el correo electrónico');
-                                            is_complete(this.add_user_form_level, 'Nivel de usuario no fue especificado');
-                                            is_length(this.add_user_form_user, 5, 60, 'Usuario Longitug debe estar entre 5 y 60 longitud de caracteres');
-                                            is_email(this.add_user_form_email, 'Correo electrónico no válido');
-                                            is_alpha_or_dot(this.add_user_form_user, 'El usuario debe ser alfanumérico y puede contener (a-z,A-Z,0-9,.).');
-                                            is_number(this.add_user_form_maxfilesize, 'El tamaño deñ archivo debe ser un valor entero');
-
-
-                                            //						is_complete(this.add_user_form_pass,'Complete la contraseña');
-                                            //is_complete(this.add_user_form_pass2,'la verificación de la contraseña n fue completa');
-                                            //						is_length(this.add_user_form_pass,5,60,'Contraseña Longitug debe estar entre 5 y 60 longitud de caracteres');
-                                            //						is_password(this.add_user_form_pass,'Su clave puede unicamente contener letras, numeros y los siguientes caracteres: ` ! \" ? $ ? % ^ & * ( ) _ - + = { [ } ] : ; @ ~ # | < , > . ? \' / \\ ');
-                                            //is_match(this.add_user_form_pass,this.add_user_form_pass2,'La contraseña no coincide ');
-
-
-                                            // show the errors or continue if everything is ok
-                                            if (show_form_errors() == false) {
-                                                return false;
-                                            }
-                                        });
-                                    });
-                                </script>
-
-                                <form action="users-add.php" name="adduser" method="post" class="form-horizontal">
                                     <div class="form-group">
-                                        <label for="add_user_form_name" class="col-sm-4 control-label">Nombre</label>
+                                        <label for="name" class="col-sm-4 control-label">Nombre</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="add_user_form_name" id="add_user_form_name" class="form-control required" placeholder="Nombre completo del usuario" value="" />
-                                        </div>
+                                            <input type="text" name="name" id="name" class="form-control required" placeholder="Nombre completo del usuario" value="" />
+                                            @error('name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="add_user_form_user" class="col-sm-4 control-label">Ingresar nombre de usuario</label>
+                                        <label for="user" class="col-sm-4 control-label">Ingresar nombre de usuario</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="add_user_form_user" id="add_user_form_user" placeholder="Usuario de RED" class="form-control required" maxlength="60" value="" placeholder="Debe ser alfanumérico" />
+                                            <input type="text" name="user" id="user" placeholder="Usuario de RED" class="form-control required" maxlength="60" value="" placeholder="Debe ser alfanumérico" />
+                                            @error('user')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                         </div>
                                     </div>
 
@@ -99,7 +81,10 @@
                                         <div class="col-sm-8">
                                             <div class="input-group">
                                                 <!--input name="add_user_form_pass" id="add_user_form_pass" class="form-control  password_toggle" type="password" maxlength="" /-->
-                                                <input name="add_user_form_pass" id="add_user_form_pass" class="form-control  password_toggle" type="password" />
+                                                <input name="password" id="password" class="form-control  password_toggle" type="password" />
+                                                @error('password')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                                 <div class="input-group-btn password_toggler">
                                                     <button type="button" class="btn pass_toggler_show"><i class="glyphicon glyphicon-eye-open"></i></button>
                                                 </div>
@@ -109,29 +94,35 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="add_user_form_email" class="col-sm-4 control-label">E-Mail</label>
+                                        <label for="email" class="col-sm-4 control-label">E-Mail</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="add_user_form_email" id="add_user_form_email" class="form-control required" value="" placeholder="Debe ser válido y único" />
-                                        </div>
+                                            <input type="text" name="email" id="email" class="form-control required" value="" placeholder="Debe ser válido y único" />
+                                            @error('email')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="add_user_form_level" class="col-sm-4 control-label">Rol</label>
+                                        <label for="level" class="col-sm-4 control-label">Rol</label>
                                         <div class="col-sm-8">
-                                            <select name="add_user_form_level" id="add_user_form_level" class="form-control">
+                                            <select name="level" id="level" class="form-control">
                                                 <option value="10">Administrador de Accesos</option>
-                                                <!--option value="9" >Administrador del sistema</option-->
+
                                                 <option value="8">Usuarios del sistema</option>
-                                                <!--option value="7" >Cargador</option-->
+
                                             </select>
+                                            @error('level')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="add_user_form_maxfilesize" class="col-sm-4 control-label">Máximo tamaño de subida</label>
+                                        <label for="max_file_size" class="col-sm-4 control-label">Máximo tamaño de subida</label>
                                         <div class="col-sm-8">
                                             <div class="input-group">
-                                                <input value="0" type="text" name="add_user_form_maxfilesize" id="add_user_form_maxfilesize" class="form-control" readonly value="" />
+                                                <input value="0" type="text" name="" id="max_file_size" class="form-control" readonly value="" />
                                                 <span class="input-group-addon">mb</span>
                                             </div>
                                             <p class="field_note">Ponga 0 como limite predeterminado (2048 mb)</p>
@@ -140,18 +131,21 @@
 
                                     <div class="form-group">
                                         <div class="col-sm-8 col-sm-offset-4">
-                                            <label for="add_user_form_active">
-                                                <input type="checkbox" name="add_user_form_active" id="add_user_form_active" checked="checked" /> Activo (usuario puede ingresar al sistema) </label>
+                                            <label for="active">
+                                                <input type="checkbox" name="active" id="active" value="1" {{ old('active', 1) ? 'checked' : '' }} /> Activo (usuario puede ingresar al sistema)
+                                            </label>
                                         </div>
                                     </div>
-
 
                                     <div class="form-group">
                                         <div class="col-sm-8 col-sm-offset-4">
-                                            <label for="add_user_form_notify_account">
-                                                <input type="checkbox" name="add_user_form_notify_account" id="add_user_form_notify_account" checked="checked" /> Envíe correo de bienvenida </label>
+                                            <label for="notify">
+                                                <input type="checkbox" name="notify" id="notify" value="1" {{ old('notify', 0) ? 'checked' : '' }} /> Envíe correo de bienvenida
+                                            </label>
                                         </div>
                                     </div>
+
+
 
 
                                     <div class="inside_form_buttons">
