@@ -180,8 +180,10 @@
 									</div>
 								</div>
 							
-
-								<button type="submit" name="submit" class="btn btn-wide btn-primary">Agregar cliente</button>
+                              
+								<div class="inside_form_buttons">
+								     <button type="submit" name="submit" class="btn btn-wide btn-primary">Agregar cliente</button>
+								</div>
 
 
 								<div class="alert alert-info">La información de cuenta será enviada al correo electrónico suministrado </div>
