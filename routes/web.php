@@ -70,9 +70,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/add_user', [UserSystemController::class, 'store'])->name('users.store');
 
-    Route::get('/manage_users', function () {
-        return view('system_users.manage_users');
-    })->name('manage_users');
+    Route::get('/manage-users', [UserSystemController::class, 'index'])->name('manage_users');
+    Route::get('users', [UserSystemController::class, 'index'])->name('system_users.index');
+    Route::post('system_users/bulk_action', [UserSystemController::class, 'bulkAction'])->name('system_users.bulk_action');
+    Route::get('system_users/{id}/edit', [UserSystemController::class, 'edit'])->name('system_users.edit');
+    Route::put('system_users/{id}', [UserSystemController::class, 'update'])->name('system_users.update');
 
     Route::middleware('auth')->group(function () {
         Route::get('/add_company', [CompanyController::class, 'create'])->name('add_company');

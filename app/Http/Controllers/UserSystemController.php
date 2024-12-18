@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -21,18 +22,104 @@ class UserSystemController extends Controller
 
 
 
-    public function index()
-    {
-        // Obtener todos los usuarios (puedes agregar filtros o paginación si es necesario)
-        $users = User::all();  // O puedes usar paginate() para paginación
+    public function index(Request $request)
+{
+    // Obtener parámetros de búsqueda, filtros y orden
+    $search = $request->get('search'); // Búsqueda por nombre, usuario o email
+    $role = $request->get('role', 'all'); // Filtro de rol
+    $active = $request->get('active', '2'); // Filtro de estado (2 = todos, 1 = activo, 0 = inactivo)
+    $orderby = $request->get('orderby', 'name'); // Campo para ordenar
+    $order = $request->get('order', 'asc'); // Dirección del orden
 
-        return view('manage_users', compact('users'));
+    // Construir la consulta base
+    $query = User::query();
+
+    // Aplicar búsqueda
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%$search%")
+              ->orWhere('user', 'like', "%$search%")
+              ->orWhere('email', 'like', "%$search%");
+        });
     }
 
+    // Aplicar filtro de rol
+    if ($role !== 'all') {
+        $query->where('level', $role);
+    }
+
+    // Aplicar filtro de estado
+    if ($active !== '2') {
+        $query->where('active', $active);
+    }
+
+    // Aplicar orden y paginación
+    $users = $query->orderBy($orderby, $order)->paginate(10);
+
+    // Agregar parámetros actuales a los enlaces de paginación
+    $users->appends([
+        'search' => $search,
+        'role' => $role,
+        'active' => $active,
+        'orderby' => $orderby,
+        'order' => $order,
+    ]);
+
+    // Contar el total de usuarios (sin filtros)
+    $totalUsers = User::count();
+
+    return view('system_users.manage_users', compact('users', 'totalUsers'));
+}
 
 
+public function edit($id)
+{
+    // Buscar el usuario por ID
+    $user = User::findOrFail($id);
+
+    // Retornar la vista de edición con los datos del usuario
+    return view('system_users.edit_user', compact('user'));
+}
 
 
+public function bulkAction(Request $request)
+{
+    // Validar la acción seleccionada
+    $request->validate([
+        'action' => 'required|in:activate,deactivate,delete',
+        'batch' => 'required|array|min:1',
+        'batch.*' => 'exists:tbl_users,id', // Validar que los IDs sean válidos
+    ]);
+
+    // Obtener los IDs seleccionados
+    $userIds = $request->batch;
+    $action = $request->action;
+
+    try {
+        // Dependiendo de la acción seleccionada, procesar
+        switch ($action) {
+            case 'activate':
+                User::whereIn('id', $userIds)->update(['active' => 1]);
+                session()->flash('success', 'Usuarios activados correctamente.');
+                break;
+
+            case 'deactivate':
+                User::whereIn('id', $userIds)->update(['active' => 0]);
+                session()->flash('success', 'Usuarios desactivados correctamente.');
+                break;
+
+            case 'delete':
+                User::whereIn('id', $userIds)->delete();
+                session()->flash('success', 'Usuarios eliminados correctamente.');
+                break;
+        }
+    } catch (\Exception $e) {
+        session()->flash('error', 'Hubo un error al procesar la acción seleccionada.');
+    }
+
+    // Redirigir de vuelta con el mensaje
+    return redirect()->route('system_users.index');
+}
 
 
     /**
@@ -77,6 +164,39 @@ class UserSystemController extends Controller
 
     }
 
+
+    public function update(Request $request, $id)
+    {
+        // Validar los datos del formulario
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'user' => 'required|string|max:60',
+            'email' => 'required|email|max:255|unique:tbl_users,email,' . $id, // Ignora el correo del usuario actual
+            'level' => 'required|in:10,8',  // Asegúrate de que 'level' sea uno de los valores válidos
+            'password' => 'nullable|string|min:8', // Si no se cambia la contraseña, no es obligatorio
+            'active' => 'boolean',
+        ]);
+
+        // Buscar el usuario por su ID
+        $user = User::findOrFail($id);
+
+        // Actualizar los datos del usuario
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->level = $request->level;  // Cambiar 'role' por 'level'
+        $user->active = $request->active;
+
+        // Si la contraseña ha sido cambiada, actualizarla
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        // Guardar los cambios
+        $user->save();
+
+        // Redirigir con un mensaje de éxito
+        return redirect()->route('system_users.index')->with('success', 'Usuario actualizado correctamente.');
+    }
 
 
 
