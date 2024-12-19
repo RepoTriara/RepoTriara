@@ -184,7 +184,7 @@ public function bulkAction(Request $request)
         $user->name = $request->name;
         $user->email = $request->email;
         $user->level = $request->level;  // Cambiar 'role' por 'level'
-        $user->active = $request->active;
+        $user->active = $request->input('active', 0); // Si no se envía, establecer en 0
 
         // Si la contraseña ha sido cambiada, actualizarla
         if ($request->filled('password')) {
