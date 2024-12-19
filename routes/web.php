@@ -79,6 +79,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('/add_company', [CompanyController::class, 'create'])->name('add_company');
         Route::post('/add_company', [CompanyController::class, 'store'])->name('company.store');
+        Route::get('/manage_company', [CompanyController::class, 'manageCompany'])->name('manage_company');
+        Route::post('/groups/bulk_action', [CompanyController::class, 'bulkAction'])->name('groups.bulk_action');
+
+        Route::post('customers/bulk_action', [UserSystemController::class, 'bulkAction'])->name('customers.bulk_action');
+        Route::get('/customers', action: [Add_ClientController::class, 'index'])->name(name: 'customers.index');
+
     });
 
 });
