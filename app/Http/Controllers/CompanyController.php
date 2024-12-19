@@ -7,6 +7,8 @@ use App\Models\Members;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\Groups; 
+
 
 class CompanyController extends Controller
 {
@@ -91,6 +93,35 @@ class CompanyController extends Controller
 
     return redirect()->route('add_company')->with('success', 'Grupo creado exitosamente.');
 }
+public function manageCompany(Request $request)
+{
+    $query = Groups::query();
+
+    // Filtro de búsqueda por nombre del grupo
+    if ($request->has('search') && !empty($request->search)) {
+        $query->where('name', 'LIKE', '%' . $request->search . '%');
+    }
+
+    // Paginación de resultados
+    $groups = $query->paginate(10);
+    $groups->withPath(url()->current());
+
+    return view('companies.manage_company', compact('groups'));
+}
+
+public function bulkAction(Request $request)
+{
+    $action = $request->input('action');
+    $selectedGroups = $request->input('batch');
+
+    if ($action == 'delete' && !empty($selectedGroups)) {
+        Groups::whereIn('id', $selectedGroups)->delete();
+        return redirect()->back()->with('success', 'Grupos eliminados correctamente.');
+    }
+
+    return redirect()->back()->with('error', 'Seleccione una acción válida y al menos un grupo.');
+}
+
 
     
 
