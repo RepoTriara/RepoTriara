@@ -19,10 +19,14 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/add_client', [Add_ClientController::class, 'create'])->name('add_client');
-
-Route::post('/add_client', [Add_ClientController::class, 'store'])->name('add_client');
-
+Route::get('/add_client', [Add_ClientController::class, 'create'])->name(name:'add_client');
+Route::post('/add_client', [Add_ClientController::class, 'store'])->name(name:'add_client');
+Route::get('/customer_manager', action: [Add_ClientController::class, 'index'])->name(name: 'customer_manager');
+Route::post('/customers/bulk_Action', [Add_ClientController::class, 'bulkAction'])->name('customers.bulk_Action');
+// Ruta para mostrar el formulario de edición
+Route::get('/customer_manager/{id}/edit', [Add_ClientController::class, 'edit'])->name('customer_manager.edit');
+// Ruta para actualizar los datos del cliente
+Route::put('/customer_manager/{id}', [Add_ClientController::class, 'update'])->name('customer_manager.update');
 
 // Ruta específica para nivel 0
 Route::middleware('auth')->group(function () {
@@ -49,14 +53,8 @@ Route::middleware('auth')->group(function () {
         return view('files.search_orphan_files');
     })->name('search_orphan_files');
 
-    Route::get('/customer_manager', function () {
-        return view('customers.customer_manager');
-    })->name('customer_manager');
-
-    Route::get('/add_client', function () {
-        return view('customers.add_client');
-    })->name('add_client');
-
+   
+   
     Route::get('/add_company', function () {
         return view('companies.add_company');
     })->name('add_company');
