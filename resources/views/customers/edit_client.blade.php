@@ -6,7 +6,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Agregar cliente &raquo; Repositorio</title>
-
 	<link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico')}}" />
 	<link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png')}}" sizes="152x152">
 	<link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png')}}" sizes="32x32">
@@ -30,9 +29,6 @@
 </head>
 
 <body class="add_client logged-in logged-as-admin menu_hidden backend">
-
-
-
 	<div class="container-custom">
 
 		<div class="main_content">
@@ -41,26 +37,19 @@
 			<div class="row">
 				<div id="section_title">
 					<div class="col-xs-12">
-						<h2>Agregar cliente</h2>
+						<h2>Editar cliente</h2>
 					</div>
 				</div>
 			</div>
 			@if ($errors->any())
-    <div class="alert alert-danger">
-        <strong>Por favor corrige los siguientes errores:</strong>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-@if (session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
+				<div class="alert alert-danger">
+					<ul>
+						@foreach ($errors->all() as $error)
+							<li>{{ $error }}</li>
+						@endforeach
+					</ul>
+				</div>
+			@endif
 
 			@if(session('success'))
 				<div class="alert alert-success">
@@ -94,15 +83,17 @@
 									});
 								});
 							</script>
-							<form action="{{ route('add_client') }}" name="add_client" method="POST"
+							<form method="POST" action="{{ route('customer_manager.update', $client->id) }}"
 								class="form-horizontal">
 								@csrf
+								@method('PUT')
+
 								<div class="form-group">
 									<label for="name" class="col-sm-4 control-label">Nombre</label>
 									<div class="col-sm-8">
 										<input type="text" name="name" id="name" class="form-control required"
-											placeholder="Nombre completo del usuario" value="{{ old('name') }}"
-											required />
+											placeholder="Nombre completo del usuario"
+											value="{{ old('name', $client->name) }}" />
 										@error('name')
 											<div class="invalid-feedback">{{ $message }}</div>
 										@enderror
@@ -112,8 +103,9 @@
 									<label for="user" class="col-sm-4 control-label">Ingresar nombre de usuario</label>
 									<div class="col-sm-8">
 										<input type="text" name="user" id="user" placeholder="Usuario de RED"
-											class="form-control required" maxlength="60" value="{{ old('user') }}"
-											placeholder="Debe ser alfanumérico" required />
+											class="form-control required" maxlength="60"
+											value="{{ old('user', $client->user) }}"
+											placeholder="Debe ser alfanumérico" />
 										@error('user')
 											<div class="invalid-feedback">{{ $message }}</div>
 										@enderror
@@ -124,7 +116,8 @@
 									<div class="col-sm-8">
 										<div class="input-group">
 											<input name="password" id="password" class="form-control password_toggle"
-												type="password" maxlength="60" value="{{ old('user') }}" required />
+												type="password" maxlength="60"
+												value="{{ old('user', $client->password) }}" required />
 											@error('password')
 												<div class="invalid-feedback">{{ $message }}</div>
 											@enderror
@@ -142,7 +135,8 @@
 									<label for="email" class="col-sm-4 control-label">E-Mail</label>
 									<div class="col-sm-8">
 										<input type="text" name="email" id="email" class="form-control required"
-											value="{{ old('email') }}" placeholder="Debe ser válido y único" required />
+											value="{{ old('email', $client->email) }}"
+											placeholder="Debe ser válido y único" required />
 										@error('email')
 											<div class="text-danger mt-2">{{ $message }}</div>
 										@enderror
@@ -153,7 +147,7 @@
 									<label for="address" class="col-sm-4 control-label">Dirección</label>
 									<div class="col-sm-8">
 										<input type="text" name="address" id="address" class="form-control"
-											value="{{ old('address') }}" placeholder="Opcional" />
+											value="{{ old('address', $client->address) }}" placeholder="Opcional" />
 										@error('address')
 											<div class="text-danger mt-2">{{ $message }}</div>
 										@enderror
@@ -163,7 +157,8 @@
 									<label for="phone" class="col-sm-4 control-label">Teléfono</label>
 									<div class="col-sm-8">
 										<input type="text" name="phone" id="phone" class="form-control"
-											value="{{ old('phone') }}" placeholder="Opcional" />
+											value="{{ old('phone', $client->phone) }}" placeholder="Opcional"
+											required />
 										@error('phone')
 											<div class="text-danger mt-2">{{ $message }}</div>
 										@enderror
@@ -174,7 +169,7 @@
 										interno</label>
 									<div class="col-sm-8">
 										<input type="text" name="contact" id="contact" class="form-control"
-											value="{{ old('contact') }}" />
+											value="{{ old('contact', $client->contact) }}" required />
 										@error('contact')
 											<div class="text-danger mt-2">{{ $message }}</div>
 										@enderror
@@ -186,7 +181,8 @@
 									<div class="col-sm-8">
 										<div class="input-group">
 											<input type="text" name="max_file_size" id="max_file_size"
-												class="form-control" value="{{ old('max_file_size') }}" required/>
+												class="form-control"
+												value="{{ old('max_file_size', $client->max_file_size) }}" required />
 											<span class="input-group-addon">mb</span>
 											@error('max_file_size')
 												<div class="text-danger mt-2">{{ $message }}</div>
@@ -195,33 +191,27 @@
 										<p class="field_note">Ponga 0 como limite predeterminado (2048 mb)</p>
 									</div>
 								</div>
-								<!-- Mostrar los nombres de los grupos -->
-
-
-								<!-- Vista Blade -->
 
 								<div class="form-group assigns">
-										<label for="group_request"
-											class="col-sm-4 control-label">Grupos</label>
-										<div class="col-sm-8">
-											<select multiple="multiple" name="group_request[]"
-												id="group-select" class="form-control chosen-select"
-												data-placeholder="Seleccione una o mas opciones. Escriba para buscar">
+									<label for="group_request" class="col-sm-4 control-label">Grupos</label>
+									<div class="col-sm-8">
+										<select multiple="multiple" name="group_request[]" id="group-select"
+											class="form-control chosen-select"
+											data-placeholder="Seleccione una o mas opciones. Escriba para buscar">
 											@foreach ($groups as $group)
-												<option value="{{ $group->id }}">{{ $group->name }}</option>
+												<option value="{{ $group->id }}" {{ in_array($group->id, $associatedGroups) ? 'selected' : '' }}>
+													{{ $group->name }}
+												</option>
 											@endforeach
 										</select>
 									</div>
 								</div>
 
-
 								<div class="form-group">
 									<div class="col-sm-8 col-sm-offset-4">
 										<label for="active">
-											<input type="checkbox" name="active" id="active" value="1" {{ old('active', 1) ? 'checked' : '' }} /> Activo (usuario puede ingresar al sistema)
-											@error('active')
-											<div class="text-danger mt-2">{{ $message }}</div>
-										@enderror
+											<input type="checkbox" name="active" id="active" value="1" {{ old('active', $client->active) == 1 ? 'checked' : '' }} /> Activo (usuario puede
+											ingresar al sistema)
 										</label>
 									</div>
 								</div>
@@ -229,23 +219,16 @@
 								<div class="form-group">
 									<div class="col-sm-8 col-sm-offset-4">
 										<label for="add_client_form_notify_upload">
-											<input type="checkbox" name="notify" id="notify" value="1" {{old('notify', 0) ? 'checked' : ''}}> Notificar nuevos archivos por correo </label>
-										@error('notify')
+											<input type="checkbox" name="notify" id="notify" value="1" {{old('notify', $client->notify) == 0 ? 'checked' : ''}}> Notificar nuevos
+											archivos por correo </label>
+										@error('notify_upload')
 											<div class="text-danger mt-2">{{ $message }}</div>
 										@enderror
 									</div>
 								</div>
-								<div class="form-group">
-									<div class="col-sm-8 col-sm-offset-4">
-										<label for="add_client_form_notify_account">
-											<input type="checkbox" name="notify" id="notify" value="1" {{ old('notify', 0) ? 'checked' : '' }} /> Envíe correo de bienvenida
-											@error('notify')
-												<div class="notify_account">{{ $message }}</div>
-											@enderror
-									</div>-
-								</div>
+
 								<div class="inside_form_buttons">
-									<button type="submit" name="submit" class="btn btn-wide btn-primary">Agregar
+									<button type="submit" name="submit" class="btn btn-wide btn-primary">Actualizar
 										cliente</button>
 								</div>
 								<div class="alert alert-info">La información de cuenta será enviada al correo
@@ -254,8 +237,8 @@
 						</div>
 					</div>
 				</div>
-			</div> <!-- row -->
-		</div> <!-- container-fluid -->
+			</div> 
+		</div> 
 		<footer>
 			<div id="footer">
 				Claro Colombia </div>
@@ -268,8 +251,6 @@
 		<script src="{{asset('includes/js/main.js')}}"></script>
 		<script src="{{asset('includes/js/js.functions.php')}}"></script>
 		<script src="{{asset('includes/js/chosen/chosen.jquery.min.js')}}"></script>
-
-		<!-- Inicializar Chosen -->
 		<script>
 			$(document).ready(function () {
 				$('.chosen-select').chosen({
@@ -278,8 +259,6 @@
 				});
 			});
 		</script>
-
-
 	</div> <!-- main_content -->
 	</div> <!-- container-custom -->
 
