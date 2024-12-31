@@ -68,4 +68,16 @@ class TblFile extends Model
 {
     return $this->hasMany(TblFileRelation::class, 'file_id', 'id');
 }
+
+protected static function boot()
+{
+    parent::boot();
+
+    static::creating(function ($file) {
+        if (empty($file->public_token)) {
+            $file->public_token = Str::random(32);
+        }
+    });
+}
+
 }
