@@ -11,12 +11,6 @@
 	<link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png" sizes="32x32')}}">
 	<link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png" sizes="152x152')}}">
 	<script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
-
-	<!--[if lt IE 9]>
-		<script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
-		<script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
-	<![endif]-->
-
 	<link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" />
 	<link rel="stylesheet" media="all" type="text/css" href="{{asset('includes/plupload/js/jquery.plupload.queue/css/jquery.plupload.queue.css')}}" />
 	<link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" />
@@ -28,10 +22,10 @@
 	<div class="container-custom">
 
 
-		
+
 		<div class="main_content">
 		@include('layouts.app')
-         
+
 			<div class="container-fluid">
 
 				<div class="row">
@@ -144,7 +138,8 @@
 							});
 						</script>
 
-						<form action="upload-process-form.php" name="upload_by_client" id="upload_by_client" method="post" enctype="multipart/form-data">
+                        <form action="" method="POST" enctype="multipart/form-data">
+                            @csrf
 							<input type="hidden" name="uploaded_files" id="uploaded_files" value="" />
 							<div id="uploader">
 								<div class="message message_error">

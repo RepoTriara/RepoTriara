@@ -26,7 +26,7 @@
 
             <ul class="nav pull-right nav_account">
                 <li id="header_welcome">
-                    <span>{{ auth()->user()->user }}</span>
+                    <span>{{ auth()->user()->name }}</span>
                 </li>
                 <li>
                     <a href="{{ route('profile.edit') }}" class="my_account">
@@ -58,9 +58,12 @@
             </a>
             <ul class="dropdown_content">
                 <li><a href="{{ route('upload') }}"><span class="submenu_label">Subir</span></a></li>
-                <li class="divider"></li>
+
                 <li><a href="{{ route('file_manager') }}"><span class="submenu_label">Administrar archivos</span></a></li>
                 <li><a href="{{ route('search_orphan_files') }}"><span class="submenu_label">Buscar archivos huérfanos</span></a></li>
+                @if(Auth::user()->level != 8)
+                <li><a href="{{ route('categories.index') }}"><span class="submenu_label">Categorias</span></a></li>
+                @endif
             </ul>
         </li>
 
