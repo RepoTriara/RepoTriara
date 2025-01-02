@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\UserSystemController;
 use App\Http\Controllers\CompanyController;
+use App\Models\TblFile;
+use Illuminate\Support\Str;
 
 // Ruta de bienvenida
 //Route::get('/', function () {
@@ -79,9 +81,39 @@ Route::middleware('auth')->group(function () {
         Route::post('/add_company', [CompanyController::class, 'store'])->name('company.store');
         Route::get('/manage_company', [CompanyController::class, 'manageCompany'])->name('manage_company');
         Route::post('/groups/bulk_action', [CompanyController::class, 'bulkAction'])->name('groups.bulk_action');
+        Route::get('/groups/{id}/edit', [CompanyController::class, 'edit'])->name('groups.edit');
+        Route::put('/groups/{id}', [CompanyController::class, 'update'])->name('groups.update');
+        Route::get('/groups/{id}/files', [CompanyController::class, 'manageFiles'])->name('groups.files');
+        Route::get('/files/download/{id}', [CompanyController::class, 'download'])->name('files.download');
+        Route::get('/files/edit/{id}', [CompanyController::class, 'editFile'])->name('files.edit');
+        Route::put('/files/update/{id}', [CompanyController::class, 'updateFile'])->name('files.update');
+        Route::get('/manage-files/{groupId}', [CompanyController::class, 'manageFiles'])->name('files.manage');
+        Route::post('/manage-files/{groupId}/bulk-action', [CompanyController::class, 'bulkAction'])->name('files.bulk_action');
+        Route::post('/files/bulk-action/{groupId}', [CompanyController::class, 'bulkActionFiles'])->name('files.bulk-action');
+
+
+        Route::get('/fix-public-tokens', function () {
+            $files = TblFile::whereNull('public_token')->orWhere('public_token', '')->get();
+        
+            foreach ($files as $file) {
+                $file->public_token = Str::random(32);
+                if ($file->save()) {
+                    echo "Token generado para el archivo con ID: {$file->id}<br>";
+                } else {
+                    echo "Error al generar el token para el archivo con ID: {$file->id}<br>";
+                }
+            }
+        
+            return "Proceso completado.";
+        });
+
+
+        
 
         Route::post('customers/bulk_action', [UserSystemController::class, 'bulkAction'])->name('customers.bulk_action');
         Route::get('/customers', action: [Add_ClientController::class, 'index'])->name(name: 'customers.index');
+       
+
 
     });
 

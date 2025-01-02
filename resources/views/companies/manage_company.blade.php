@@ -30,13 +30,32 @@
         <div class="main_content">
             @include('layouts.app')
             <div class="container-fluid">
-                <div class="row">
-                    <div id="section_title">
-                        <div class="col-xs-12">
-                            <h2>Administración de Grupos</h2>
-                        </div>
+    
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div id="section_title">
+            <div class="col-xs-12">
+                <h2>Administración de Grupos</h2>
+
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
                     </div>
-                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
                 <div class="form_actions_left">
     <div class="form_actions_limit_results">
@@ -50,75 +69,78 @@
 </div>
 
 
-<form action="{{ route('groups.bulk_action') }}" method="post" class="form-inline">
+<form action="{{ route('groups.bulk_action') }}" method="post">
     @csrf
     <div class="form_actions_right">
         <div class="form_actions">
             <div class="form_actions_submit">
-                <div class="form-group group_float">
-                    <label class="control-label hidden-xs hidden-sm">
-                        <i class="glyphicon glyphicon-check"></i> Acciones de grupo seleccionadas:
+                <div class="form-group group_float" style="display: flex; align-items: center; gap: 10px;">
+                    <label class="control-label hidden-xs hidden-sm" style="margin-right: 10px;">
+                        <i class="glyphicon glyphicon-check"></i> Acciones seleccionadas:
                     </label>
-                    <select name="action" id="action" class="txtfield form-control">
+                    <select name="action" id="action" class="txtfield form-control" style="width: auto;">
                         <option value="none">Seleccione la acción</option>
                         <option value="delete">Eliminar</option>
                     </select>
+                    <button type="submit" id="do_action" class="btn btn-sm btn-default" style="height: 34px;">
+                        <i class="glyphicon glyphicon-ok"></i> Proceder
+                    </button>
+
                 </div>
-                <button type="submit" id="do_action" class="btn btn-sm btn-default">Proceder</button>
             </div>
         </div>
     </div>
+
+
+    <table id="groups_tbl" class="footable table">
+        <thead>
+            <tr>
+                <th class="td_checkbox"><input type="checkbox" name="select_all" id="select_all" value="0" /></th>
+                <th>Nombre del grupo</th>
+                <th>Descripción</th>
+                <th>Miembros</th>
+                <th>Archivos</th>
+                <th>Público</th>
+                <th>Creado por</th>
+                <th>Adicionado</th>
+                <th>Ver</th>
+                <th>Comportamiento</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($groups as $group)
+                <tr class="{{ $loop->even ? 'table_row_alt' : 'table_row' }}">
+                    <td>
+                        <input type="checkbox" class="batch_checkbox" name="batch[]" value="{{ $group->id }}" />
+                    </td>
+                    <td>{{ $group->name }}</td>
+                    <td>{{ $group->description ?? 'N/A' }}</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>
+                        @if ($group->public)
+                            <a href="javascript:void(0);" class="btn btn-default btn-sm disabled" title="">Público</a>
+                        @else
+                            <a href="javascript:void(0);" class="btn btn-default btn-sm disabled" title="">Privado</a>
+                        @endif
+                    </td>
+                    <td>{{ $group->created_by }}</td>
+                    <td>{{ $group->timestamp ?? 'N/A' }}</td>
+                    <td>
+                    <a href="{{ route('groups.files', $group->id) }}" class="btn btn-primary btn-sm">Archivos</a>
+                 </td>
+                    <td>
+    <a href="{{ route('groups.edit', $group->id) }}" class="btn btn-sm btn-primary">
+        <i class="fa fa-pencil"></i><span class="button_label">Editar</span>
+    </a>
+</td>
+
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 </form>
-
-
-                <div class="row">
-                    <div class="col-xs-12">
-                        <table id="groups_tbl" class="footable table">
-                            <thead>
-                                <tr>
-                                    <th class="td_checkbox"><input type="checkbox" name="select_all" id="select_all" value="0" /></th>
-                                    <th>Nombre del grupo</th>
-                                    <th>Descripción</th>
-                                    <th>Miembros</th>
-                                    <th>Archivos</th>
-                                    <th>Público</th>
-                                    <th>Creado por</th>
-                                    <th>Adicionado</th>
-                                    <th>Ver</th>
-                                    <th>Comportamiento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($groups as $group)
-                                    <tr class="{{ $loop->even ? 'table_row_alt' : 'table_row' }}">
-                                        <td>
-                                            <input type="checkbox" class="batch_checkbox" name="batch[]" value="{{ $group->id }}" />
-                                        </td>
-                                        <td>{{ $group->name }}</td>
-                                        <td>{{ $group->description ?? 'N/A' }}</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>
-                                            @if ($group->public)
-                                                <a href="javascript:void(0);" class="btn btn-default btn-sm disabled" title="">Público</a>
-                                            @else
-                                                <a href="javascript:void(0);" class="btn btn-default btn-sm disabled" title="">Privado</a>
-                                            @endif
-                                        </td>
-                                        <td>{{ $group->created_by }}</td>
-                                        <td>{{ $group->timestamp ?? 'N/A' }}</td>
-                                        <td>
-                                            <a href="{{ url('manage-files.php?group_id=' . $group->id) }}" class="btn btn-primary btn-sm">Archivos</a>
-                                        </td>
-                                        <td>
-                                            <a href="{{ url('groups-edit.php?id=' . $group->id) }}" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-pencil"></i><span class="button_label">Editar</span>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                        
 
                         <div class="container-fluid text-center">
                             <nav aria-label="Resultados de Navegación">
@@ -164,6 +186,14 @@
 
 
 		<script>
+
+        document.getElementById('select_all').addEventListener('click', function() {
+        let isChecked = this.checked;
+        let checkboxes = document.querySelectorAll('input[name="batch[]"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = isChecked;
+        });
+    });
     function goToPage() {
         let page = document.getElementById('go_to_page').value;
         if (page) {

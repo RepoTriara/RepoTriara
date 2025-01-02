@@ -30,4 +30,10 @@ class Groups extends Model
 
     public function fileRelations(){     return $this->hasMany(TblFileRelation::class, 'group_id', 'id'); }
 
+    public function members()
+{
+    return $this->hasMany(Members::class, 'group_id');
+}
+
+
 }
