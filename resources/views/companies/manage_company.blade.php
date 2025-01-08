@@ -43,7 +43,7 @@
     <div class="row">
         <div id="section_title">
             <div class="col-xs-12">
-                <h2>Administración de Grupos</h2>
+                <h2>{{ $pageTitle ?? 'Administración de Grupos' }}</h2>
 
                 @if (session('success'))
                     <div class="alert alert-success">

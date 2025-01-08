@@ -111,7 +111,28 @@ class CompanyController extends Controller
 }
 
 public function manageCompany(Request $request)
-{
+{   
+    $memberId = $request->query('member');
+
+    if ($memberId) {
+        // Obtener la información del cliente (usuario) por su ID
+        $user = User::find($memberId);
+
+        if ($user) {
+            // Cambiar el título de la página basado en el nombre del cliente
+            $pageTitle = __('Grupos donde') . ' ' . $user->name . ' ' . __('es miembro');
+            
+            // Obtener los grupos a los que el cliente pertenece con paginación
+            $groups = $user->groups()->paginate(10);
+
+            return view('companies.manage_company', compact('pageTitle', 'user', 'groups'));
+        } else {
+            // Si el cliente no existe, devolver error
+            $error = 'client_not_exists';
+            return view('companies.manage_company', compact('error'));
+        }
+    }
+
     // Incluir las columnas necesarias en la consulta
     $query = Groups::select('id', 'name', 'description', 'public', 'created_by', 'timestamp', 'public_token')
         ->withCount(['members', 'fileRelations']); // Contar las relaciones necesarias
@@ -133,6 +154,7 @@ public function manageCompany(Request $request)
 
     // Paginación de resultados
     $groups = $query->paginate(10);
+    $groups->withPath(url()->current());
 
     // Total de grupos
     $totalGroups = Groups::count();

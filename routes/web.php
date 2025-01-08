@@ -1,5 +1,5 @@
 <?php
-use App\Http\Controllers\Add_ClientController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -23,14 +23,14 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/add_client', [Add_ClientController::class, 'create'])->name(name:'add_client');
-Route::post('/add_client', [Add_ClientController::class, 'store'])->name(name:'add_client');
-Route::get('/customer_manager', action: [Add_ClientController::class, 'index'])->name(name: 'customer_manager');
-Route::post('/customers/bulk_Action', [Add_ClientController::class, 'bulkAction'])->name('customers.bulk_Action');
+Route::get('/add_client', [ClientController::class, 'create'])->name(name:'add_client');
+Route::post('/add_client', [ClientController::class, 'store'])->name(name:'add_client');
+Route::get('/customer_manager', action: [ClientController::class, 'index'])->name(name: 'customer_manager');
+Route::post('/customers/bulk_Action', [ClientController::class, 'bulkAction'])->name('customers.bulk_Action');
 // Ruta para mostrar el formulario de edición
-Route::get('/customer_manager/{id}/edit', [Add_ClientController::class, 'edit'])->name('customer_manager.edit');
+Route::get('/customer_manager/{id}/edit', [ClientController::class, 'edit'])->name('customer_manager.edit');
 // Ruta para actualizar los datos del cliente
-Route::put('/customer_manager/{id}', [Add_ClientController::class, 'update'])->name('customer_manager.update');
+Route::put('/customer_manager/{id}', [ClientController::class, 'update'])->name('customer_manager.update');
 
 // Ruta específica para nivel 0
 Route::middleware('auth')->group(function () {
@@ -120,7 +120,7 @@ Route::post('/files/group-bulk-action/{groupId}', [CompanyController::class, 'bu
 
 
         Route::post('customers/bulk_action', [UserSystemController::class, 'bulkAction'])->name('customers.bulk_action');
-        Route::get('/customers', action: [Add_ClientController::class, 'index'])->name(name: 'customers.index');
+        Route::get('/customers', action: [ClientController::class, 'index'])->name(name: 'customers.index');
 
     // Rutas para la gestión de categorías
     Route::prefix('categories')->group(function() {
