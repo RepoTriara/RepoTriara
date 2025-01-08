@@ -166,12 +166,18 @@
                 <td>{{ $fileRelation->file && isset($fileRelation->file->size) ? number_format($fileRelation->file->size / 1024, 2) . ' KB' : 'Desconocido' }}</td>
                 <td>{{ $fileRelation->file->uploader ?? 'N/A' }}</td>
                 <td>
-                    @if ($fileRelation->file && $fileRelation->file->public_allow)
-                    <button type="button" class="btn btn-primary btn-sm">Público</button>
-                    @else
-                    <button type="button" class="btn btn-secondary btn-sm" disabled>Privado</button>
-                    @endif
-                </td>
+                                            @if ($fileRelation->file && $fileRelation->file->public_allow)
+                                            <button type="button"
+                                                class="btn btn-primary btn-sm"
+                                                data-toggle="modal"
+                                                data-target="#urlModal"
+                                                data-url="{{ url('download.php?id=' . $fileRelation->file->id . '&token=' . $fileRelation->file->public_token) }}">
+                                                Descarga
+                                            </button>
+                                            @else
+                                            <button type="button" class="btn btn-secondary btn-sm" disabled>Privado</button>
+                                            @endif
+                                        </td>
                 <td>
                     @if ($fileRelation->file && $fileRelation->file->expires)
                     @if (\Carbon\Carbon::parse($fileRelation->file->expiry_date)->isPast())
@@ -240,8 +246,8 @@
         <script src="{{asset('includes/js/main.js')}}"></script>
         <script src="{{asset('includes/js/js.functions.php')}}"></script>
         <script src="{{asset('includes/js/footable/footable.min.js')}}"></script>
-    </div> <!-- main_content -->
-    </div> <!-- container-custom -->
+    </div>
+    </div> 
     <script>
         document.getElementById('select_all').addEventListener('click', function() {
             let isChecked = this.checked;
