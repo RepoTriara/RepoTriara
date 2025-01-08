@@ -8,6 +8,7 @@ use App\Http\Controllers\CompanyController;
 use App\Models\TblFile;
 use Illuminate\Support\Str;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FilesController;
 
 // Ruta de bienvenida
 //Route::get('/', function () {
@@ -48,9 +49,7 @@ Route::middleware('auth')->group(function () {
         return view('files.upload');
     })->name('upload');
 
-    Route::get('/file_manager', function () {
-        return view('files.file_manager');
-    })->name('file_manager');
+    
 
     Route::get('/file_manager', [FilesController::class, 'index'])->name('file_manager');
 
@@ -94,11 +93,12 @@ Route::post('/files/download-compressed', [FilesController::class, 'downloadComp
         Route::put('/groups/{id}', [CompanyController::class, 'update'])->name('groups.update');
         Route::get('/groups/{id}/files', [CompanyController::class, 'manageFiles'])->name('groups.files');
         Route::get('/files/download/{id}', [CompanyController::class, 'download'])->name('files.download');
-        Route::get('/files/edit/{id}', [CompanyController::class, 'editFile'])->name('files.edit');
-        Route::put('/files/update/{id}', [CompanyController::class, 'updateFile'])->name('files.update');
-        Route::get('/manage-files/{groupId}', [CompanyController::class, 'manageFiles'])->name('files.manage');
-        Route::post('/manage-files/{groupId}/bulk-action', [CompanyController::class, 'bulkAction'])->name('files.bulk_action');
-        Route::post('/files/bulk-action/{groupId}', [CompanyController::class, 'bulkActionFiles'])->name('files.bulk-action');
+        Route::get('/companies/files/edit/{id}', [CompanyController::class, 'editFile'])->name('companies.files.edit');
+Route::put('/companies/files/update/{id}', [CompanyController::class, 'updateFile'])->name('companies.files.update');
+
+Route::get('/manage-files/{groupId}', [CompanyController::class, 'manageFiles'])->name('files.manage');
+Route::post('/manage-files/{groupId}/bulk-action', [CompanyController::class, 'bulkAction'])->name('files.bulk_action');
+Route::post('/files/group-bulk-action/{groupId}', [CompanyController::class, 'bulkActionFiles'])->name('files.group-bulk-action');
 
 
         Route::get('/fix-public-tokens', function () {
