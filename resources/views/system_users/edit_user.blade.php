@@ -70,7 +70,7 @@
                                     <div class="form-group">
                                         <label for="user" class="col-sm-4 control-label">Ingresar nombre de usuario</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="user" id="user" placeholder="Usuario de RED" class="form-control required" maxlength="60" value="{{ old('user', $user->user) }}" />
+                                            <input type="text" name="user" id="user" placeholder="Usuario de RED" class="form-control required" maxlength="60" value="{{ old('user', $user->user) }}" readonly />
                                             @error('user')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -140,7 +140,7 @@
                                         <button type="submit" name="submit" class="btn btn-wide btn-primary">Actualizar Usuario</button>
                                     </div>
 
-                                    <div class="alert alert-info">La información de cuenta será enviada al correo electrónico suministrado</div>
+                                    
                                 </form>
 
                             </div>

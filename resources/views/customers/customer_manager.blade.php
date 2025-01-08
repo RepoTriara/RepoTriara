@@ -83,7 +83,7 @@
                                     </div>
                                 </div>
                             </div>
-                           
+
                             <div class="clear"></div>
                             <div class="form_actions_count">
                                 <p>Encontró: <span>{{ $totalCliente }} clientes</span></p>
@@ -115,7 +115,7 @@
                                             <span class="footable-sort-indicator"></span>
 
                                         </th>
-                                        
+
                                         <th data-hide="phone">Grupos Activos</th>
                                         <th data-hide="phone,tablet">Notificación</th>
                                         <th class="{{ request('orderby') === 'max_file_size' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
@@ -137,9 +137,9 @@
                                                         <td>{{ $client->name }}</td>
                                                         <td>{{ $client->user }}</td>
                                                         <td>{{ $client->email }}</td>
-                                                        <td>{{ $client->uploads_count }}</td> 
-                                                        <td>{{ $client->own_files_count }}</td> 
-                                                         <td>{{ $client->group_files_count}}</td>                                                        
+                                                        <td>{{ $client->uploads_count }}</td>
+                                                        <td>{{ $client->own_files_count }}</td>
+                                                         <td>{{ $client->group_files_count}}</td>
                                                         <td><span class="label {{ $client->active ? 'label-success' : 'label-danger' }}">{{ $client->active ? 'Activo' : 'Inactivo' }}</span></td>
                                                         <td>{{ $client->group_count }}</td> <!-- Mostrar el número de grupos -->
                                                         <td>{{ $client->notification_status }}</td>  
