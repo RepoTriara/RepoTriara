@@ -52,6 +52,14 @@ Route::middleware('auth')->group(function () {
         return view('files.file_manager');
     })->name('file_manager');
 
+    Route::get('/file_manager', [FilesController::class, 'index'])->name('file_manager');
+
+    Route::get('/files/download/{id}', [FilesController::class, 'download'])->name('files.download');
+    Route::get('/file_manager/edit/{id}', [FilesController::class, 'edit'])->name('files.edit');
+Route::put('/file_manager/update/{id}', [FilesController::class, 'update'])->name('files.update');
+Route::post('/files/bulk-action', [FilesController::class, 'bulkAction'])->name('files.bulk-action');
+Route::post('/files/download-compressed', [FilesController::class, 'downloadCompressed'])->name('files.download-compressed');
+
     Route::get('/search_orphan_files', function () {
         return view('files.search_orphan_files');
     })->name('search_orphan_files');
