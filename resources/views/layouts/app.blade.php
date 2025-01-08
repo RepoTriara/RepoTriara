@@ -44,7 +44,7 @@
             </ul>
         </header>
 
-        <li class="current_nav">
+        <li class="{{ request()->routeIs('dashboard') ? 'current_nav' : '' }}">
             <a href="{{ route('dashboard') }}" class="nav_top_level">
                 <i class="fa fa-tachometer fa-fw" aria-hidden="true"></i><span class="menu_label">Tablero</span>
             </a>
@@ -52,7 +52,8 @@
 
         <li class="separator"></li>
 
-        <li class="has_dropdown {{ request()->routeIs('upload') || request()->routeIs('file_manager') || request()->routeIs('search_orphan_files') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('upload') || request()->routeIs('file_manager') || request()->routeIs('search_orphan_files') || request()->routeIs('categories.index') || request()->routeIs('categories.edit') || request()->routeIs('categories.create') ? 'current_nav' : '' }}">
+
             <a href="#" class="nav_top_level">
                 <i class="fa fa-file fa-fw" aria-hidden="true"></i><span class="menu_label">Archivos</span>
             </a>
@@ -67,7 +68,7 @@
             </ul>
         </li>
 
-        <li class="has_dropdown {{ request()->routeIs('add_client') || request()->routeIs('customer_manager') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('add_client') || request()->routeIs('customer_manager') || request()->routeIs('customer_manager.edit') ? 'current_nav' : '' }}">
             <a href="#" class="nav_top_level">
                 <i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span>
             </a>
@@ -77,7 +78,7 @@
             </ul>
         </li>
 
-        <li class="has_dropdown {{ request()->routeIs('add_company') || request()->routeIs('manage_company') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('add_company') || request()->routeIs('manage_company') || request()->routeIs('groups.edit') ? 'current_nav' : '' }}">
             <a href="#" class="nav_top_level">
                 <i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañías</span>
             </a>
@@ -88,7 +89,7 @@
         </li>
 
         @if(Auth::user()->level != 8)
-        <li class="has_dropdown {{ request()->routeIs('add_user') || request()->routeIs('manage_users') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('add_user') || request()->routeIs('manage_users') || request()->routeIs('system_users.edit') ? 'current_nav' : '' }}">
             <a href="#" class="nav_top_level">
                 <i class="fa fa-users fa-fw" aria-hidden="true"></i><span class="menu_label">Usuarios del Sistema</span>
             </a>
