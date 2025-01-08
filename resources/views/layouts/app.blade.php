@@ -26,7 +26,7 @@
 
             <ul class="nav pull-right nav_account">
                 <li id="header_welcome">
-                    <span>{{ auth()->user()->user }}</span>
+                    <span>{{ auth()->user()->name }}</span>
                 </li>
                 <li>
                     <a href="{{ route('profile.edit') }}" class="my_account">
@@ -35,7 +35,7 @@
                 </li>
                 <li>
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        Cerrar Sesión
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>Salir
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
@@ -44,7 +44,7 @@
             </ul>
         </header>
 
-        <li class="current_nav">
+        <li class="{{ request()->routeIs('dashboard') ? 'current_nav' : '' }}">
             <a href="{{ route('dashboard') }}" class="nav_top_level">
                 <i class="fa fa-tachometer fa-fw" aria-hidden="true"></i><span class="menu_label">Tablero</span>
             </a>
@@ -52,19 +52,23 @@
 
         <li class="separator"></li>
 
-        <li class="has_dropdown {{ request()->routeIs('upload') || request()->routeIs('file_manager') || request()->routeIs('search_orphan_files') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('upload') || request()->routeIs('file_manager') || request()->routeIs('search_orphan_files') || request()->routeIs('categories.index') || request()->routeIs('categories.edit') || request()->routeIs('categories.create') ? 'current_nav' : '' }}">
+
             <a href="#" class="nav_top_level">
                 <i class="fa fa-file fa-fw" aria-hidden="true"></i><span class="menu_label">Archivos</span>
             </a>
             <ul class="dropdown_content">
                 <li><a href="{{ route('upload') }}"><span class="submenu_label">Subir</span></a></li>
-                <li class="divider"></li>
+
                 <li><a href="{{ route('file_manager') }}"><span class="submenu_label">Administrar archivos</span></a></li>
                 <li><a href="{{ route('search_orphan_files') }}"><span class="submenu_label">Buscar archivos huérfanos</span></a></li>
+                @if(Auth::user()->level != 8)
+                <li><a href="{{ route('categories.index') }}"><span class="submenu_label">Categorias</span></a></li>
+                @endif
             </ul>
         </li>
 
-        <li class="has_dropdown {{ request()->routeIs('add_client') || request()->routeIs('customer_manager') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('add_client') || request()->routeIs('customer_manager') || request()->routeIs('customer_manager.edit') ? 'current_nav' : '' }}">
             <a href="#" class="nav_top_level">
                 <i class="fa fa-address-card fa-fw" aria-hidden="true"></i><span class="menu_label">Clientes</span>
             </a>
@@ -74,7 +78,7 @@
             </ul>
         </li>
 
-        <li class="has_dropdown {{ request()->routeIs('add_company') || request()->routeIs('manage_company') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('add_company') || request()->routeIs('manage_company') || request()->routeIs('groups.edit') ? 'current_nav' : '' }}">
             <a href="#" class="nav_top_level">
                 <i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="menu_label">Compañías</span>
             </a>
@@ -85,7 +89,7 @@
         </li>
 
         @if(Auth::user()->level != 8)
-        <li class="has_dropdown {{ request()->routeIs('add_user') || request()->routeIs('manage_users') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('add_user') || request()->routeIs('manage_users') || request()->routeIs('system_users.edit') ? 'current_nav' : '' }}">
             <a href="#" class="nav_top_level">
                 <i class="fa fa-users fa-fw" aria-hidden="true"></i><span class="menu_label">Usuarios del Sistema</span>
             </a>

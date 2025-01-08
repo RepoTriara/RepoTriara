@@ -23,24 +23,34 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
-{
-    $request->authenticate();
+    {
+        $request->authenticate();
 
-    $request->session()->regenerate();
+        $request->session()->regenerate();
 
-    $user = Auth::user();
+        $user = Auth::user();
 
-    // Redirigir según el nivel del usuario
-    switch ($user->level) {
-        case 10:
+        // Validar si el usuario está desactivado
+        if ($user->active == 0) {
+            Auth::logout(); // Cerrar la sesión inmediatamente
+
+            return redirect()->route('login')->withErrors([
+                'active' => 'Tu cuenta está desactivada. Por favor, contacta con el administrador.',
+            ]);
+        }
+
+        // Redirigir según el nivel del usuario
+        switch ($user->level) {
+            case 10:
             case 8:
                 return redirect()->route('dashboard');
             case 0:
                 return redirect()->route('dashboard.level0');
             default:
                 return redirect()->route('dashboard');
+        }
     }
-}
+
 
     public function destroy(Request $request): RedirectResponse
     {

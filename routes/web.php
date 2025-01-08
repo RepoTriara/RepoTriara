@@ -7,6 +7,7 @@ use App\Http\Controllers\UserSystemController;
 use App\Http\Controllers\CompanyController;
 use App\Models\TblFile;
 use Illuminate\Support\Str;
+use App\Http\Controllers\CategoryController;
 
 // Ruta de bienvenida
 //Route::get('/', function () {
@@ -55,8 +56,8 @@ Route::middleware('auth')->group(function () {
         return view('files.search_orphan_files');
     })->name('search_orphan_files');
 
-   
-   
+
+
     Route::get('/add_company', function () {
         return view('companies.add_company');
     })->name('add_company');
@@ -94,7 +95,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/fix-public-tokens', function () {
             $files = TblFile::whereNull('public_token')->orWhere('public_token', '')->get();
-        
+
             foreach ($files as $file) {
                 $file->public_token = Str::random(32);
                 if ($file->save()) {
@@ -103,16 +104,27 @@ Route::middleware('auth')->group(function () {
                     echo "Error al generar el token para el archivo con ID: {$file->id}<br>";
                 }
             }
-        
+
             return "Proceso completado.";
         });
 
 
-        
+
 
         Route::post('customers/bulk_action', [UserSystemController::class, 'bulkAction'])->name('customers.bulk_action');
         Route::get('/customers', action: [Add_ClientController::class, 'index'])->name(name: 'customers.index');
-       
+
+    // Rutas para la gestión de categorías
+    Route::prefix('categories')->group(function() {
+        Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/', [CategoryController::class, 'store'])->name('categories.store');
+        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::delete('/categories/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulk_delete');
+        Route::get('/categories/{category}/files', [CategoryController::class, 'showFiles'])->name('categories.showFiles');
+    });
 
 
     });

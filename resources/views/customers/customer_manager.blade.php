@@ -83,7 +83,7 @@
                                     </div>
                                 </div>
                             </div>
-                           
+
                             <div class="clear"></div>
                             <div class="form_actions_count">
                                 <p>Encontró: <span>{{ $totalCliente }} clientes</span></p>
@@ -110,7 +110,7 @@
                                                 Estado
                                             </a>
                                         </th>
-                                        
+
                                         <th data-hide="phone">Grupos Activos</th>
                                         <th data-hide="phone,tablet">Notificación</th>
                                         <th>
@@ -130,13 +130,13 @@
                                                         <td>{{ $client->name }}</td>
                                                         <td>{{ $client->user }}</td>
                                                         <td>{{ $client->email }}</td>
-                                                        <td>{{ $client->uploads_count }}</td> 
-                                                        <td>{{ $client->own_files_count }}</td> 
-                                                         <td>{{ $client->group_files_count}}</td>                                                        
+                                                        <td>{{ $client->uploads_count }}</td>
+                                                        <td>{{ $client->own_files_count }}</td>
+                                                         <td>{{ $client->group_files_count}}</td>
                                                         <td><span class="label {{ $client->active ? 'label-success' : 'label-danger' }}">{{ $client->active ? 'Activo' : 'Inactivo' }}</span></td>
-      
-                                                        <td>{{$client->active_groups}}</td> 
-                                                        <td>{{ $client->notification_status }}</td>  
+
+                                                        <td>{{$client->active_groups}}</td>
+                                                        <td>{{ $client->notification_status }}</td>
                                                         <td>@if($client->max_file_size == 0)Defecto @else{{ $client->max_file_size }} MB @endif</td>
                                                         <td>{{ $client->timestamp ? \Carbon\Carbon::parse($client->timestamp)->format('Y/m/d') : 'No disponible' }}</td>
                                                         <td>

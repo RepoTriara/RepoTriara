@@ -65,21 +65,11 @@
                                         <div class="form-group">
                                             <label for="login">E-Mail o Usuario</label>
                                             <input type="text" name="login" id="login" value="{{ old('login') }}" class="form-control @error('login') is-invalid @enderror" autofocus />
-                                            @error('login')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
                                         </div>
 
                                         <div class="form-group">
                                             <label for="password">Contraseña</label>
                                             <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror"/>
-                                            @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
                                         </div>
 
                                         <div class="inside_form_buttons">
