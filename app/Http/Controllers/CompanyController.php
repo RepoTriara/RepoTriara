@@ -112,19 +112,45 @@ class CompanyController extends Controller
 
 public function manageCompany(Request $request)
 {
-    $query = Groups::query();
+    // Incluir las columnas necesarias en la consulta
+    $query = Groups::select('id', 'name', 'description', 'public', 'created_by', 'timestamp', 'public_token')
+        ->withCount(['members', 'fileRelations']); // Contar las relaciones necesarias
 
-    // Filtro de búsqueda por nombre del grupo
+    // Filtro de búsqueda
     if ($request->has('search') && !empty($request->search)) {
-        $query->where('name', 'LIKE', '%' . $request->search . '%');
+        $query->where('name', 'like', '%' . $request->search . '%');
     }
+
+    // Aplicar clasificación
+    if ($request->has('sort') && $request->has('direction')) {
+        $allowedSorts = ['name', 'description', 'members_count', 'file_relations_count', 'created_by', 'timestamp'];
+        if (in_array($request->sort, $allowedSorts)) {
+            $query->orderBy($request->sort, $request->direction);
+        }
+    }
+
+    $filteredTotal = $query->count();
 
     // Paginación de resultados
     $groups = $query->paginate(10);
-    $groups->withPath(url()->current());
 
-    return view('companies.manage_company', compact('groups'));
+    // Total de grupos
+    $totalGroups = Groups::count();
+
+    // Verificar si los tokens están presentes
+    foreach ($groups as $group) {
+        if (empty($group->public_token) && $group->public) {
+            $group->public_token = substr(Str::uuid()->toString(), 0, 32); // Generar un nuevo token
+            $group->save();
+        }
+    }
+
+    return view('companies.manage_company', compact('groups', 'totalGroups'));
 }
+
+
+
+
 
 public function bulkAction(Request $request)
 {
@@ -224,61 +250,55 @@ public function manageFiles($groupId, Request $request)
 {
     $group = Groups::findOrFail($groupId);
 
-    $query = TblFileRelation::where('group_id', $groupId)->with('file');
+    // Obtener parámetros de ordenación con valores predeterminados
+    $sort = $request->get('sort', 'timestamp'); // Ordenar por 'timestamp' por defecto
+    $direction = $request->get('direction', 'asc'); // Dirección ascendente por defecto
+
+    // Validar las columnas permitidas para ordenar
+    $allowedSorts = ['timestamp', 'filename', 'uploader', 'public_allow', 'download_count'];
+    if (!in_array($sort, $allowedSorts)) {
+        $sort = 'timestamp';
+    }
+
+    // Construir la consulta
+    $query = TblFileRelation::where('group_id', $groupId)
+        ->join('tbl_files', 'tbl_files_relations.file_id', '=', 'tbl_files.id') // Hacer el join con tbl_files
+        ->select(
+            'tbl_files_relations.*',
+            'tbl_files.filename',
+            'tbl_files.uploader',
+            'tbl_files.public_allow'
+        );
 
     // Filtro de búsqueda
     if ($request->has('search') && !empty($request->search)) {
-        $query->whereHas('file', function ($q) use ($request) {
-            $q->where('filename', 'like', '%' . $request->search . '%');
-        });
+        $query->where('tbl_files.filename', 'like', '%' . $request->search . '%');
     }
 
     // Filtro por estado (oculto/visible/todos)
     if ($request->has('hidden')) {
-        if ($request->hidden == '2') {
-            // Si es "Todos los estados", no filtrar por 'hidden'
-        } else {
-            $query->where('hidden', $request->hidden);
+        if ($request->hidden != '2') { // Si no es "Todos los estados"
+            $query->where('tbl_files_relations.hidden', $request->hidden);
         }
+    }
+
+    // Aplicar ordenación
+    if ($sort === 'filename' || $sort === 'uploader' || $sort === 'public_allow') {
+        $query->orderBy("tbl_files.$sort", $direction);
+    } elseif ($sort === 'download_count') {
+        $query->orderBy("tbl_files_relations.$sort", $direction);
+    } else {
+        $query->orderBy($sort, $direction); // Ordenar por columna en tbl_files_relations
     }
 
     // Paginación de resultados
-    $files = $query->paginate(10);
+    $files = $query->paginate(10)->appends($request->except('page'));
 
-    foreach ($files as $fileRelation) {
-        if ($fileRelation->file) {
-            // Generar token público si no existe
-            if (empty($fileRelation->file->public_token)) {
-                $fileRelation->file->public_token = Str::random(32);
-                $fileRelation->file->save();
-            }
-    
-            // Calcular tamaño y tipo del archivo
-            $filePath = public_path('uploads/' . $fileRelation->file->url);
-            $fileRelation->file->size = file_exists($filePath) ? filesize($filePath) : null;
-            $fileRelation->file->type = pathinfo($fileRelation->file->filename, PATHINFO_EXTENSION);
-    
-            // Generar URL de descarga
-            $fileRelation->file->downloadUrl = url('download.php?id=' . $fileRelation->file->id . '&token=' . $fileRelation->file->public_token);
-
-    
-            // Registrar logs
-            \Log::info("Archivo ID: {$fileRelation->file->id}, URL: {$fileRelation->file->download_url}");
-        
-    
-    
-
-            // Determinar si el archivo tiene una fecha de expiración y si ya expiró
-            if ($fileRelation->file->expires && $fileRelation->file->expiry_date) {
-                $fileRelation->file->isExpired = $fileRelation->file->expiry_date < now();
-            } else {
-                $fileRelation->file->isExpired = null; // No tiene fecha de expiración
-            }
-        }
-    }
-
-    return view('companies.manage_files', compact('files', 'group'));
+    return view('companies.manage_files', compact('files', 'group', 'sort', 'direction'));
 }
+
+
+
 
 
 
