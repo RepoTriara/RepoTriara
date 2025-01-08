@@ -23,53 +23,60 @@ class UserSystemController extends Controller
 
 
     public function index(Request $request)
-{
-    // Obtener parámetros de búsqueda, filtros y orden
-    $search = $request->get('search'); // Búsqueda por nombre, usuario o email
-    $role = $request->get('role', 'all'); // Filtro de rol
-    $active = $request->get('active', '2'); // Filtro de estado (2 = todos, 1 = activo, 0 = inactivo)
-    $orderby = $request->get('orderby', 'name'); // Campo para ordenar
-    $order = $request->get('order', 'asc'); // Dirección del orden
+    {
+        // Obtener parámetros de búsqueda, filtros y orden
+        $search = $request->get('search'); // Búsqueda por nombre, usuario o email
+        $role = $request->get('role', 'all'); // Filtro de rol
+        $active = $request->get('active', '2'); // Filtro de estado (2 = todos, 1 = activo, 0 = inactivo)
+        $orderby = $request->get('orderby', 'name'); // Campo para ordenar
+        $order = $request->get('order', 'asc'); // Dirección del orden
 
-    // Construir la consulta base
-    $query = User::query();
+        // Construir la consulta base
+        $query = User::query();
 
-    // Aplicar búsqueda
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%$search%")
-              ->orWhere('user', 'like', "%$search%")
-              ->orWhere('email', 'like', "%$search%");
-        });
+        // Filtrar solo usuarios con level 10 u 8
+        $query->whereIn('level', [10, 8]);
+
+        // Aplicar búsqueda
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhere('user', 'like', "%$search%")
+                  ->orWhere('email', 'like', "%$search%");
+            });
+        }
+
+        // Aplicar filtro de rol
+        if ($role !== 'all') {
+            $query->where('level', $role);
+        }
+
+        // Aplicar filtro de estado
+        if ($active !== '2') {
+            $query->where('active', $active);
+        }
+
+        // Obtener el total de usuarios filtrados
+        $filteredUsersCount = $query->count();
+
+        // Obtener el total de usuarios con level 10 u 8 (sin filtros adicionales)
+        $totalUsers = User::whereIn('level', [10, 8])->count();
+
+        // Aplicar orden y paginación
+        $users = $query->orderBy($orderby, $order)->paginate(10);
+
+        // Agregar parámetros actuales a los enlaces de paginación
+        $users->appends([
+            'search' => $search,
+            'role' => $role,
+            'active' => $active,
+            'orderby' => $orderby,
+            'order' => $order,
+        ]);
+
+        return view('system_users.manage_users', compact('users', 'totalUsers', 'filteredUsersCount'));
     }
 
-    // Aplicar filtro de rol
-    if ($role !== 'all') {
-        $query->where('level', $role);
-    }
-
-    // Aplicar filtro de estado
-    if ($active !== '2') {
-        $query->where('active', $active);
-    }
-
-    // Aplicar orden y paginación
-    $users = $query->orderBy($orderby, $order)->paginate(10);
-
-    // Agregar parámetros actuales a los enlaces de paginación
-    $users->appends([
-        'search' => $search,
-        'role' => $role,
-        'active' => $active,
-        'orderby' => $orderby,
-        'order' => $order,
-    ]);
-
-    // Contar el total de usuarios (sin filtros)
-    $totalUsers = User::count();
-
-    return view('system_users.manage_users', compact('users', 'totalUsers'));
-}
 
 
 public function edit($id)
