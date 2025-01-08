@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 
-class Add_ClientController extends Controller
+class ClientController extends Controller
 {   
 
     public function create()
@@ -72,13 +72,14 @@ class Add_ClientController extends Controller
                 ->count();
             $cliente->own_files_count = $own_files > 0 ? $own_files : null;
 
-
             // Encontrar todos los grupos a los que pertenece el cliente.
             $found_groups = Members::where('client_id', $cliente->id)
                 ->pluck('group_id')
                 ->toArray();
+                $cliente->group_count = count($found_groups);
 
-            // Inicializar el conteo de archivos de grupo.
+
+            // Inicializar el conteo de archivos de grupos.
             $groups_files = 0;
             if (count($found_groups) > 0) {
                 $groups_files = TblFileRelation::whereIn('group_id', values: $found_groups)
@@ -112,7 +113,7 @@ class Add_ClientController extends Controller
             'address' => ['nullable', 'string'],
             'phone' => ['nullable', 'string', 'max:32'],
             'contact' => ['nullable', 'string', 'max:255'],
-            'max_file_size' => ['nullable', 'integer', 'min:0'],
+            'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'], // Validación de rango
             'group_request' => ['nullable', 'array'],
             'group_request.*' => ['integer'],
             'active' => ['nullable', 'boolean'],
@@ -151,13 +152,12 @@ class Add_ClientController extends Controller
             session()->flash('success', 'Cliente registrado correctamente');
         }catch (\Exception $e) {
             // Puedes registrar el error en los logs para más información.
-            \Log::error('Error al registrar el cliente: ' . $e->getMessage());
+            Log::error('Error al registrar el cliente: ' . $e->getMessage());
             
             // Mensaje genérico para el usuario.
             session()->flash('error', 'Hubo un problema al registrar el cliente. Verifica los datos ingresados o inténtalo nuevamente.');
         }
         
-
         return back();
     }
 
@@ -218,7 +218,7 @@ public function edit($id)
     $groups = Groups::all(); 
     $associatedGroups = Members::where('client_id', $id)->pluck('group_id')->toArray(); 
 
-    return view('customers.Edit_client', compact('client', 'groups', 'associatedGroups'));
+    return view('customers.edit_client', compact('client', 'groups', 'associatedGroups'));
 }
 
 public function update(Request $request, $id)
@@ -231,7 +231,7 @@ public function update(Request $request, $id)
         'address' => ['nullable', 'string'],
         'phone' => ['nullable', 'string', 'max:32'],
         'contact' => ['nullable', 'string', 'max:255'],
-        'max_file_size' => ['nullable', 'integer', 'min:0'],
+        'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'], // Validación de rango
         'group_request' => ['nullable', 'array'],
         'group_request.*' => ['integer'],
         'active' => ['nullable', 'boolean'],
@@ -281,6 +281,6 @@ public function update(Request $request, $id)
         ]);
     }
 
-    return redirect()->route('customer_manager')->with('success', 'Cliente actualizado correctamente.');
+    return back()->with('success', 'Cliente actualizado correctamente.');
 }
 }

@@ -34,6 +34,11 @@ class Groups extends Model
 {
     return $this->hasMany(Members::class, 'group_id');
 }
+// Modelo Groups.php
+public function users()
+{
+    return $this->belongsToMany(User::class, 'tbl_members', 'group_id', 'client_id');
+}
 
 
 }

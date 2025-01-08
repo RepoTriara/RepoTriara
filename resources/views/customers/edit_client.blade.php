@@ -158,7 +158,7 @@
 									<div class="col-sm-8">
 										<input type="text" name="phone" id="phone" class="form-control"
 											value="{{ old('phone', $client->phone) }}" placeholder="Opcional"
-											required />
+											 />
 										@error('phone')
 											<div class="text-danger mt-2">{{ $message }}</div>
 										@enderror
@@ -169,7 +169,7 @@
 										interno</label>
 									<div class="col-sm-8">
 										<input type="text" name="contact" id="contact" class="form-control"
-											value="{{ old('contact', $client->contact) }}" required />
+											value="{{ old('contact', $client->contact) }}"  />
 										@error('contact')
 											<div class="text-danger mt-2">{{ $message }}</div>
 										@enderror

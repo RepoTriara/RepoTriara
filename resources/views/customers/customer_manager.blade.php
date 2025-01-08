@@ -89,35 +89,42 @@
                                 <p>Encontró: <span>{{ $totalCliente }} clientes</span></p>
                             </div>
 
-                            <table id="users_tbl" class="footable table">
+
+                            <table id="users_tbl" class="footable table default footable-loaded ">
                                 <thead>
                                     <tr>
-                                        <th><input type="checkbox" id="select_all" /></th>
-                                        <th>
-                                            <a href="{{ route('customer_manager', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Nombre Completo</a>
+                                        <th><input type="checkbox" id="select_all" class="footable-sort-indicator"/></th>
+                                        <th class="{{ request('orderby') === 'name' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
+                                            <a href="{{ route('customer_manager', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') ==='asc' ? 'desc' : 'asc']) }}">Nombre Completo</a>
+                                            <span class="footable-sort-indicator"></span>
                                         </th>
-                                        <th>
-                                            <a href="{{ route('customer_manager', ['orderby' => 'user', 'order' => request('orderby') === 'user' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Nombre de usuario</a>
+                                        <th class="{{ request('orderby') === 'user' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
+                                            <a href="{{ route('customer_manager', ['orderby' => 'user', 'order' => request('orderby') === 'user' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Ingresaraquo nombre de usuario</a>
+                                            <span class="footable-sort-indicator"></span>
                                         </th>
-                                        <th>
+                                        <th class="{{ request('orderby') === 'email' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
                                             <a href="{{ route('customer_manager', ['orderby' => 'email', 'order' => request('orderby') === 'email' && request('order') === 'asc' ? 'desc' : 'asc']) }}">E-mail</a>
+                                            <span class="footable-sort-indicator"></span>
+
                                         </th>
                                         <th data-hide="phone">Cargas</th>
                                         <th data-hide="phone">Archivos Propios</th>
                                         <th data-hide="phone">Archivos Grupos</th>
-                                        <th>
-                                            <a href="{{ route('system_users.index', ['orderby' => 'active', 'order' => request('orderby') === 'active' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                Estado
-                                            </a>
+                                        <th class="{{ request('orderby') === 'active' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
+                                            <a href="{{ route('customer_manager', ['orderby' => 'active', 'order' => request('orderby') === 'active' && request('order') === 'asc' ? 'desc' : 'asc']) }}"> Estado</a>
+                                            <span class="footable-sort-indicator"></span>
+
                                         </th>
                                         
                                         <th data-hide="phone">Grupos Activos</th>
                                         <th data-hide="phone,tablet">Notificación</th>
-                                        <th>
+                                        <th class="{{ request('orderby') === 'max_file_size' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
                                             <a href="{{ route('customer_manager', ['orderby' => 'max_file_size', 'order' => request('orderby') === 'max_file_size' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Max. tamaño permitido</a>
+                                            <span class="footable-sort-indicator"></span>
                                         </th>
-                                        <th>
+                                        <th class="{{ request('orderby') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
                                             <a href="{{ route('customer_manager', ['orderby' => 'timestamp', 'order' => request('orderby') === 'timestamp' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Adicionado</a>
+                                            <span class="footable-sort-indicator"></span>
                                         </th>
                                         <th>Ver</th>
                                         <th>Comportamiento</th>
@@ -134,20 +141,19 @@
                                                         <td>{{ $client->own_files_count }}</td> 
                                                          <td>{{ $client->group_files_count}}</td>                                                        
                                                         <td><span class="label {{ $client->active ? 'label-success' : 'label-danger' }}">{{ $client->active ? 'Activo' : 'Inactivo' }}</span></td>
-      
-                                                        <td>{{$client->active_groups}}</td> 
+                                                        <td>{{ $client->group_count }}</td> <!-- Mostrar el número de grupos -->
                                                         <td>{{ $client->notification_status }}</td>  
                                                         <td>@if($client->max_file_size == 0)Defecto @else{{ $client->max_file_size }} MB @endif</td>
                                                         <td>{{ $client->timestamp ? \Carbon\Carbon::parse($client->timestamp)->format('Y/m/d') : 'No disponible' }}</td>
                                                         <td>
 											                 <a href="manage-files.php?client_id=495" class="btn btn-sm btn-primary">Archivos</a>
-											                 <a href="groups.php?member=495" class="btn btn-sm btn-primary">Grupos</a>
+                                                             <a href="{{ route('manage_company', ['member' => $client->id]) }}" class="btn btn-primary">{{ __('Grupos') }}</a>
 											                 <a href="my_files/?client=aramirez" class="btn btn-primary btn-sm" target="_blank">Como cliente</a>
 										                </td>
                                                         <td><a href="{{ route('customer_manager.edit', ['id' => $client->id]) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i>
                                                             <span class="button_label">Editar</span>
                                                         </td>
-
+               
                                                     </tr>
                                                       @empty
                                                     <tr>

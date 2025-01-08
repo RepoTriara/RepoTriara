@@ -111,8 +111,12 @@ class User extends Authenticatable
         return $this->level == $level;
     }
 
-    public function members()
+  // En el modelo User (User.php)
+// Modelo User.php
+public function groups()
 {
-    return $this->hasMany(Members::class, 'client_id');
+    return $this->belongsToMany(Groups::class, 'tbl_members', 'client_id', 'group_id');
 }
+
+
 }
