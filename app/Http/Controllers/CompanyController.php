@@ -122,8 +122,11 @@ public function manageCompany(Request $request)
             // Cambiar el título de la página basado en el nombre del cliente
             $pageTitle = __('Grupos donde') . ' ' . $user->name . ' ' . __('es miembro');
             
-            // Obtener los grupos a los que el cliente pertenece con paginación
-            $groups = $user->groups()->paginate(10);
+          // Obtener los grupos a los que el cliente pertenece con relaciones y conteo
+          $groups = $user->groups()
+          ->with(['members', 'fileRelations']) 
+          ->withCount(['members', 'fileRelations']) 
+          ->paginate(10);
 
             return view('companies.manage_company', compact('pageTitle', 'user', 'groups'));
         } else {
@@ -132,7 +135,7 @@ public function manageCompany(Request $request)
             return view('companies.manage_company', compact('error'));
         }
     }
-
+    
     // Incluir las columnas necesarias en la consulta
     $query = Groups::select('id', 'name', 'description', 'public', 'created_by', 'timestamp', 'public_token')
         ->withCount(['members', 'fileRelations']); // Contar las relaciones necesarias
@@ -153,7 +156,7 @@ public function manageCompany(Request $request)
     $filteredTotal = $query->count();
 
     // Paginación de resultados
-    $groups = $query->paginate(10);
+    $groups = $query->paginate(perPage: 10);
     $groups->withPath(url()->current());
 
     // Total de grupos
