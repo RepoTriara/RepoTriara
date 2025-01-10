@@ -156,7 +156,7 @@
                 <td>{{ $group->timestamp ?? 'N/A' }}</td>
                 <td>
                     @if ($group->file_relations_count > 0)
-                        <a href="{{ route('groups.files', $group->id) }}" class="btn btn-primary btn-sm">Archivos</a>
+                    <a href="{{ route('file_manager', ['group_id' => $group->id]) }}" class="btn btn-primary btn-sm">Archivos</a>
                     @else
                         <a href="javascript:void(0);" class="btn btn-secondary btn-sm disabled" title="No hay archivos">Archivos</a>
                     @endif

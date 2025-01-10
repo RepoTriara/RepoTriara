@@ -146,8 +146,10 @@
                                                         <td>@if($client->max_file_size == 0)Defecto @else{{ $client->max_file_size }} MB @endif</td>
                                                         <td>{{ $client->timestamp ? \Carbon\Carbon::parse($client->timestamp)->format('Y/m/d') : 'No disponible' }}</td>
                                                         <td>
-											                 <a href="manage-files.php?client_id=495" class="btn btn-sm btn-primary">Archivos</a>
+                                                        <a href="{{ route('file_manager', ['client_id' => $client->id]) }}" class="btn btn-primary">{{ __('Archivos') }}</a>
+                                                             
                                                              <a href="{{ route('manage_company', ['member' => $client->id]) }}" class="btn btn-primary">{{ __('Grupos') }}</a>
+
 											                 <a href="my_files/?client=aramirez" class="btn btn-primary btn-sm" target="_blank">Como cliente</a>
 										                </td>
                                                         <td><a href="{{ route('customer_manager.edit', ['id' => $client->id]) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i>

@@ -47,28 +47,43 @@
                     <div class="col-xs-12">
                     <div class="form_actions_left">
     <div class="form_actions_limit_results">
-        <!-- Formulario de búsqueda -->
-        <form action="{{ route('file_manager') }}" method="GET" class="form-inline">
-            <div class="form-group group_float">
-                <input type="text" name="search" id="search" value="{{ request('search') }}" class="txtfield form_actions_search_box form-control" placeholder="Buscar archivo">
-            </div>
-            <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-default">Búsqueda</button>
-        </form>
+     <!-- Formulario de búsqueda -->
+     <form action="{{ route('file_manager', ['groupId' => $group->id ?? '']) }}" method="GET" class="form-inline">
+    <div class="form-group group_float">
+        <input type="text" name="search" id="search" value="{{ request('search') }}"
+    </div>
+    <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-default">Búsqueda</button>
+</form>
 
-        <!-- Filtro por cargador -->
-        <form action="{{ route('file_manager') }}" method="GET" class="form-inline form_filters">
-            <div class="form-group group_float">
-                <select name="uploader" id="uploader" class="txtfield form-control">
-                    <option value="">Cargador</option>
-                    @foreach ($uploaders as $uploader)
-                        <option value="{{ $uploader }}" {{ request('uploader') == $uploader ? 'selected' : '' }}>
-                            {{ $uploader }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <button type="submit" id="btn_proceed_filter_clients" class="btn btn-sm btn-default">Filtrar</button>
-        </form>
+
+        @if(isset($group))
+    <!-- Filtro por estado del archivo para el grupo -->
+    <form action="{{ route('files.manage', $group->id) }}" method="GET" class="form-inline form_filters">
+        <div class="form-group group_float">
+            <select name="hidden" id="hidden" class="txtfield form-control">
+                <option value="2" {{ request('hidden') == '2' ? 'selected' : '' }}>Todos los estados</option>
+                <option value="0" {{ request('hidden') == '0' ? 'selected' : '' }}>Visible</option>
+                <option value="1" {{ request('hidden') == '1' ? 'selected' : '' }}>Oculto</option>
+            </select>
+        </div>
+        <button type="submit" id="btn_proceed_filter_clients" class="btn btn-sm btn-default">Filtrar</button>
+    </form>
+@else
+    <!-- Filtro por cargador -->
+    <form action="{{ route('file_manager') }}" method="GET" class="form-inline form_filters">
+        <div class="form-group group_float">
+            <select name="uploader" id="uploader" class="txtfield form-control">
+                <option value="">Cargador</option>
+                @foreach ($uploaders as $uploader)
+                    <option value="{{ $uploader }}" {{ request('uploader') == $uploader ? 'selected' : '' }}>
+                        {{ $uploader }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <button type="submit" id="btn_proceed_filter_clients" class="btn btn-sm btn-default">Filtrar</button>
+    </form>
+@endif
     </div>
 </div>
 
