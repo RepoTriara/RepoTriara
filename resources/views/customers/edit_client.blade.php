@@ -117,7 +117,7 @@
 										<div class="input-group">
 											<input name="password" id="password" class="form-control password_toggle"
 												type="password" maxlength="60"
-												value="{{ old('user', $client->password) }}" required />
+												value="" required />
 											@error('password')
 												<div class="invalid-feedback">{{ $message }}</div>
 											@enderror
@@ -237,8 +237,8 @@
 						</div>
 					</div>
 				</div>
-			</div> 
-		</div> 
+			</div>
+		</div>
 		<footer>
 			<div id="footer">
 				Claro Colombia </div>

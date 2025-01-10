@@ -1,4 +1,3 @@
-<!doctype html>
 <html lang="es_CO">
 
 <head>
@@ -7,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<title>Subir archivos &raquo; Repositorio</title>
-	<link rel="shortcut icon" type="image/x-icon" href="{{asset('favicon.ico')}}" />
+	<link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico')}}" />
 	<link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png" sizes="32x32')}}">
 	<link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png" sizes="152x152')}}">
 	<script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
@@ -44,115 +43,89 @@
 						</p>
 
 						<script type="text/javascript">
-							$(document).ready(function() {
-								setInterval(function() {
-									// Send a keep alive action every 1 minute
-									var timestamp = new Date().getTime()
-									$.ajax({
-										type: 'GET',
-										cache: false,
-										url: 'includes/ajax-keep-alive.php',
-										data: 'timestamp=' + timestamp,
-										success: function(result) {
-											var dummy = result;
-										}
-									});
-								}, 1000 * 60);
-							});
+    $(document).ready(function () {
+    var uploader = $("#uploader").pluploadQueue({
+        runtimes: 'html5,flash,silverlight,html4',
+        url: '{{ route('files.upload_process') }}', // Asegúrate de que apunte al controlador correcto
+        max_file_size: '2048mb',
+        chunk_size: '1mb', // Divide los archivos en fragmentos de 1 MB
+        multipart: true,
+        multipart_params: {
+            _token: '{{ csrf_token() }}', // Token CSRF para seguridad
+        },
+        filters: [
+            {
+                title: "Archivos permitidos",
+                extensions: "pdf,doc,docx,xls,xlsx,png,jpg,jpeg,zip",
+            },
+        ],
+        init: {
+            FilesAdded: function (up, files) {
+                console.log("Archivos añadidos: ", files);
+                $('#btn-submit').prop('disabled', false);
+            },
+            BeforeUpload: function (up, file) {
+                console.log("Subiendo archivo:", file.name);
+            },
+            FileUploaded: function (up, file, info) {
+                console.log("Archivo subido:", file.name);
+            },
+            UploadComplete: function (up, files) {
+                alert("Todos los archivos han sido subidos correctamente.");
+                console.log("Archivos subidos:", files);
 
-							$(function() {
-								$("#uploader").pluploadQueue({
-									runtimes: 'html5,flash,silverlight,html4',
-									url: 'process-upload.php',
-									max_file_size: '2048mb',
-									chunk_size: '1mb',
-									multipart: true,
-									filters: [{
-										title: "Allowed files",
-										extensions: "7z,ace,ai,avi,bin,bmp,bz2,cdr,doc,docm,docx,eps,fla,flv,gif,gz,gzip,htm,html,iso,jpeg,jpg,mp3,mp4,mpg,odt,oog,ppt,pptx,pptm,pps,ppsx,pdf,png,psd,rar,rtf,tar,tif,tiff,tgz,txt,wav,xls,xlsm,xlsx,xz,zip"
-									}],
-									flash_swf_url: 'includes/plupload/js/plupload.flash.swf',
-									silverlight_xap_url: 'includes/plupload/js/plupload.silverlight.xap',
-									preinit: {
-										Init: function(up, info) {
-											$('#uploader_container').removeAttr("title");
-										}
-									}
-									/*
-									,init : {
-										QueueChanged: function(up) {
-											var uploader = $('#uploader').pluploadQueue();
-											uploader.start();
-										}
-									}
-									*/
-								});
+                window.location.href = '{{ route("files.upload_process.view") }}';
+            },
+            Error: function (up, err) {
+                console.error("Error en la subida:", err);
+                alert("Error en la subida: " + err.message);
+            }
+        }
+    });
 
-								var uploader = $('#uploader').pluploadQueue();
+    var uploaderInstance = $("#uploader").pluploadQueue();
 
-								$('form').submit(function(e) {
+    $('#btn-submit').on('click', function (e) {
+        e.preventDefault();
 
-									if (uploader.files.length > 0) {
-										uploader.bind('StateChanged', function() {
-											if (uploader.files.length === (uploader.total.uploaded + uploader.total.failed)) {
-												$('form')[0].submit();
-											}
-										});
+        if (uploaderInstance.files.length > 0) {
+            uploaderInstance.start();
+        } else {
+            alert('Por favor, selecciona al menos un archivo para subir.');
+        }
+    });
 
-										uploader.start();
+    window.onbeforeunload = function (e) {
+        if (uploaderInstance.state === 2) {
+            return 'Los archivos que se están subiendo se perderán si abandonas esta página.';
+        }
+    };
 
-										$("#btn-submit").hide();
-										$(".message_uploading").fadeIn();
+    $('#btn-submit').prop('disabled', true);
+});
 
-										uploader.bind('FileUploaded', function(up, file, info) {
-											var obj = JSON.parse(info.response);
-											var new_file_field = '<input type="hidden" name="finished_files[]" value="' + obj.NewFileName + '" />'
-											$('form').append(new_file_field);
-										});
+</script>
 
-										return false;
-									} else {
-										alert('Usted debe seleccionar al meno una archivo para cargar.');
-									}
 
-									return false;
-								});
 
-								window.onbeforeunload = function(e) {
-									var e = e || window.event;
+<form action="{{ route('files.upload_process') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <!-- Input de archivos oculto -->
+    <input type="file" name="uploaded_files[]" id="uploaded_files" multiple style="display: none;">
 
-									console.log('state? ' + uploader.state);
+    <!-- Plupload -->
+    <div id="uploader">
+        <div class="message message_error">
+            <p>Su navegador no soporta HTML5, Flash o Silverlight. Por favor, actualícelo o instale Adobe Flash o Silverlight para continuar.</p>
+        </div>
+    </div>
 
-									// if uploading
-									if (uploader.state === 2) {
-										//IE & Firefox
-										if (e) {
-											e.returnValue = 'Are you sure? Files currently being uploaded will be discarded if you leave this page.';
-										}
+    <div class="after_form_buttons">
+        <button type="button" name="Submit" class="btn btn-wide btn-primary" id="btn-submit">Subir archivos</button>
+    </div>
+</form>
 
-										// For Safari
-										return 'Are you sure? Files currently being uploaded will be discarded if you leave this page.';
-									}
 
-								};
-							});
-						</script>
-
-                        <form action="" method="POST" enctype="multipart/form-data">
-                            @csrf
-							<input type="hidden" name="uploaded_files" id="uploaded_files" value="" />
-							<div id="uploader">
-								<div class="message message_error">
-									<p>Su navegador no soporta HTML5, Flash o Silverlight. Por favor, actualicelo o instalar Adobe Flash o Silverlight para continuar.</p>
-								</div>
-							</div>
-							<div class="after_form_buttons">
-								<button type="submit" name="Submit" class="btn btn-wide btn-primary" id="btn-submit">Subir archivos</button>
-							</div>
-							<div class="message message_info message_uploading">
-								<p>¡Tus archivos están siendo subidos! Los indicadores de progreso pueden tardar un poco en actualizarse, pero todavía se está trabajando tras bamabalinas.</p>
-							</div>
-						</form>
 
 					</div>
 

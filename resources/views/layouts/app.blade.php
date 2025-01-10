@@ -52,7 +52,7 @@
 
         <li class="separator"></li>
 
-        <li class="has_dropdown {{ request()->routeIs('upload') || request()->routeIs('file_manager') || request()->routeIs('search_orphan_files') || request()->routeIs('categories.index') || request()->routeIs('categories.edit') || request()->routeIs('categories.create') ? 'current_nav' : '' }}">
+        <li class="has_dropdown {{ request()->routeIs('upload') || request()->routeIs('file_manager') || request()->routeIs('search_orphan_files') || request()->routeIs('categories.index') || request()->routeIs('categories.edit') || request()->routeIs('categories.create')  || request()->routeIs('search_orphan_files') || request()->routeIs('categories.index') || request()->routeIs('categories.edit') || request()->routeIs('files.upload_process.view') || request()->routeIs('files.edit')? 'current_nav' : '' }}">
 
             <a href="#" class="nav_top_level">
                 <i class="fa fa-file fa-fw" aria-hidden="true"></i><span class="menu_label">Archivos</span>

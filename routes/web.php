@@ -45,11 +45,16 @@ Route::middleware('auth')->group(function () {
 
 
 
+    // Ruta para subir archivos
     Route::get('/upload', function () {
         return view('files.upload');
     })->name('upload');
 
-    
+    Route::post('/files/upload-process', [FilesController::class, 'uploadProcess'])->name('files.upload_process');
+    Route::post('/file/store', [FilesController::class, 'store'])->name('file.store');
+    Route::get('/files/upload-process-view', [FilesController::class, 'uploadProcessView'])->name('files.upload_process.view');
+
+
 
     Route::get('/file_manager', [FilesController::class, 'index'])->name('file_manager');
 
