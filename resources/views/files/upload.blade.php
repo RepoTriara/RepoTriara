@@ -46,8 +46,7 @@
                             $(document).ready(function() {
                                 var uploader = $("#uploader").pluploadQueue({
                                     runtimes: 'html5,flash,silverlight,html4',
-                                    url: '{{ route('
-                                    files.upload_process ') }}', // Asegúrate de que apunte al controlador correcto
+                                    url: '{{ route('files.upload_process') }}',
                                     max_file_size: '2048mb',
                                     chunk_size: '1mb', // Divide los archivos en fragmentos de 1 MB
                                     multipart: true,
