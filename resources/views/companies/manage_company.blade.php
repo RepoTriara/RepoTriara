@@ -30,7 +30,7 @@
         <div class="main_content">
             @include('layouts.app')
             <div class="container-fluid">
-    
+
 
     @if (session('error'))
         <div class="alert alert-danger">
@@ -100,13 +100,13 @@
         <thead>
             <tr>
                 <th class="td_checkbox"><input type="checkbox" id="select_all"></th>
-                <th>
+                <th class="{{ request('sort') === 'name' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">
                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                         Nombre del grupo
                         <i class="fa fa-sort{{ request('sort') === 'name' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                     </a>
                 </th>
-                <th>
+                <th class="{{ request('sort') === 'description' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">
                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'description', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                         Descripción
                         <i class="fa fa-sort{{ request('sort') === 'description' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
@@ -114,20 +114,20 @@
                 </th>
                 <th>Miembros</th>
                 <th>Archivos</th>
-                <th>
+                <th class="{{ request('sort') === 'public' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">
                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'public', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                         Público
                         <i class="fa fa-sort{{ request('sort') === 'public' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                     </a>
                 </th>
-                <th style="text-align: center; width: 110px;">
-    <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_by', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}" 
+                <th style="text-align: center; width: 110px;" class="{{ request('sort') === 'created_by' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">
+    <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_by', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
        style="display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
         Creado por
         <i class="fa fa-sort{{ request('sort') === 'created_by' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
     </a>
 </th>
-                <th>
+                <th class="{{ request('sort') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">
                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                         Adicionado
                         <i class="fa fa-sort{{ request('sort') === 'timestamp' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
@@ -174,7 +174,7 @@
 
 
 
-                        
+
 
                         <div class="container-fluid text-center">
                             <nav aria-label="Resultados de Navegación">
@@ -214,8 +214,8 @@
 			<script src="{{asset('includes/js/main.js')}}"></script>
 			<script src="{{asset('includes/js/js.functions.js')}}"></script>
 			<script src="{{asset('includes/js/footable/footable.min.js')}}"></script>
-            
-			</div> 
+
+			</div>
 		    </div>
 
 

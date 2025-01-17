@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class TblFile extends Model
 {
@@ -78,6 +79,11 @@ protected static function boot()
             $file->public_token = Str::random(32);
         }
     });
+}
+
+public function groups()
+{
+    return $this->belongsToMany(Groups::class, 'tbl_files_relations', 'file_id', 'group_id');
 }
 
 }

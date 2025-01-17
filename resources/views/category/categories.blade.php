@@ -88,6 +88,7 @@
                                         </th>
                                         <th>Descripción</th>
                                         <th>Archivos</th> <!-- Nueva columna para mostrar la cantidad de archivos -->
+                                        <th>Ver</th> <!-- Nueva columna para Ver -->
                                         <th>Comportamiento</th>
                                     </tr>
                                 </thead>
@@ -97,21 +98,21 @@
                                             <td><input type="checkbox" name="categories[]" value="{{ $category->id }}" /></td>
                                             <td>{{ $category->name }}</td>
                                             <td>{{ $category->description }}</td>
-                                            <td>{{ $category->files_count }}</td> <!-- Mostrar cantidad de archivos -->
+                                            <td> <span class="label label-success">{{ $category->files_count }}</span></td> <!-- Mostrar cantidad de archivos -->
+                                            <td>
+                                                <a href="{{ route('files.index', ['category_id' => $category->id]) }}" class="btn btn-sm btn-primary">
+                                                    Ver Archivos
+                                                </a>
+                                            </td>
                                             <td>
                                                 <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-primary">
                                                     <i class="fa fa-pencil"></i>
-                                                    <span class="button_label">Editar</span>
-                                                </a>
-                                                <a href="{{ route('categories.showFiles', $category->id) }}" class="btn btn-sm btn-info">
-                                                    <i class="fa fa-eye"></i>
-                                                    <span class="button_label">Ver Archivos</span>
                                                 </a>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="text-center">No hay categorías registradas.</td>
+                                            <td colspan="6" class="text-center">No hay categorías registradas.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
