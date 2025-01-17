@@ -117,7 +117,7 @@
 										<div class="input-group">
 											<input name="password" id="password" class="form-control password_toggle"
 												type="password" maxlength="60"
-												value="" required />
+												value=""  />
 											@error('password')
 												<div class="invalid-feedback">{{ $message }}</div>
 											@enderror

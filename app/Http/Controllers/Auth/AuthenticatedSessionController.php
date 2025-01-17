@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
             case 8:
                 return redirect()->route('dashboard');
             case 0:
-                return redirect()->route('dashboard.level0');
+                return redirect()->route('my_files');
             default:
                 return redirect()->route('dashboard');
         }
