@@ -116,32 +116,28 @@
 								</thead>
 								<tbody>
 									@foreach ($files as $file)
-									<tr class="table_row">
-										<td><input type="checkbox" name="batch[]" value="{{ $file->id }}"></td>
+										<tr class="table_row">
+											<td><input type="checkbox" name="batch[]" value="{{ $file->id }}"></td>
 
-										<td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}
-										</td>
-										<td>
-											
-												{{ strtoupper(pathinfo($file->original_url, PATHINFO_EXTENSION)) }}
-											
-										</td>
-										<td>
-											<a href="{{ route('files.download', $file->id) }}">{{ $file->filename
-												}}</a>
-										</td>
+											<td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}
+											</td>
+											<td>
 
+													{{ strtoupper(pathinfo($file->original_url, PATHINFO_EXTENSION)) }}
 
-										<td>{{ $file->size ? number_format($file->size / 1024, 2) . ' KB' : '-' }}
-										</td>
+											</td>
+											<td>
+												<a href="{{ route('files.download', $file->id) }}">{{ $file->filename
+													}}</a>
+											</td>
 
 
-										<td>
-											<a href="{{ route('edit_files', ['id' => $file->id]) }}"  class="btn btn-primary btn-sm"><i
-													class="fa fa-pencil"></i><span
-													class="button_label">Editar</span></a>
-										</td>
-									</tr>
+											<td>{{ $file->size ? number_format($file->size / 1024, 2) . ' KB' : '-' }}
+											</td>
+
+
+											<td><a href="{{ route('files.edit', $file->id) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a></td>
+										</tr>
 									@endforeach
 								</tbody>
 							</table>
