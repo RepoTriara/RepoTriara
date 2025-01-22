@@ -9,8 +9,14 @@ use App\Models\TblFile;
 use Illuminate\Support\Str;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FilesController;
+use Carbon\Carbon;
 
-
+Route::get('/test-timezone', function () {
+    return response()->json([
+        'timezone' => config('app.timezone'),
+        'current_time' => Carbon::now()->setTimezone(config('app.timezone'))->toDateTimeString(),
+    ]);
+});
 Route::redirect('/', '/login');
 
 // Ruta genérica del dashboard protegida por autenticación (para level 8 y 10)
@@ -46,10 +52,7 @@ Route::middleware('auth')->group(function () {
 
 // Ruta para subir archivos
 Route::middleware('auth')->group(function () {
-    Route::get('/upload', function () {
-        return view('files.upload');
-    })->name('upload');
-
+    Route::get('/upload', [FilesController::class, 'uploadView'])->name('upload');
     Route::post('/files/upload-process', [FilesController::class, 'uploadProcess'])->name('files.upload_process');
     Route::post('/file/store', [FilesController::class, 'store'])->name('file.store');
     Route::get('/files/upload-process-view', [FilesController::class, 'uploadProcessView'])->name('files.upload_process.view');

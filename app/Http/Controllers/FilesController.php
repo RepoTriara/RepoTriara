@@ -15,7 +15,8 @@ use Illuminate\Support\Str;
 use App\Models\Members;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
 class FilesController extends Controller
 {
     public function index(Request $request)
@@ -89,8 +90,7 @@ if ($clientId || $groupId || $categoryId) {
                 // Obtener y formatear tamaño
                 $file->size = $this->getFormattedFileSize($realPublicPath);
             } else {
-                \Log::info("Archivo no encontrado: " . $file->stored_filename);
-                $file->size = 'Archivo no encontrado';
+                $file->size = '--';
             }
         }
 
@@ -161,8 +161,7 @@ else {
             // Obtener y formatear tamaño
             $file->size = $this->getFormattedFileSize($realPublicPath);
         } else {
-            \Log::info("Archivo no encontrado: " . $file->stored_filename);
-            $file->size = 'Archivo no encontrado';
+            $file->size = '--';
         }
     }
 
@@ -330,11 +329,30 @@ else {
         return redirect()->route('files.edit', $id)->with('success', 'El archivo se ha actualizado correctamente.');
     }
 
+    public function resetUploadSession()
+    {
+
+        $uploadSessionId = session('upload_session_id');
+        if ($uploadSessionId) {
+
+            session()->forget("uploaded_files_$uploadSessionId");
+            session()->forget('upload_session_id');
+        }
+    }
+
+
+    public function uploadView(Request $request)
+    {
+
+        $this->resetUploadSession();
+
+        return view('files.upload');
+    }
+
+
     public function uploadProcess(Request $request)
     {
         try {
-            Log::info('Datos recibidos por el controlador:', $request->all());
-
             $request->validate([
                 'file' => 'required|file|max:20480',
                 'name' => 'required|string',
@@ -349,17 +367,12 @@ else {
             $filename = time() . '_' . $file->getClientOriginalName();
             $filePath = $file->move($tempDir, $filename);
 
-            if (!$filePath) {
-                Log::error('Error al guardar el archivo en el directorio temporal.');
-                return response()->json(['error' => 'No se pudo guardar el archivo.'], 500);
-            }
+            $uploadSessionId = session('upload_session_id', Str::uuid()->toString());
+            session(['upload_session_id' => $uploadSessionId]);
 
-            Log::info('Archivo guardado correctamente:', ['path' => $filePath]);
-
-            // Agregar el archivo a la sesión
-            $uploadedFiles = session('uploaded_files', []);
+            $uploadedFiles = session("uploaded_files_$uploadSessionId", []);
             $uploadedFiles[] = $filename;
-            session(['uploaded_files' => $uploadedFiles]);
+            session(["uploaded_files_$uploadSessionId" => $uploadedFiles]);
 
             return response()->json([
                 'success' => true,
@@ -369,11 +382,9 @@ else {
                 ],
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Error al procesar los archivos:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Error al procesar los archivos: ' . $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
 
 
     public function store(Request $request)
@@ -381,7 +392,7 @@ else {
         try {
             Log::info('Datos recibidos en el controlador store:', $request->all());
 
-            // Validar datos
+
             $data = $request->validate([
                 'file' => 'required|array',
                 'file.*.file' => 'required|string',
@@ -398,7 +409,7 @@ else {
             $finalDir = storage_path('app/private/uploads');
             $savedFiles = [];
 
-            // Crear carpeta final si no existe
+
             if (!file_exists($finalDir)) {
                 mkdir($finalDir, 0777, true);
             }
@@ -414,7 +425,7 @@ else {
                     continue;
                 }
 
-                // Generar un nombre único para el archivo final
+
                 $fileExtension = pathinfo($fileData['file'], PATHINFO_EXTENSION);
                 $uniqueFileName = uniqid() . '-' . sha1(uniqid() . microtime()) . ($fileExtension ? '.' . $fileExtension : '');
                 $finalFilePath = $finalDir . DIRECTORY_SEPARATOR . $uniqueFileName;
@@ -423,7 +434,7 @@ else {
                     throw new \Exception('Error al mover el archivo a su ubicación final: ' . $finalFilePath);
                 }
 
-                // Preparar datos para la base de datos
+
                 $fileDataForDatabase = [
                     'filename' => $fileData['name'],
                     'url' => $uniqueFileName,
@@ -431,7 +442,7 @@ else {
                     'description' => $fileData['description'] ?? 'Sin descripción',
                     'uploader' => auth()->user()->name ?? 'anónimo',
                     'expires' => isset($fileData['expiry_date']) ? 1 : 0,
-                    'expiry_date' => $fileData['expiry_date'] ?? '2025-01-01 00:00:00',
+                    'expiry_date' => Carbon::parse($fileData['created_at'] ?? now())->addYear()->startOfDay(),
                     'public_allow' => $fileData['public'],
                     'hidden' => $fileData['hidden'],
                     'public_token' => $fileData['public'] ? bin2hex(random_bytes(16)) : null,
@@ -439,7 +450,7 @@ else {
 
                 $file = TblFile::create($fileDataForDatabase);
 
-                // Guardar relaciones de asignaciones
+
                 foreach ($fileData['assignments'] as $assignment) {
                     TblFileRelation::create([
                         'file_id' => $file->id,
@@ -449,7 +460,7 @@ else {
                     ]);
                 }
 
-                // Guardar relaciones de categorías
+
                 foreach ($fileData['categories'] as $categoryId) {
                     TblCategoryRelation::create([
                         'file_id' => $file->id,
@@ -458,7 +469,7 @@ else {
                     ]);
                 }
 
-                // Contar relaciones de asignaciones y categorías
+
                 $assignmentsCount = TblFileRelation::where('file_id', $file->id)->count();
                 $categoriesCount = TblCategoryRelation::where('file_id', $file->id)->count();
 
@@ -468,22 +479,25 @@ else {
                 $savedFiles[] = $file->loadCount(['fileRelations', 'categoryRelations']);
             }
 
-            session()->forget('uploaded_files');
 
-            return redirect()->route('files.upload_process.view')->with('savedFiles', $savedFiles);
+            session(['savedFiles' => $savedFiles]);
+
+            return redirect()->route('files.upload_process.view');
         } catch (\Exception $e) {
             Log::error('Error al guardar los archivos:', ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Error al guardar los archivos: ' . $e->getMessage()]);
         }
     }
 
+
     public function uploadProcessView(Request $request)
     {
         try {
-            // Reconstruir archivos en proceso desde la sesión
+            $uploadSessionId = session('upload_session_id');
+            $uploadedFiles = session("uploaded_files_$uploadSessionId", []);
             $files = collect();
-            $uploadedFiles = session('uploaded_files', []);
             $tempDir = storage_path('app/private/uploads/tmp');
+
 
             foreach ($uploadedFiles as $filename) {
                 $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
@@ -505,11 +519,10 @@ else {
                 }
             }
 
-            // Recuperar archivos guardados y archivos archivados de la sesión
-            $savedFiles = collect(session('savedFiles', []));
-            $archivedFiles = collect(session('archivedFiles', []));
 
-            // Si hay archivos guardados, archívalos y elimina los guardados
+            $savedFiles = collect(session('savedFiles', []));
+            $archivedFiles = collect(session("archivedFiles_$uploadSessionId", []));
+
             if ($savedFiles->isNotEmpty()) {
                 $recentlyArchived = $savedFiles->map(function ($file) {
                     return [
@@ -522,22 +535,17 @@ else {
                 $archivedFiles = $recentlyArchived;
 
 
-                session(['archivedFiles' => $archivedFiles->toArray()]);
+                session(["archivedFiles_$uploadSessionId" => $archivedFiles]);
+
+
                 session()->forget('savedFiles');
             }
 
-            // Cargar usuarios y categorías
+
             $users = User::all();
             $categories = TblCategory::all();
 
-            // Regresar los datos a la vista
-            return view('files.upload_process', compact(
-                'files',
-                'savedFiles',
-                'archivedFiles',
-                'users',
-                'categories'
-            ));
+            return view('files.upload_process', compact('files', 'savedFiles', 'archivedFiles', 'users', 'categories'));
         } catch (\Exception $e) {
             Log::error('Error al cargar la vista de proceso de carga:', ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Error al cargar los archivos para procesar.']);
