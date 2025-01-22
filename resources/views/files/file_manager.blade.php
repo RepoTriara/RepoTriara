@@ -187,60 +187,62 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($files as $file)
-                                                                    <tr>
-                                                                        <td><input type="checkbox" name="batch[]" value="{{ $file->id }}"></td>
-                                                                        <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}</td>
-                                                                        <td>{{ pathinfo($file->original_url, PATHINFO_EXTENSION) }}</td>
-                                                                        <td><a href="{{ route('files.download', $file->id) }}">{{ $file->filename }}</a>
-                                                                        </td>
-                                                                        <td>{{ $file->size ? number_format($file->size / 1024, 2) . ' KB' : '-' }}</td>
-                                                                        <td>{{ $file->uploader ?? 'Desconocido' }}</td>
-                                                                        <td>
-                                                                            @if ($file->fileRelations->isNotEmpty())
-                                                                                <span class="label label-success">Si</span>
-                                                                            @else
-                                                                                <span class="label label-danger">No</span>
-                                                                            @endif
-                                                                        </td>
-                                                                        <td>
-                                                                            @if ($file->public_allow)
-                                                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                                                    data-target="#urlModal"
-                                                                                    data-url="{{ url('download.php?id=' . $file->id . '&token=' . $file->public_token) }}">Descarga</button>
-                                                                            @else
-                                                                                <button type="button" class="btn btn-secondary btn-sm"
-                                                                                    disabled>Privado</button>
-                                                                            @endif
-                                                                        </td>
-                                                                        <td>
-                                                                            @if ($file->expires && $file->expiry_date)
-                                                                                                                    @php
-                                                                                                                        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
-                                                                                                                    @endphp
-                                                                                                                    @if ($expiryDate->isPast())
-                                                                                                                        <span class="label label-danger"
-                                                                                                                            style="display: block; text-align: center;">
-                                                                                                                            Expiró en<br>
-                                                                                                                            <strong>{{ $expiryDate->format('Y/m/d') }}</strong>
-                                                                                                                        </span>
-                                                                                                                    @else
-                                                                                                                    <span class="btn btn-info disabled btn-sm" style="display: block; text-align: center;">
-                                                                                                                        Expira en<br>
-                                                                                                                        <strong>{{ $expiryDate->format('Y/m/d') }}</strong>
-                                                                                                                    </span>
-                                                                                                                    @endif
-                                                                            @else
-                                                                                <span class="btn btn-success disabled btn-sm" >
-                                                                                    No expira
-                                                                                </span>
-                                                                            @endif
-                                                                        </td>
+                                                                                                    <tr>
+                                                                                                        <td><input type="checkbox" name="batch[]" value="{{ $file->id }}"></td>
+                                                                                                        <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}</td>
+                                                                                                        <td>{{ pathinfo($file->original_url, PATHINFO_EXTENSION) }}</td>
+                                                                                                        <td><a href="{{ route('files.download', $file->id) }}">{{ $file->filename }}</a>
+                                                                                                        </td>
+
+                                                                                                                                                                            <td>{{ $file->size }}</td>
+
+                                                                                                        <td>{{ $file->uploader ?? 'Desconocido' }}</td>
+                                                                                                        <td>
+                                                                                                            @if ($file->fileRelations->isNotEmpty())
+                                                                                                                <span class="label label-success">Si</span>
+                                                                                                            @else
+                                                                                                                <span class="label label-danger">No</span>
+                                                                                                            @endif
+                                                                                                        </td>
+                                                                                                        <td>
+                                                                                                            @if ($file->public_allow)
+                                                                                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                                                                                                    data-target="#urlModal"
+                                                                                                                    data-url="{{ url('download.php?id=' . $file->id . '&token=' . $file->public_token) }}">Descarga</button>
+                                                                                                            @else
+                                                                                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                                                                                    disabled>Privado</button>
+                                                                                                            @endif
+                                                                                                        </td>
+                                                                                                        <td>
+                                                                                                            @if ($file->expires && $file->expiry_date)
+                                                                                                                                                    @php
+                                        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
+                                                                                                                                                    @endphp
+                                                                                                                                                    @if ($expiryDate->isPast())
+                                                                                                                                                        <span class="label label-danger"
+                                                                                                                                                            style="display: block; text-align: center;">
+                                                                                                                                                            Expiró en<br>
+                                                                                                                                                            <strong>{{ $expiryDate->format('Y/m/d') }}</strong>
+                                                                                                                                                        </span>
+                                                                                                                                                    @else
+                                                                                                                                                    <span class="btn btn-info disabled btn-sm" style="display: block; text-align: center;">
+                                                                                                                                                        Expira en<br>
+                                                                                                                                                        <strong>{{ $expiryDate->format('Y/m/d') }}</strong>
+                                                                                                                                                    </span>
+                                                                                                                                                    @endif
+                                                                                                            @else
+                                                                                                                <span class="btn btn-success disabled btn-sm" >
+                                                                                                                    No expira
+                                                                                                                </span>
+                                                                                                            @endif
+                                                                                                        </td>
 
 
-                                                                        <td>{{ $file->downloads->count() ?? 0 }} veces</td>
-                                                                        <td><a href="{{ route('files.edit', $file->id) }}"
-                                                                                class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a></td>
-                                                                    </tr>
+                                                                                                        <td>{{ $file->downloads->count() ?? 0 }} veces</td>
+                                                                                                        <td><a href="{{ route('files.edit', $file->id) }}"
+                                                                                                                class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a></td>
+                                                                                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>

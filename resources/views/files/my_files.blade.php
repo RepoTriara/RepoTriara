@@ -76,17 +76,40 @@
                                                 Búsqueda
                                             </button>
                                         </form>
+
+                                    <form action="{{ route('my_files') }}" name="files_filters" method="get" class="form-inline form_filters">
+                                        <div class="form-group group_float">
+                                            <select name="categories[]" class="txtfield form-control">
+                                                <option value="all" {{ in_array('all', request()->input('categories', [])) ? 'selected' : '' }}>
+                                                    All categories
+                                                </option>
+                                                @foreach ($categories as $category)
+                                                    <option value="{{ $category->id }}" {{ in_array($category->id, request()->input('categories', [])) ? 'selected' : '' }}>
+                                                        {{ $category->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <button type="submit" id="btn_proceed_filter_files" class="btn btn-sm btn-default">Filtrar</button>
+                                    </form>
+
+
+
+
                                     </div>
                                 </div>
 
-                                <form action="" name="files_list" method="get" class="form-inline">
+                                <form action="{{ route('files.downloadCompresed') }}" name="files_list" method="POST"
+                                    class="form-inline">
+                                    @csrf
                                     <div class="form_actions_right">
                                         <div class="form_actions">
                                             <div class="form_actions_submit">
                                                 <div class="form-group group_float">
                                                     <label class="control-label hidden-xs hidden-sm"><i
                                                             class="glyphicon glyphicon-check"></i> Acciones de archivos
-                                                        seleccionados:</label>
+                                                        seleccionados:
+                                                    </label>
                                                     <select name="action" id="action" class="txtfield form-control">
                                                         <option value="none">Seleccione la acción</option>
                                                         <option value="zip">Descarga comprimida</option>
@@ -94,9 +117,14 @@
                                                 </div>
                                                 <button type="submit" id="do_action"
                                                     class="btn btn-sm btn-default">Proceder</button>
+                                                @foreach($files as $file)
+                                                    <input type="hidden" name="file_ids[]" value="{{ $file->id }}">
+                                                @endforeach
+
                                             </div>
                                         </div>
                                     </div>
+
 
                                     <div class="right_clear"></div><br />
 
@@ -153,7 +181,7 @@
                                                     <td><input type="checkbox" name="batch[]" value="{{ $file->id }}"></td>
                                                     <td>
                                                         <a href="{{ route('files.download', $file->id) }}">{{ $file->filename
-                                                            }}</a>
+                                                                }}</a>
                                                     </td>
                                                     <td>
                                                         <span class="label label-success label_big">
@@ -165,8 +193,8 @@
                                                         {{ $file->description ?? 'N/A' }}
                                                         <!-- Muestra N/A si no hay descripción -->
                                                     </td>
-                                                    <td>{{ $file->size ? number_format($file->size / 1024, 2) . ' KB' : '-' }}
-                                                    </td>
+                                                    <td>{{ $file->size }}</td>
+
 
                                                     <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}
                                                     </td>
@@ -185,10 +213,12 @@
 
                                                     <td></td>
                                                     <td class="text-center">
-                                                        <a href="{{ url('repositorio/process.php', ['do' => 'download', 'id' => $file->id]) }}"
-                                                            class="btn btn-primary btn-sm btn-wide" target="_blank">
-                                                            Descargar </a>
+                                                        <a href="{{ route('file.directDownload', ['id' => $file->id]) }}"
+                                                            class="btn btn-primary">
+                                                            Descargar
+                                                        </a>
                                                     </td>
+
                                                 </tr>
                                             @endforeach
                                         </tbody>
