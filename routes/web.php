@@ -21,6 +21,8 @@ Route::get('/dashboard', function () {
 // Ruta para el level 0
 Route::get('/my_files', action: [FilesController::class, 'myFiles'])->name('my_files');
 Route::get('/manage-files', action: [FilesController::class, 'manageFiles'])->name('manage-files');
+Route::get('/direct-download/{id}', [FilesController::class, 'directDownload'])->name('file.directDownload');
+Route::post('/download-compresed', [FilesController::class, 'downloadCompresed'])->name('files.downloadCompresed');
 
 
 
@@ -59,9 +61,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/files/download-compressed', [FilesController::class, 'downloadCompressed'])->name('files.download-compressed');
     Route::get('/download', [FilesController::class, 'download'])->name('download.file');
 
-    Route::get('/search_orphan_files', function () {
-        return view('files.search_orphan_files');
-    })->name('search_orphan_files');
+  
 });
 
 // Rutas para la gestión de empresas
