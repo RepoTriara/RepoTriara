@@ -1,7 +1,7 @@
 <div class="main_side_menu">
 	<ul class="main_menu" role="menu">
 		<li class="">
-			<a href="{{ asset('upload-from-computer.php" class="nav_top_level')}}"><i class="fa fa-cloud-upload fa-fw"
+			<a href="{{ route('upload') }}"><i class="fa fa-cloud-upload fa-fw"
 					aria-hidden="true"></i><span class="menu_label">Subir</span></a>
 		</li>
 		<li class="">

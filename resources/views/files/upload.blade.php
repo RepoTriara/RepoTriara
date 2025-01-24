@@ -23,8 +23,11 @@
 
 
         <div class="main_content">
+            @if(Auth::user()->level == 0)
+            @include('layouts.app_level0')
+        @else
             @include('layouts.app')
-
+        @endif
             <div class="container-fluid">
 
                 <div class="row">

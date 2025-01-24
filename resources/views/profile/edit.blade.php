@@ -11,8 +11,7 @@
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
-    <link rel="stylesheet" media="all" type="text/css"
-        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
@@ -69,6 +68,20 @@
                                         </div>
                                     </div>
 
+                                    <!-- Simplificar el campo de actualización de contraseña -->
+                                    <div class="form-group">
+                                        <label for="password" class="col-sm-4 control-label">Nueva contraseña</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input name="password" id="password" class="form-control password_toggle" type="password" maxlength="60" />
+                                                <div class="input-group-btn password_toggler">
+                                                    <button type="button" class="btn pass_toggler_show"><i class="glyphicon glyphicon-eye-open"></i></button>
+                                                </div>
+                                            </div>
+                                            <button type="button" name="generate_password" id="generate_password" class="btn btn-default btn-sm btn_generate_password" data-ref="password" data-min="20" data-max="20">Generar</button>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group">
                                         <label for="email" class="col-sm-4 control-label">E-Mail</label>
                                         <div class="col-sm-8">
@@ -77,10 +90,24 @@
                                         </div>
                                     </div>
 
+                                    @if(Auth::user()->level == 0)
+                                        <div class="form-group">
+                                            <label for="address" class="col-sm-4 control-label">Dirección</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="address" id="address" class="form-control" value="{{ $user->address }}" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="phone" class="col-sm-4 control-label">Teléfono</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="phone" id="phone" class="form-control" value="{{ $user->phone }}" />
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     <div class="inside_form_buttons">
-                                        <button type="submit" name="submit" class="btn btn-wide btn-primary">Actualizar
-                                            cuenta</button>
+                                        <button type="submit" name="submit" class="btn btn-wide btn-primary">Actualizar cuenta</button>
                                     </div>
 
                                 </form>
@@ -90,84 +117,10 @@
                     </div>
                 </div> <!-- row -->
             </div> <!-- container-fluid -->
-            <div class="col-xs-12 col-sm-12 col-lg-6">
-                <div class="white-box">
-                    <div class="white-box-interior">
-                        <header>
-                            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                {{ __('Actualizar contraseña') }}
-                            </h2>
-                        </header>
-
-                        <form method="post" action="{{ route('password.update') }}" name="updatePassword"
-                            class="form-horizontal mt-6 space-y-6">
-                            @csrf
-                            @method('put')
-
-                            <div class="form-group">
-                                <label for="update_password_current_password"
-                                    class="col-sm-4 control-label">{{ __('Contraseña actual') }}</label>
-                                <div class="col-sm-8">
-                                    <input type="password" id="update_password_current_password" name="current_password"
-                                        class="form-control required mt-1 block w-full" autocomplete="current-password"
-                                        placeholder="Ingrese su contraseña actual" />
-                                    @if ($errors->updatePassword->get('current_password'))
-                                        <p class="mt-2 text-danger">
-                                            {{ $errors->updatePassword->first('current_password') }}
-                                        </p>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="update_password_password"
-                                    class="col-sm-4 control-label">{{ __('Nueva contraseña') }}</label>
-                                <div class="col-sm-8">
-                                    <input type="password" id="update_password_password" name="password"
-                                        class="form-control required mt-1 block w-full" autocomplete="new-password"
-                                        placeholder="Ingrese su nueva contraseña" />
-                                    @if ($errors->updatePassword->get('password'))
-                                        <p class="mt-2 text-danger">
-                                            {{ $errors->updatePassword->first('password') }}
-                                        </p>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="update_password_password_confirmation"
-                                    class="col-sm-4 control-label">{{ __('Confirmar nueva contraseña') }}</label>
-                                <div class="col-sm-8">
-                                    <input type="password" id="update_password_password_confirmation"
-                                        name="password_confirmation" class="form-control required mt-1 block w-full"
-                                        autocomplete="new-password" placeholder="Confirme su nueva contraseña" />
-                                    @if ($errors->updatePassword->get('password_confirmation'))
-                                        <p class="mt-2 text-danger">
-                                            {{ $errors->updatePassword->first('password_confirmation') }}
-                                        </p>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="inside_form_buttons">
-                                <button type="submit" name="submit" class="btn btn-wide btn-primary">
-                                    {{ __('Guardar Contraseña') }}
-                                </button>
-                                @if (session('status') === 'password-updated')
-                                    <p x-data="{ show: true }" x-show="show" x-transition
-                                        x-init="setTimeout(() => show = false, 2000)"
-                                        class="text-sm text-gray-600 dark:text-gray-400">
-                                        {{ __('Guardado.') }}
-                                    </p>
-                                @endif
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-
-
+	<footer>
+		<div id="footer">
+			Claro Colombia		</div>
+	</footer>
             <script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
             <script src="{{asset('includes/js/jquery.validations.js')}}"></script>
             <script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>

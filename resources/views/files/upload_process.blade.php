@@ -24,7 +24,11 @@
 <body class="upload-process-form logged-in logged-as-admin menu_hidden backend">
     <div class="container-custom">
         <div class="main_content">
-            @include('layouts.app')
+            @if(Auth::user()->level == 0)
+                @include('layouts.app_level0')
+            @else
+                @include('layouts.app')
+            @endif
             <div class="container-fluid">
                 <div class="row">
                     <div id="section_title">
@@ -63,109 +67,117 @@
                             });
                         </script>
                         <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
-                            @csrf
+                                @csrf
 
-                            <div class="container-fluid">
-                                @foreach ($files as $file)
-                                <!-- Encabezado del archivo -->
-                                <div class="file_number" style="background-color: #000; color: #fff; padding: 10px; border-radius: 5px;">
-                                    <p style="margin: 0; font-size: 14px;">
-                                        <span class="glyphicon glyphicon-saved" aria-hidden="true" style="margin-right: 5px;"></span>
-                                        {{ $file->name }}
-                                    </p>
-                                </div>
+                                <div class="container-fluid">
+                                    @foreach ($files as $file)
+                                    <!-- Encabezado del archivo -->
+                                    <div class="file_number" style="background-color: #000; color: #fff; padding: 10px; border-radius: 5px;">
+                                        <p style="margin: 0; font-size: 14px;">
+                                            <span class="glyphicon glyphicon-saved" aria-hidden="true" style="margin-right: 5px;"></span>
+                                            {{ $file->name }}
+                                        </p>
+                                    </div>
 
+                                    <!-- Contenedor principal -->
+                                    <div style="border: 1px solid #ccc; border-radius: 0 0 5px 5px; padding: 20px; margin-bottom: 20px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); background-color: #fff;">
+                                        <div class="row">
+                                            <!-- Información del archivo -->
+                                            <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
+                                                <h3 style="font-size: 16px; margin-bottom: 15px;">Información de archivo</h3>
+                                                <input type="hidden" name="file[{{ $file->id }}][file]" value="{{ $file->file }}" />
+                                                <div class="form-group">
+                                                    <label style="font-weight: bold;">Título</label>
+                                                    <input type="text" name="file[{{ $file->id }}][name]" value="{{ old('file.' . $file->id . '.name', $file->title) }}" class="form-control" placeholder="Ingrese aquí el título del archivo" required />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label style="font-weight: bold;">Descripción</label>
+                                                    <textarea name="file[{{ $file->id }}][description]" class="form-control" placeholder="Opcionalmente, introduzca aquí una descripción del archivo.">{{ old('file.' . $file->id . '.description', $file->description) }}</textarea>
+                                                </div>
+                                            </div>
 
-                                <!-- Contenedor principal -->
-                                <div style="border: 1px solid #ccc; border-radius: 0 0 5px 5px; padding: 20px; margin-bottom: 20px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); background-color: #fff;">
-                                    <div class="row">
-                                        <!-- Información del archivo -->
-                                        <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
-                                            <h3 style="font-size: 16px; margin-bottom: 15px;">Información de archivo</h3>
-                                            <input type="hidden" name="file[{{ $file->id }}][file]" value="{{ $file->file }}" />
-                                            <div class="form-group">
-                                                <label style="font-weight: bold;">Título</label>
-                                                <input type="text" name="file[{{ $file->id }}][name]" value="{{ old('file.' . $file->id . '.name', $file->title) }}" class="form-control" placeholder="Ingrese aquí el título del archivo" required />
+                                            @if(Auth::user()->level == 8 || Auth::user()->level == 10)
+                                            <!-- Fecha de expiración y descarga pública -->
+                                            <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
+                                                <h3 style="font-size: 16px; margin-bottom: 15px;">Fecha de expiración</h3>
+                                                <div class="form-group">
+                                                    <label style="font-weight: bold;">Fecha de expiración</label>
+                                                    <input type="date" class="form-control"
+                                                        name="file[{{ $file->id }}][expiry_date]"
+                                                        value="{{ old('file.' . $file->id . '.expiry_date', $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '') }}" />
+                                                </div>
+                                                <h3 style="font-size: 16px; margin-bottom: 15px;">Descarga pública</h3>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" name="file[{{ $file->id }}][public]" value="1" {{ $file->public ? 'checked' : '' }} /> Permitir descarga pública.
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" name="file[{{ $file->id }}][hidden]" value="1" {{ $file->hidden ? 'checked' : '' }} /> Carga oculta (No se enviarán notificaciones).
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label style="font-weight: bold;">Descripción</label>
-                                                <textarea name="file[{{ $file->id }}][description]" class="form-control" placeholder="Opcionalmente, introduzca aquí una descripción del archivo.">{{ old('file.' . $file->id . '.description', $file->description) }}</textarea>
-                                            </div>
-                                        </div>
 
-                                        <!-- Fecha de expiración y descarga pública -->
-                                        <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
-                                            <h3 style="font-size: 16px; margin-bottom: 15px;">Fecha de expiración</h3>
-                                            <div class="form-group">
-                                                <label style="font-weight: bold;">Fecha de expiración</label>
-                                                <input type="date" class="form-control"
-                                                    name="file[{{ $file->id }}][expiry_date]"
-                                                    value="{{ old('file.' . $file->id . '.expiry_date', $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '') }}" />
+                                            <!-- Asignaciones -->
+                                            <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
+                                                <h3 style="font-size: 16px; margin-bottom: 15px;">Asignaciones*</h3>
+                                                <select multiple="multiple"
+                                                    name="file[{{ $file->id }}][assignments][]"
+                                                    class="form-control chosen-select"
+                                                    data-type="assignments"
+                                                    required>
+                                                    <optgroup label="Clientes">
+                                                        @foreach ($users as $user)
+                                                        <option value="{{ $user->id }}" {{ in_array($user->id, $file->assignments->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                                            {{ $user->user }}
+                                                        </option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                    <optgroup label="Compañías">
+                                                        @foreach ($groups as $group)
+                                                        <option value="group_{{ $group->id }}" {{ in_array($group->id, $file->assignments->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                                            {{ $group->name }}
+                                                        </option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                </select>
+                                                <div style="margin-top: 10px;">
+                                                    <a href="#" class="btn btn-xs btn-primary add-all" data-type="assignments">Agregar todo</a>
+                                                    <a href="#" class="btn btn-xs btn-primary remove-all" data-type="assignments">Borrar todo</a>
+                                                    <a href="#" class="btn btn-xs btn-danger copy-all" data-type="assignments">Copiar la selección a otros archivos</a>
+                                                </div>
                                             </div>
-                                            <h3 style="font-size: 16px; margin-bottom: 15px;">Descarga pública</h3>
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" name="file[{{ $file->id }}][public]" value="1" {{ $file->public ? 'checked' : '' }} /> Permitir descarga pública.
-                                                </label>
-                                            </div>
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" name="file[{{ $file->id }}][hidden]" value="1" {{ $file->hidden ? 'checked' : '' }} /> Carga oculta (No se enviarán notificaciones).
-                                                </label>
-                                            </div>
-                                        </div>
 
-                                        <!-- Asignaciones -->
-                                        <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
-                                            <h3 style="font-size: 16px; margin-bottom: 15px;">Asignaciones*</h3>
-                                            <select multiple="multiple"
-                                                name="file[{{ $file->id }}][assignments][]"
-                                                class="form-control chosen-select"
-                                                data-type="assignments"
-                                                required>
-                                                <optgroup label="Clientes">
-                                                    @foreach ($users as $user)
-                                                    <option value="{{ $user->id }}" {{ in_array($user->id, $file->assignments->pluck('id')->toArray()) ? 'selected' : '' }}>
-                                                        {{ $user->user }}
+                                            <!-- Categorías -->
+                                            <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
+                                                <h3 style="font-size: 16px; margin-bottom: 15px;">Categorías*</h3>
+                                                <select multiple="multiple"
+                                                    name="file[{{ $file->id }}][categories][]"
+                                                    class="form-control chosen-select"
+                                                    data-type="categories" required>
+                                                    @foreach ($categories as $category)
+                                                    <option value="{{ $category->id }}" {{ in_array($category->id, $file->categories->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                                        {{ $category->name }}
                                                     </option>
                                                     @endforeach
-                                                </optgroup>
-                                            </select>
-                                            <div style="margin-top: 10px;">
-                                                <a href="#" class="btn btn-xs btn-primary add-all" data-type="assignments">Agregar todo</a>
-                                                <a href="#" class="btn btn-xs btn-primary remove-all" data-type="assignments">Borrar todo</a>
-                                                <a href="#" class="btn btn-xs btn-danger copy-all" data-type="assignments">Copiar la selección a otros archivos</a>
+                                                </select>
+                                                <div style="margin-top: 10px;">
+                                                    <a href="#" class="btn btn-xs btn-primary add-all" data-type="categories">Agregar todo</a>
+                                                    <a href="#" class="btn btn-xs btn-primary remove-all" data-type="categories">Borrar todo</a>
+                                                    <a href="#" class="btn btn-xs btn-danger copy-all" data-type="categories">Copiar la selección a otros archivos</a>
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <!-- Categorías -->
-                                        <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
-                                            <h3 style="font-size: 16px; margin-bottom: 15px;">Categorías*</h3>
-                                            <select multiple="multiple"
-                                                name="file[{{ $file->id }}][categories][]"
-                                                class="form-control chosen-select"
-                                                data-type="categories" required>
-                                                @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}" {{ in_array($category->id, $file->categories->pluck('id')->toArray()) ? 'selected' : '' }}>
-                                                    {{ $category->name }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                            <div style="margin-top: 10px;">
-                                                <a href="#" class="btn btn-xs btn-primary add-all" data-type="categories">Agregar todo</a>
-                                                <a href="#" class="btn btn-xs btn-primary remove-all" data-type="categories">Borrar todo</a>
-                                                <a href="#" class="btn btn-xs btn-danger copy-all" data-type="categories">Copiar la selección a otros archivos</a>
-                                            </div>
+                                            @endif
                                         </div>
                                     </div>
+                                    @endforeach
                                 </div>
-                                @endforeach
-                            </div>
 
-                            <div style="text-align: center; margin-top: 20px;">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-                        </form>
+                                <div style="text-align: center; margin-top: 20px;">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
 
 
                         @elseif ($savedFiles->isNotEmpty())
@@ -386,8 +398,6 @@
                         });
                     });
                 </script>
-
-
             </div>
             <!-- row -->
         </div>
