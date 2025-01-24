@@ -19,17 +19,13 @@
 
 <body class="upload-from-computer logged-in logged-as-admin menu_hidden backend">
     <div class="container-custom">
-
-
-
         <div class="main_content">
             @if(Auth::user()->level == 0)
-            @include('layouts.app_level0')
-        @else
-            @include('layouts.app')
-        @endif
+                @include('layouts.app_level0')
+            @else
+                @include('layouts.app')
+            @endif
             <div class="container-fluid">
-
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
@@ -39,74 +35,69 @@
                 </div>
 
                 <div class="row">
-
                     <div class="col-xs-12">
                         <p>
                         <div class="alert alert-info">Haz clic en Añadir archivos para seleccionar todos los archivos que quieras subir, y luego haga clic en continuar. En el siguiente paso, podrá establecer un nombre y descripción de cada archivo cargado. Recuerde que el tamaño maximo permitido por archivo (en mb.) es <strong>2048</strong></div>
                         </p>
 
                         <script type="text/javascript">
-                            $(document).ready(function() {
-                                var uploader = $("#uploader").pluploadQueue({
-                                    runtimes: 'html5,flash,silverlight,html4',
-                                    url: '{{ route('files.upload_process') }}',
-                                    max_file_size: '2048mb',
-                                    chunk_size: '1mb', // Divide los archivos en fragmentos de 1 MB
-                                    multipart: true,
-                                    multipart_params: {
-                                        _token: '{{ csrf_token() }}', // Token CSRF para seguridad
-                                    },
-                                    filters: [{
-                                        title: "Archivos permitidos",
-                                        extensions: "pdf,doc,docx,xls,xlsx,png,jpg,jpeg,zip",
-                                    }, ],
-                                    init: {
-                                        FilesAdded: function(up, files) {
-                                            console.log("Archivos añadidos: ", files);
-                                            $('#btn-submit').prop('disabled', false);
-                                        },
-                                        BeforeUpload: function(up, file) {
-                                            console.log("Subiendo archivo:", file.name);
-                                        },
-                                        FileUploaded: function(up, file, info) {
-                                            console.log("Archivo subido:", file.name);
-                                        },
-                                        UploadComplete: function(up, files) {
-                                            alert("Todos los archivos han sido subidos correctamente.");
-                                            console.log("Archivos subidos:", files);
+    $(document).ready(function() {
+        var uploader = $("#uploader").pluploadQueue({
+            runtimes: 'html5,flash,silverlight,html4',
+            url: '{{ route('files.upload_process') }}',
+            max_file_size: '2048mb',
+            chunk_size: '5mb', // Ajusta el tamaño de los fragmentos a 5 MB
+            multipart: true,
+            multipart_params: {
+                _token: '{{ csrf_token() }}', // Token CSRF para seguridad
+            },
+            filters: [{
+                title: "Archivos permitidos",
+                extensions: "7z,ace,ai,avi,bin,bmp,bz2,cdr,doc,docm,docx,eps,fla,flv,gif,gz,gzip,htm,html,iso,jpeg,jpg,mp3,mp4,mpg,odt,oog,ppt,pptx,pptm,pps,ppsx,pdf,png,psd,rar,rtf,tar,tif,tiff,tgz,txt,wav,xls,xlsm,xlsx,xz,zip",
+            }],
+            init: {
+                FilesAdded: function(up, files) {
+                    console.log("Archivos añadidos: ", files);
+                    $('#btn-submit').prop('disabled', false);
+                },
+                BeforeUpload: function(up, file) {
+                    console.log("Subiendo archivo:", file.name);
+                },
+                FileUploaded: function(up, file, info) {
+                    console.log("Archivo subido:", file.name);
+                },
+                UploadComplete: function(up, files) {
+                    console.log("Archivos subidos:", files);
+                    window.location.href = '{{ route("files.upload_process.view") }}';
+                },
+                Error: function(up, err) {
+                    console.error("Error en la subida:", err);
+                    alert("Error en la subida: " + err.message);
+                }
+            }
+        });
 
-                                            window.location.href = '{{ route("files.upload_process.view") }}';
-                                        },
-                                        Error: function(up, err) {
-                                            console.error("Error en la subida:", err);
-                                            alert("Error en la subida: " + err.message);
-                                        }
-                                    }
-                                });
+        var uploaderInstance = $("#uploader").pluploadQueue();
 
-                                var uploaderInstance = $("#uploader").pluploadQueue();
+        $('#btn-submit').on('click', function(e) {
+            e.preventDefault();
 
-                                $('#btn-submit').on('click', function(e) {
-                                    e.preventDefault();
+            if (uploaderInstance.files.length > 0) {
+                uploaderInstance.start();
+            } else {
+                alert('Por favor, selecciona al menos un archivo para subir.');
+            }
+        });
 
-                                    if (uploaderInstance.files.length > 0) {
-                                        uploaderInstance.start();
-                                    } else {
-                                        alert('Por favor, selecciona al menos un archivo para subir.');
-                                    }
-                                });
+        window.onbeforeunload = function(e) {
+            if (uploaderInstance.state === 2) {
+                return 'Los archivos que se están subiendo se perderán si abandonas esta página.';
+            }
+        };
 
-                                window.onbeforeunload = function(e) {
-                                    if (uploaderInstance.state === 2) {
-                                        return 'Los archivos que se están subiendo se perderán si abandonas esta página.';
-                                    }
-                                };
-
-                                $('#btn-submit').prop('disabled', true);
-                            });
-                        </script>
-
-
+        $('#btn-submit').prop('disabled', true);
+    });
+</script>
 
                         <form action="{{ route('files.upload_process') }}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -124,17 +115,14 @@
                                 <button type="button" name="Submit" class="btn btn-wide btn-primary" id="btn-submit">Subir archivos</button>
                             </div>
                         </form>
-
-
-
                     </div>
-
                 </div> <!-- row -->
             </div> <!-- container-fluid -->
 
             <footer>
                 <div id="footer">
-                    Claro Colombia </div>
+                    Claro Colombia
+                </div>
             </footer>
             <script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
             <script src="{{asset('includes/js/jquery.validations.js')}}"></script>

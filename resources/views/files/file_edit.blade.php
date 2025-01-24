@@ -29,7 +29,11 @@
 <body class="edit-file logged-in logged-as-admin menu_hidden backend">
     <div class="container-custom">
         <div class="main_content">
-            @include('layouts.app')
+            @if(Auth::user()->level == 0)
+                @include('layouts.app_level0')
+            @else
+                @include('layouts.app')
+            @endif
             <div class="container-fluid">
                 <div class="row">
                     <div id="section_title">
@@ -83,7 +87,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
+                                                    @if(Auth::user()->level == 8 || Auth::user()->level == 10)
                                                     <!-- Fecha de expiración -->
                                                     <div class="col-sm-6 col-md-3 column_even column">
                                                         <div class="file_data">
@@ -180,6 +184,7 @@
                                                                 <input type="checkbox" id="hid_existing_checkbox" name="file[1][hideall]" value="1" /> Ocultar a todos los clientes y grupos ya asignados.
                                                             </label>
                                                         </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -196,7 +201,9 @@
 
                         <script type="text/javascript">
                             $(document).ready(function() {
-                                $("form").submit(function() {
+                                var userLevel = {{ Auth::user()->level }};
+
+                                $("form").submit(function(event) {
                                     clean_form(this);
 
                                     $(this).find('input[name$="[name]"]').each(function() {
@@ -206,6 +213,20 @@
                                     // show the errors or continue if everything is ok
                                     if (show_form_errors() == false) {
                                         return false;
+                                    }
+
+                                    // Redirigir según el nivel del usuario
+                                    if (userLevel == 0) {
+                                        event.preventDefault();
+                                        window.location.href = '{{ route("manage-files") }}';
+                                    }
+                                });
+
+                                // Manejar el clic en el botón "Cancelar"
+                                $('a[name="cancel"]').click(function(event) {
+                                    if (userLevel == 0) {
+                                        event.preventDefault();
+                                        window.location.href = '{{ route("manage-files") }}';
                                     }
                                 });
                             });

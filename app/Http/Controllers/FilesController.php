@@ -58,7 +58,7 @@ if ($clientId || $groupId || $categoryId) {
         $query = TblFile::whereHas('categoryRelations', function ($query) use ($categoryId) {
             $query->where('cat_id', $categoryId);
         });
-        
+
     }
 
     if ($entity) {
@@ -364,7 +364,7 @@ else {
     // Redirigir por defecto si no se especifica la vista
     return redirect()->route('files.index')->with('success', 'El archivo se ha actualizado correctamente.');
 }
-    
+
 
     public function resetUploadSession()
     {
@@ -616,7 +616,7 @@ else {
     {
         // Obtener parámetros opcionales de la query string
         $search = $request->query('search');
-        $category = $request->query('categories', []);	
+        $category = $request->query('categories', []);
         $sorts = $request->query('sort', 'timestamp'); // Ordenar por columna predeterminada
         $direction = $request->query('direction', 'asc'); // Dirección predeterminada
 
@@ -698,8 +698,8 @@ else {
                 $file->formattedExpiryDate = null;
             }
         }
-       
-  
+
+
         // Filtrar los archivos:
 
         $files = $files->filter(function ($file) use ($clientId) {
@@ -748,7 +748,7 @@ else {
 
 
 
-   
+
     // codigto de la vista manage-files
     public function manageFiles(Request $request)
     {
@@ -779,15 +779,15 @@ else {
                 $query->where('filename', 'like', '%' . $search . '%')
                     ->orWhere('description', 'like', '%' . $search . '%')
                     ->orWhere('timestamp', 'like', '%' . $search . '%');
-                    
+
 
             });
         }
 
-        
+
         $filesQuery->orderBy($sorts, $direction);
 
-        
+
 
 
         // Obtener el total de archivos antes de la paginación
@@ -851,18 +851,18 @@ else {
         $file = TblFile::find($id);
 
         if (!$file) {
-            return response()->json(['error' => 'El archivo no existe.'], 404);
+            return back()->with(['error' => 'El archivo no existe.']);
         }
 
         $url = $file->url;
         if (empty($url)) {
-            return response()->json(['error' => 'El archivo no tiene una URL asociada.'], 404);
+            return back()->with(['error' => 'El archivo no tiene una URL asociada.']);
         }
 
         $path = storage_path('app/private/uploads/' . $url);
 
         if (!file_exists($path)) {
-            return response()->json(['error' => 'El archivo no está disponible para descargar.'], 404);
+            return back()->with(['error' => 'El archivo no está disponible para descargar.'], 404);
         }
 
         $fileContent = file_get_contents($path);

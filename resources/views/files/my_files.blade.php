@@ -176,7 +176,7 @@
                                                     </td>
                                                     <td>
                                                         <a
-                                                            href="{{ route('files.download', $file->id) }}">{{ $file->filename }}</a>
+                                                            href="{{ route('file.directDownload', ['id' => $file->id]) }}">{{ $file->filename }}</a>
                                                         <span class="footable-sort-indicator"></span>
                                                     </td>
                                                     <td>
