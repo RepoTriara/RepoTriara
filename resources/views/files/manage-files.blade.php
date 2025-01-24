@@ -123,7 +123,7 @@
 											</td>
 											<td>
 
-													{{ strtoupper(pathinfo($file->original_url, PATHINFO_EXTENSION)) }}
+											{{ strtoupper(pathinfo($file->original_url, PATHINFO_EXTENSION)) }}
 
 											</td>
 											<td>
@@ -131,12 +131,9 @@
 													}}</a>
 											</td>
 
+											<td>{{ $file->size }}</td>
 
-											<td>{{ $file->size ? number_format($file->size / 1024, 2) . ' KB' : '-' }}
-											</td>
-
-
-											<td><a href="{{ route('files.edit', $file->id) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a></td>
+											<td><a href="{{ route('files.editBasic', $file->id) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a></td>
 										</tr>
 									@endforeach
 								</tbody>

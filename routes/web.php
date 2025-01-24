@@ -63,8 +63,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/files/bulk-action', [FilesController::class, 'bulkAction'])->name('files.bulk-action');
     Route::post('/files/download-compressed', [FilesController::class, 'downloadCompressed'])->name('files.download-compressed');
     Route::get('/download', [FilesController::class, 'download'])->name('download.file');
+    Route::get('/files/{fileId}/edit-basic', [FilesController::class, 'editBasic'])->name('files.editBasic');
 
-  
+
+
 });
 
 // Rutas para la gestión de empresas

@@ -11,6 +11,8 @@
     <link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png')}}" sizes="32x32">
     <link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png')}}" sizes="152x152">
     <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <!--[if lt IE 9]>
 		<script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
 		<script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
@@ -77,21 +79,23 @@
                                             </button>
                                         </form>
 
-                                    <form action="{{ route('my_files') }}" name="files_filters" method="get" class="form-inline form_filters">
-                                        <div class="form-group group_float">
-                                            <select name="categories[]" class="txtfield form-control">
-                                                <option value="all" {{ in_array('all', request()->input('categories', [])) ? 'selected' : '' }}>
-                                                    All categories
-                                                </option>
-                                                @foreach ($categories as $category)
-                                                    <option value="{{ $category->id }}" {{ in_array($category->id, request()->input('categories', [])) ? 'selected' : '' }}>
-                                                        {{ $category->name }}
+                                        <form action="{{ route('my_files') }}" name="files_filters" method="get"
+                                            class="form-inline form_filters">
+                                            <div class="form-group group_float">
+                                                <select name="categories[]" class="txtfield form-control">
+                                                    <option value="all" {{ in_array('all', request()->input('categories', [])) ? 'selected' : '' }}>
+                                                        All categories
                                                     </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <button type="submit" id="btn_proceed_filter_files" class="btn btn-sm btn-default">Filtrar</button>
-                                    </form>
+                                                    @foreach ($categories as $category)
+                                                        <option value="{{ $category->id }}" {{ in_array($category->id, request()->input('categories', [])) ? 'selected' : '' }}>
+                                                            {{ $category->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <button type="submit" id="btn_proceed_filter_files"
+                                                class="btn btn-sm btn-default">Filtrar</button>
+                                        </form>
 
 
 
@@ -117,9 +121,6 @@
                                                 </div>
                                                 <button type="submit" id="do_action"
                                                     class="btn btn-sm btn-default">Proceder</button>
-                                                @foreach($files as $file)
-                                                    <input type="hidden" name="file_ids[]" value="{{ $file->id }}">
-                                                @endforeach
 
                                             </div>
                                         </div>
@@ -138,50 +139,45 @@
                                     <table id="files_list" class="footable table default footable-loaded">
                                         <thead>
                                             <tr>
-                                                <th class="td_checkbox"><input type="checkbox" name="select_all"
-                                                        id="select_all" value="0" /></th>
-
-
-                                                <th class="{{ request('orderby') === 'filename' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
+                                                <th>
+                                                    <input type="checkbox" id="select_all"
+                                                        class="footable-sort-indicator" />
+                                                </th>
+                                                <th class="{{ request('orderby') === 'filename' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }} "
                                                     data-hide="phone,tablet">
                                                     <a
                                                         href="{{ route('my_files', ['orderby' => 'filename', 'order' => request('orderby') === 'filename' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Titulo</a>
                                                     <span class="footable-sort-indicator"></span>
                                                 </th>
-
                                                 <th data-hide="phone">Tipo</th>
-
                                                 <th class="{{ request('orderby') === 'description' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
                                                     data-hide="phone,tablet">
                                                     <a
                                                         href="{{ route('my_files', ['orderby' => 'description', 'order' => request('orderby') === 'description' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Descripción</a>
                                                     <span class="footable-sort-indicator"></span>
                                                 </th>
-
                                                 <th data-hide="phone">Tamaño</th>
-
                                                 <th class="{{ request('orderby') === 'Timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
                                                     data-hide="phone,tablet">
                                                     <a
                                                         href="{{ route('my_files', ['orderby' => 'Timestamp', 'order' => request('orderby') === 'Timestamp' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Fecha</a>
                                                     <span class="footable-sort-indicator"></span>
                                                 </th>
-
                                                 <th data-hide="phone">Fecha de expiración</th>
-
-                                                <th data-hide="phone,tablet">Image preview</th>
-
                                                 <th data-hide="phone">Descarga</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($files as $file)
                                                 <tr class="table_row">
-                                                    <td><input type="checkbox" name="batch[]" value="{{ $file->id }}"></td>
                                                     <td>
-                                                        <a href="{{ route('files.download', $file->id) }}">{{ $file->filename
-                                                                }}</a>
+                                                        <input type="checkbox" name="file_ids[]" value="{{ $file->id }}"
+                                                            class="footable-sort-indicator">
+                                                    </td>
+                                                    <td>
+                                                        <a
+                                                            href="{{ route('files.download', $file->id) }}">{{ $file->filename }}</a>
+                                                        <span class="footable-sort-indicator"></span>
                                                     </td>
                                                     <td>
                                                         <span class="label label-success label_big">
@@ -189,19 +185,14 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <!-- Aquí accedemos directamente al campo description -->
                                                         {{ $file->description ?? 'N/A' }}
-                                                        <!-- Muestra N/A si no hay descripción -->
                                                     </td>
                                                     <td>{{ $file->size }}</td>
-
-
                                                     <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}
                                                     </td>
                                                     <td>
                                                         @if ($file->formattedExpiryDate)
                                                             <span class="label label-primary label_big">
-
                                                                 <strong>{{ $file->formattedExpiryDate }}</strong>
                                                             </span>
                                                         @else
@@ -210,15 +201,12 @@
                                                             </span>
                                                         @endif
                                                     </td>
-
-                                                    <td></td>
                                                     <td class="text-center">
                                                         <a href="{{ route('file.directDownload', ['id' => $file->id]) }}"
                                                             class="btn btn-primary">
                                                             Descargar
                                                         </a>
                                                     </td>
-
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -241,6 +229,7 @@
                                                         <input type="text" class="form-control" name="page"
                                                             id="go_to_page"
                                                             value="{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->currentPage() : 1 }}" />
+
                                                     </form>
                                                 </div>
 
@@ -252,6 +241,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 </form>
 
                             </div> <!-- right_column -->
@@ -272,19 +262,74 @@
                     <script src="{{ asset('includes/js/js.functions.php') }}"></script>
                     <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
                     <script>
-                        document.getElementById('select_all').addEventListener('click', function () {
-                            // Obtener el estado del checkbox principal
-                            var isChecked = this.checked;
+                        // Mostrar mensaje de espera al enviar el formulario
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const downloadForm = document.forms['files_list'];
+                            const delay = 3000; // Tiempo de espera (en milisegundos)
 
-                            // Seleccionar todos los checkboxes que están en el grupo 'batch[]'
-                            var checkboxes = document.querySelectorAll('input[name="batch[]"]');
+                            downloadForm.onsubmit = function (e) {
+                                const action = document.getElementById('action').value;
 
-                            // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
-                            checkboxes.forEach(function (checkbox) {
-                                checkbox.checked = isChecked;
+                                if (action === 'zip') {
+                                    e.preventDefault(); // Evitar envío inmediato
+
+                                    // Mostrar mensaje de carga con SweetAlert
+                                    Swal.fire({
+                                        title: 'Por favor, espera',
+                                        html: `
+                        <p>Estamos procesando tu descarga comprimida...</p>
+                        <div style="margin-top: 10px;">
+                            <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando..." width="50">
+                        </div>
+                    `,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false
+                                    });
+
+                                    // Configurar el temporizador para cerrar automáticamente el mensaje y enviar el formulario
+                                    const swalTimer = setTimeout(() => {
+                                        Swal.close(); // Cerrar el mensaje
+                                        e.target.submit(); // Enviar el formulario
+                                    }, delay); // Tiempo sincronizado
+                                }
+                            };
+
+                            // Verificar si hay un mensaje de error o éxito (esto dependerá de cómo manejes la respuesta en el backend)
+                            @if (session('success'))
+                                Swal.fire({
+                                    title: '¡Éxito!',
+                                    text: '{{ session('success') }}',
+                                    icon: 'success',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            @elseif (session('error'))
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: '{{ session('error') }}',
+                                    icon: 'error',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            @endif
+
+                            // Agregar funcionalidad para seleccionar todos los checkboxes
+                            document.getElementById('select_all').addEventListener('click', function () {
+                                // Obtener el estado del checkbox principal
+                                var isChecked = this.checked;
+
+                                // Seleccionar todos los checkboxes que están en el grupo 'file_ids[]'
+                                var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
+
+                                // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
+                                checkboxes.forEach(function (checkbox) {
+                                    checkbox.checked = isChecked;
+                                });
                             });
                         });
                     </script>
+
+
+
+
 </body>
 
 </html>
