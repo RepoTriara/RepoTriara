@@ -33,7 +33,7 @@
 
 <body class="manage-files logged-in logged-as-admin menu_hidden backend">
 	<div class="container-custom">
-		
+
 
     @include('layouts.app_level0')
 
@@ -139,7 +139,13 @@
 								</tbody>
 							</table>
 						</form>
-                        
+                            <div class="container-fluid text-center">
+                            <nav aria-label="Resultados de Navegación">
+                                <div class="pagination_wrapper d-inline-block">
+                                    {{ $files->links('vendor.pagination.bootstrap-4') }}
+                                </div>
+                            </nav>
+                        </div>
 					</div>
 
 				</div> <!-- row -->

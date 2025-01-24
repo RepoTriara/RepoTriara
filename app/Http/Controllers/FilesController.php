@@ -750,84 +750,70 @@ else {
 
 
     // codigto de la vista manage-files
-    public function manageFiles(Request $request)
-    {
-        // Obtener parámetros opcionales de la query string
-        $search = $request->query('search');
-        $category = $request->query('category', 0);
-        $sorts = $request->query('sort', 'timestamp');
-        $direction = $request->query('direction', 'asc');
-        $orderby = $request->input('orderby', 'filename');
-        $order = $request->input('order', 'asc');
+   public function manageFiles(Request $request)
+{
+    // Obtener parámetros opcionales de la query string
+    $search = $request->query('search');
+    $category = $request->query('category', 0);
+    $sorts = $request->query('sort', 'timestamp');
+    $direction = $request->query('direction', 'asc');
+    $orderby = $request->input('orderby', 'filename');
+    $order = $request->input('order', 'asc');
 
+    // Definir título de la página
+    $pageTitle = __('Administración del Sistema');
 
-        // Definir título de la página
-        $pageTitle = __('Administración del Sistema');
+    // Obtener el ID del cliente autenticado
+    $clientId = auth()->user()->id; // Cambia esto según tu implementación de autenticación
 
-        // Obtener el ID del cliente autenticado
-        $clientId = auth()->user()->id; // Cambia esto según tu implementación de autenticación
+    // Construir la consulta para los archivos propios del cliente
+    $filesQuery = TblFile::whereHas('fileRelations', function ($subQuery) use ($clientId) {
+        $subQuery->where('client_id', $clientId); // Archivos propios del cliente
+    });
 
-        // Construir la consulta para los archivos propios del cliente
-        $filesQuery = TblFile::whereHas('fileRelations', function ($subQuery) use ($clientId) {
-            $subQuery->where('client_id', $clientId); // Archivos propios del cliente
+    // Filtrar por búsqueda (título o descripción)
+    if ($search) {
+        $filesQuery->where(function ($query) use ($search) {
+            $query->where('filename', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%')
+                ->orWhere('timestamp', 'like', '%' . $search . '%');
         });
-
-
-        // Filtrar por búsqueda (título o descripción)
-        if ($search) {
-            $filesQuery->where(function ($query) use ($search) {
-                $query->where('filename', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%')
-                    ->orWhere('timestamp', 'like', '%' . $search . '%');
-
-
-            });
-        }
-
-
-        $filesQuery->orderBy($sorts, $direction);
-
-
-
-
-        // Obtener el total de archivos antes de la paginación
-        $filteredTotal = $filesQuery->count();
-
-        // Obtener los archivos paginados
-        $files = $filesQuery->paginate(10);
-        // Obtener los archivos paginados
-        $files = $filesQuery->get(); // Traemos todos los archivos sin paginar primero
-
-        foreach ($files as $file) {
-            // Asignar el nombre del archivo almacenado a partir de la columna 'url'
-            $file->stored_filename = $file->url;
-
-            // Ruta del archivo en la carpeta de almacenamiento privado
-            $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
-            $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename); // Ruta de archivos públicos
-
-            // Convertir las rutas a formatos absolutos
-            $realPrivatePath = realpath($privateFilePath);
-            $realPublicPath = realpath($publicFilePath);
-
-            // Verificar primero en privado, luego en público
-            if ($realPrivatePath && file_exists($realPrivatePath)) {
-
-                // Obtener y formatear tamaño
-                $file->size = $this->getFormattedFileSize($realPrivatePath);
-            } elseif ($realPublicPath && file_exists($realPublicPath)) {
-
-                // Obtener y formatear tamaño
-                $file->size = $this->getFormattedFileSize($realPublicPath);
-            } else {
-                $file->size = '--';
-            }
-
-        }
-
-
-        return view('files.manage-files', compact('pageTitle', 'files', 'filteredTotal'));
     }
+
+    $filesQuery->orderBy($sorts, $direction);
+
+    // Obtener el total de archivos antes de la paginación
+    $filteredTotal = $filesQuery->count();
+
+    // Obtener los archivos paginados
+    $files = $filesQuery->paginate(10);
+
+    foreach ($files as $file) {
+        // Asignar el nombre del archivo almacenado a partir de la columna 'url'
+        $file->stored_filename = $file->url;
+
+        // Ruta del archivo en la carpeta de almacenamiento privado
+        $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
+        $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename); // Ruta de archivos públicos
+
+        // Convertir las rutas a formatos absolutos
+        $realPrivatePath = realpath($privateFilePath);
+        $realPublicPath = realpath($publicFilePath);
+
+        // Verificar primero en privado, luego en público
+        if ($realPrivatePath && file_exists($realPrivatePath)) {
+            // Obtener y formatear tamaño
+            $file->size = $this->getFormattedFileSize($realPrivatePath);
+        } elseif ($realPublicPath && file_exists($realPublicPath)) {
+            // Obtener y formatear tamaño
+            $file->size = $this->getFormattedFileSize($realPublicPath);
+        } else {
+            $file->size = '--';
+        }
+    }
+
+    return view('files.manage-files', compact('pageTitle', 'files', 'filteredTotal'));
+}
 
     private function getFormattedFileSize($filePath)
     {
