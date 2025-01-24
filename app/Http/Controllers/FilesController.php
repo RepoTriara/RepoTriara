@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\TblFile;
 use App\Models\TblFileRelation;
-use Illuminate\Support\Facades\Log;
 use App\Models\Groups;
 use App\Models\User;
 use App\Models\TblCategory;
@@ -80,12 +79,10 @@ if ($clientId || $groupId || $categoryId) {
 
             // Verificar primero en privado, luego en público
             if ($realPrivatePath && file_exists($realPrivatePath)) {
-                \Log::info("Archivo encontrado en privado: " . $realPrivatePath);
 
                 // Obtener y formatear tamaño
                 $file->size = $this->getFormattedFileSize($realPrivatePath);
             } elseif ($realPublicPath && file_exists($realPublicPath)) {
-                \Log::info("Archivo encontrado en público: " . $realPublicPath);
 
                 // Obtener y formatear tamaño
                 $file->size = $this->getFormattedFileSize($realPublicPath);
@@ -204,7 +201,6 @@ else {
 
     public function bulkAction(Request $request)
     {
-        Log::info('Datos recibidos en bulkAction:', $request->all());
         $action = $request->input('action');
         $fileIds = $request->input('batch');
 
@@ -431,7 +427,6 @@ else {
     public function store(Request $request)
     {
         try {
-            Log::info('Datos recibidos en el controlador store:', $request->all());
 
             $rules = [
                 'file' => 'required|array',
@@ -472,7 +467,6 @@ else {
                 $tempFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileData['file'];
 
                 if (!file_exists($tempFilePath)) {
-                    Log::warning('Archivo no encontrado en la carpeta temporal:', ['file' => $tempFilePath]);
                     continue;
                 }
 
@@ -550,7 +544,6 @@ else {
 
             return redirect()->route('files.upload_process.view');
         } catch (\Exception $e) {
-            Log::error('Error al guardar los archivos:', ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Error al guardar los archivos: ' . $e->getMessage()]);
         }
     }
@@ -612,7 +605,6 @@ else {
 
             return view('files.upload_process', compact('files', 'savedFiles', 'archivedFiles', 'users', 'categories'));
         } catch (\Exception $e) {
-            Log::error('Error al cargar la vista de proceso de carga:', ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Error al cargar los archivos para procesar.']);
         }
     }
@@ -687,7 +679,6 @@ else {
 
             // Verificar primero en privado, luego en público
             if ($realPrivatePath && file_exists($realPrivatePath)) {
-                \Log::info("Archivo encontrado en privado: " . $realPrivatePath);
 
                 // Obtener y formatear tamaño
                 $file->size = $this->getFormattedFileSize($realPrivatePath);
@@ -842,7 +833,6 @@ else {
     {
         $fileSize = filesize($filePath);
         if ($fileSize === false) {
-            \Log::info("Error al obtener el tamaño del archivo: " . $filePath);
             return 'Error al obtener tamaño';
         }
 
@@ -895,7 +885,7 @@ else {
 
         $zip = new ZipArchive();
         $zipFileName = 'archivos_comprimidos.zip';
-        $zipFilePath = storage_path('app/private/' . $zipFileName);
+        $zipFilePath = storage_path('app/private/uploads/' . $zipFileName);
 
         // Intentar crear el archivo ZIP
         if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
