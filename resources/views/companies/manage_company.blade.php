@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Administraci&oacute;n de Grupos &raquo; Repositorio</title>
+    <title>Administraci&oacute;n de Compañias &raquo; Repositorio</title>
     <link rel="shortcut icon" type="image/x-icon" href="https://repo.triara.co/repositorio/favicon.ico" />
     <link rel="icon" type="image/png" href="https://repo.triara.co/repositorio/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="https://repo.triara.co/repositorio/img/favicon/favicon-152.png" sizes="152x152">
@@ -43,7 +43,7 @@
     <div class="row">
         <div id="section_title">
             <div class="col-xs-12">
-                <h2>{{ $pageTitle ?? 'Administración de Grupos' }}</h2>
+                <h2>{{ $pageTitle ?? 'Administración de Compañias' }}</h2>
 
                 @if (session('success'))
                     <div class="alert alert-success">
@@ -90,7 +90,7 @@
 
     <!-- Mostrar el total de grupos -->
     <div class="form_actions_count">
-        <p class="form_count_total">Total de grupos: <span>{{ $groups->total() }}</span></p>
+        <p class="form_count_total">Total de Compañias: <span>{{ $groups->total() }}</span></p>
     </div>
 
     <div class="clear"></div>
@@ -102,7 +102,7 @@
                 <th class="td_checkbox"><input type="checkbox" id="select_all"></th>
                 <th class="{{ request('sort') === 'name' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">
                     <a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
-                        Nombre del grupo
+                        Nombre de la compañia
                         <i class="fa fa-sort{{ request('sort') === 'name' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                     </a>
                 </th>

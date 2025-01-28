@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Editar Grupo de Clientes &raquo; Repositorio</title>
+    <title>Editar Compáñia de Clientes &raquo; Repositorio</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
@@ -28,7 +28,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Editar Grupo de Clientes</h2>
+                            <h2>Editar Compañia de Clientes</h2>
                         </div>
                     </div>
                 </div>

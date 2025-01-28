@@ -134,14 +134,12 @@
                                                             <label>Asigne este archivo a:</label>
                                                             <select multiple="multiple" name="assignments[]" class="form-control chosen-select" data-placeholder="Seleccione una o más opciones. Escriba para buscar">
                                                                 <optgroup label="Clientes">
-                                                                    @foreach ($clients as $client)
-                                                                        <option value="client_{{ $client->id }}" {{ in_array($client->id, $selectedAssignments) ? 'selected' : '' }}>
+                                                                    @foreach($clients as $client)
+                                                                        <option value="user_{{ $client->id }}" {{ in_array($client->id, $selectedAssignments) ? 'selected' : '' }}>
                                                                             {{ $client->name }}
                                                                         </option>
                                                                     @endforeach
-                                                                </optgroup>
-                                                                <optgroup label="Grupos">
-                                                                    @foreach ($groups as $group)
+                                                                    @foreach($groups as $group)
                                                                         <option value="group_{{ $group->id }}" {{ in_array($group->id, $selectedGroups) ? 'selected' : '' }}>
                                                                             {{ $group->name }}
                                                                         </option>
