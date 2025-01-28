@@ -92,13 +92,11 @@
                                                 
                                             </div>
 
-                                            <div class="after_form_buttons">
-                                                <a href="{{ route('manage-files') }}" name="cancel"
-                                                    class="btn btn-default btn-wide">Cancelar</a>
-                                                        <input type="hidden" name="viewType" value="editBasic">
-                                                <button type="submit" name="submit"
-                                                    class="btn btn-wide btn-primary">Guardar</button>
-                                            </div>
+                                        <div class="after_form_buttons">
+                                            <a href="{{ route('manage-files') }}" name="cancel" class="btn btn-default btn-wide">Cancelar</a>
+                                            <input type="hidden" name="viewType" value="editBasic">
+                                            <button type="submit" id="guardar" name="submit" class="btn btn-wide btn-primary">Guardar</button>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -135,6 +133,42 @@
             <script src="{{asset('includes/js/bootstrap-datepicker/js/bootstrap-datepicker.js')}}"></script>
             <script src="{{asset('includes/js/chosen/chosen.jquery.min.js')}}"></script>
             <script src="{{asset('includes/js/ckeditor/ckeditor.js')}}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+           <script>
+    document.getElementById('guardar').addEventListener('click', function (event) {
+        event.preventDefault(); // Evita el envío inmediato del formulario
+        // Envía el formulario utilizando AJAX (Fetch API)
+        fetch(event.target.closest('form').action, {
+            method: 'POST',
+            body: new FormData(event.target.closest('form'))
+        }).then(response => {
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Guardado!',
+                    text: 'Los cambios se han guardado correctamente.',
+                    icon: 'success',
+                    timer: 2000, // El mensaje se quitará automáticamente después de 2 segundos
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al guardar los cambios.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }).catch(error => {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al guardar los cambios.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    });
+</script>
+
         </div>
     </div>
 </body>

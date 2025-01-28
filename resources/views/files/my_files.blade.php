@@ -79,23 +79,25 @@
                                             </button>
                                         </form>
 
-                                        <form action="{{ route('my_files') }}" name="files_filters" method="get"
-                                            class="form-inline form_filters">
-                                            <div class="form-group group_float">
-                                                <select name="categories[]" class="txtfield form-control">
-                                                    <option value="all" {{ in_array('all', request()->input('categories', [])) ? 'selected' : '' }}>
-                                                        All categories
+                                    <!-- Formulario de filtro de categorías -->
+                                    <form action="{{ route('my_files') }}" name="files_filters" method="get" class="form-inline form_filters">
+                                        <!-- Campo oculto para mantener el parámetro cliente_id -->
+                                        <input type="hidden" name="cliente_id" value="{{ request('cliente_id', auth()->user()->id) }}">
+                                        <div class="form-group group_float">
+                                            <select name="categories[]" class="txtfield form-control">
+                                                <option value="all" {{ in_array('all', request()->input('categories', [])) ? 'selected' : '' }}>
+                                                    All categories
+                                                </option>
+                                                @foreach ($categories as $category)
+                                                    <option value="{{ $category->id }}" {{ in_array($category->id, request()->input('categories', [])) ? 'selected' : '' }}>
+                                                        {{ $category->name }}
                                                     </option>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{ $category->id }}" {{ in_array($category->id, request()->input('categories', [])) ? 'selected' : '' }}>
-                                                            {{ $category->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <button type="submit" id="btn_proceed_filter_files"
-                                                class="btn btn-sm btn-default">Filtrar</button>
-                                        </form>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <button type="submit" id="btn_proceed_filter_files" class="btn btn-sm btn-default">Filtrar</button>
+                                    </form>
+
 
 
 
@@ -212,120 +214,140 @@
                                         </tbody>
                                     </table>
 
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-xs-12 text-center">
-                                                <nav aria-label="Resultados de Navegación">
-                                                    <!-- Renderizar el paginador -->
-                                                    {{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->appends(request()->query())->links('pagination::bootstrap-4') : '' }}
-                                                </nav>
-                                                <div style="margin-top: 50px;"></div>
+                                    <div class="container-fluid text-center">
+                                        <nav aria-label="Resultados de Navegación">
+                                            <div class="pagination_wrapper d-inline-block">
+                                                <!-- Renderizar el paginador -->
+                                                {{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->links('vendor.pagination.bootstrap-4') : '' }}
+                                            </div>
+                                        </nav>
 
+                                        <div class="d-inline-block" style="margin-top: 10px;">
+                                            <form class="form-inline d-inline-block" id="go_to_page_form">
                                                 <div class="form-group">
-                                                    <label class="control-label hidden-xs hidden-sm">Valla a:</label>
-                                                    <form method="GET" action="{{ request()->url() }}"
-                                                        id="go_to_page_form">
-                                                        <!-- Enviar el número de página -->
-                                                        <input type="text" class="form-control" name="page"
-                                                            id="go_to_page"
-                                                            value="{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->currentPage() : 1 }}" />
-
-                                                    </form>
+                                                    <label class="control-label hidden-xs hidden-sm">Vaya a:</label>
+                                                    <input type="number" class="form-control" style="width: auto;"
+                                                        name="page" id="go_to_page"
+                                                        value="{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->currentPage() : 1 }}"
+                                                        min="1"
+                                                        max="{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->lastPage() : 1 }}" />
                                                 </div>
-
                                                 <div class="form-group">
-                                                    <button type="submit" class="form-control" form="go_to_page_form">
-                                                        <span aria-hidden="true" class="glyphicon glyphicon-ok"></span>
+                                                    <button type="button" class="btn btn-default" onclick="goToPage()">
+                                                        <span class="glyphicon glyphicon-ok"></span>
                                                     </button>
                                                 </div>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
 
+
+
                                 </form>
+                            </div>
 
-                            </div> <!-- right_column -->
-                        </div> <!-- wrapper -->
-
-                        <footer>
-                            <div id="footer">
-                                Claro Colombia </div>
-                        </footer>
-
+                        </div>
                     </div>
-                    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-                    <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
-                    <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
-                    <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
-                    <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
-                    <script src="{{ asset('includes/js/main.js') }}"></script>
-                    <script src="{{ asset('includes/js/js.functions.php') }}"></script>
-                    <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
-                    <script>
-                        // Mostrar mensaje de espera al enviar el formulario
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const downloadForm = document.forms['files_list'];
-                            const delay = 3000; // Tiempo de espera (en milisegundos)
+                </div>
 
-                            downloadForm.onsubmit = function (e) {
-                                const action = document.getElementById('action').value;
+                </form>
 
-                                if (action === 'zip') {
-                                    e.preventDefault(); // Evitar envío inmediato
+            </div> <!-- right_column -->
+        </div> <!-- wrapper -->
 
-                                    // Mostrar mensaje de carga con SweetAlert
-                                    Swal.fire({
-                                        title: 'Por favor, espera',
-                                        html: `
+        <footer>
+            <div id="footer">
+                Claro Colombia </div>
+        </footer>
+
+    </div>
+    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
+    <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
+    <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
+    <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
+    <script src="{{ asset('includes/js/main.js') }}"></script>
+    <script src="{{ asset('includes/js/js.functions.php') }}"></script>
+    <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
+    <script>
+        // Mostrar mensaje de espera al enviar el formulario
+        document.addEventListener('DOMContentLoaded', function () {
+            const downloadForm = document.forms['files_list'];
+            const delay = 3000; // Tiempo de espera (en milisegundos)
+
+            downloadForm.onsubmit = function (e) {
+                const action = document.getElementById('action').value;
+
+                if (action === 'zip') {
+                    e.preventDefault(); // Evitar envío inmediato
+
+                    // Mostrar mensaje de carga con SweetAlert
+                    Swal.fire({
+                        title: 'Por favor, espera',
+                        html: `
                         <p>Estamos procesando tu descarga comprimida...</p>
                         <div style="margin-top: 10px;">
                             <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando..." width="50">
                         </div>
                     `,
-                                        allowOutsideClick: false,
-                                        showConfirmButton: false
-                                    });
+                        allowOutsideClick: false,
+                        showConfirmButton: false
+                    });
 
-                                    // Configurar el temporizador para cerrar automáticamente el mensaje y enviar el formulario
-                                    const swalTimer = setTimeout(() => {
-                                        Swal.close(); // Cerrar el mensaje
-                                        e.target.submit(); // Enviar el formulario
-                                    }, delay); // Tiempo sincronizado
-                                }
-                            };
+                    // Configurar el temporizador para cerrar automáticamente el mensaje y enviar el formulario
+                    const swalTimer = setTimeout(() => {
+                        Swal.close(); // Cerrar el mensaje
+                        e.target.submit(); // Enviar el formulario
+                    }, delay); // Tiempo sincronizado
+                }
+            };
 
-                            // Verificar si hay un mensaje de error o éxito (esto dependerá de cómo manejes la respuesta en el backend)
-                            @if (session('success'))
-                                Swal.fire({
-                                    title: '¡Éxito!',
-                                    text: '{{ session('success') }}',
-                                    icon: 'success',
-                                    confirmButtonText: 'Aceptar'
-                                });
-                            @elseif (session('error'))
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: '{{ session('error') }}',
-                                    icon: 'error',
-                                    confirmButtonText: 'Aceptar'
-                                });
-                            @endif
+            // Verificar si hay un mensaje de error o éxito (esto dependerá de cómo manejes la respuesta en el backend)
+            @if (session('success'))
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
+            @elseif (session('error'))
+                Swal.fire({
+                    title: 'Error',
+                    text: '{{ session('error') }}',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            @endif
 
-                            // Agregar funcionalidad para seleccionar todos los checkboxes
-                            document.getElementById('select_all').addEventListener('click', function () {
-                                // Obtener el estado del checkbox principal
-                                var isChecked = this.checked;
+            // Agregar funcionalidad para seleccionar todos los checkboxes
+            document.getElementById('select_all').addEventListener('click', function () {
+                // Obtener el estado del checkbox principal
+                var isChecked = this.checked;
 
-                                // Seleccionar todos los checkboxes que están en el grupo 'file_ids[]'
-                                var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
+                // Seleccionar todos los checkboxes que están en el grupo 'file_ids[]'
+                var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
 
-                                // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
-                                checkboxes.forEach(function (checkbox) {
-                                    checkbox.checked = isChecked;
-                                });
-                            });
-                        });
-                    </script>
+                // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = isChecked;
+                });
+            });
+        });
+        function goToPage() {
+            const form = document.getElementById('go_to_page_form');
+            const page = document.getElementById('go_to_page').value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            window.location.href = url.toString();
+        }
+         function goToPageClientes() {
+                const form = document.getElementById('go_to_page_form_clientes');
+                const page = document.getElementById('go_to_page_clientes').value;
+                const url = new URL(window.location.href);
+                url.searchParams.set('page', page);
+                window.location.href = url.toString();
+            }
+    </script>
 
 
 

@@ -185,16 +185,37 @@
                             </table>
 
                             <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-xs-12 text-center">
-                                        <nav aria-label="Resultados de Navegación">
-                                            <div class="pagination_wrapper text-center">
-                                                {{ $clientes->links('pagination::bootstrap-4') }}
-                                            </div>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <nav aria-label="Resultados de Navegación">
+                <div class="pagination_wrapper text-center">
+                    {{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->links('pagination::bootstrap-4') : '' }}
+                </div>
+            </nav>
+            <div style="margin-top: 50px;"></div>
+
+            <div class="d-inline-block" style="margin-top: 10px;">
+                <form class="form-inline d-inline-block" id="go_to_page_form_clientes">
+                    <div class="form-group">
+                        <label class="control-label hidden-xs hidden-sm">Vaya a:</label>
+                        <input type="number" class="form-control" style="width: 4em !important;" name="page" id="go_to_page_clientes"
+                            value="{{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->currentPage() : 1 }}"
+                            min="1"
+                            max="{{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->lastPage() : 1 }}" />
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default" onclick="goToPageClientes()">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
                         </form>
                     </div>
                 </div>
@@ -227,6 +248,13 @@
                         checkbox.checked = isChecked;
                     });
                 });
+
+                function goToPageClientes() {
+                  const page = document.getElementById('go_to_page_clientes').value;
+                  const url = new URL(window.location.href);
+                  url.searchParams.set('page', page);
+                 window.location.href = url.toString();
+               }
             </script>
 
         </div> <!-- main_content -->
