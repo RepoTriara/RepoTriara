@@ -129,7 +129,7 @@
                                                     required>
                                                     <optgroup label="Clientes">
                                                         @foreach ($users as $user)
-                                                        <option value="{{ $user->id }}" {{ in_array($user->id, $file->assignments->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                                        <option value="user_{{ $user->id }}" {{ in_array($user->id, $file->assignments->pluck('id')->toArray()) ? 'selected' : '' }}>
                                                             {{ $user->user }}
                                                         </option>
                                                         @endforeach
@@ -256,7 +256,12 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('files.edit', $savedFile->id) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a>
+                                            @if(Auth::user()->level == 0)
+                                                <a href="{{ route('files.editBasic', $savedFile->id) }}" class="btn btn-sm btn-primary"><i
+                                                    class="fa fa-pencil"></i></a>
+                                            @else
+                                                <a href="{{ route('files.edit', $savedFile->id) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Adicionar grupo de clientes &raquo; Repositorio</title>
+    <title>Adicionar compañias de clientes &raquo; Repositorio</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
@@ -34,7 +34,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Adicionar grupo de clientes</h2>
+                            <h2>Adicionar compañia de clientes</h2>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                                         <div class="form-group">
     <label for="add_group_form_name" class="col-sm-4 control-label">Nombre de la compañía</label>
     <div class="col-sm-8">
-        <input type="text" name="add_group_form_name" id="add_group_form_name" class="form-control required" 
+        <input type="text" name="add_group_form_name" id="add_group_form_name" class="form-control required"
                value="{{ old('add_group_form_name') }}" />
         @error('add_group_form_name')
             <span class="text-danger">{{ $message }}</span>

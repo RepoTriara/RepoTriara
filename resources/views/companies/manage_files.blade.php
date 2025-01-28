@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Administrar archivos para el Grupo {{ $group->name }} &raquo; Repositorio</title>
+    <title>Administrar archivos para la compañia {{ $group->name }} &raquo; Repositorio</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="https://repo.triara.co/repositorio/favicon.ico" />
     <link rel="icon" type="image/png" href="https://repo.triara.co/repositorio/img/favicon/favicon-32.png" sizes="32x32">
@@ -247,7 +247,7 @@
         <script src="{{asset('includes/js/js.functions.php')}}"></script>
         <script src="{{asset('includes/js/footable/footable.min.js')}}"></script>
     </div>
-    </div> 
+    </div>
     <script>
         document.getElementById('select_all').addEventListener('click', function() {
             let isChecked = this.checked;
@@ -382,7 +382,7 @@
 
 
 
-    
+
 </body>
 
 </html>
