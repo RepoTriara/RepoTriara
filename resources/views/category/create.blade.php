@@ -6,14 +6,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Crear Nueva Categoría &raquo; Repositorio</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('favicon.ico')}}" />
-    <link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png" sizes="32x32')}}">
-    <link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png" sizes="152x152')}}">
-    <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/main.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/mobile.min.css')}}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png" sizes="32x32') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png" sizes="152x152') }}">
+    <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 </head>
 
 <body class="category-create logged-in logged-as-admin menu_hidden backend">
@@ -33,20 +35,20 @@
 
                 <!-- Mostrar errores de validación -->
                 @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
 
                 <!-- Mostrar mensaje de éxito -->
-                @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
                 @endif
 
                 <div class="row">
@@ -61,9 +63,11 @@
                                     <div class="form-group">
                                         <label for="name" class="col-sm-4 control-label">Nombre</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="name" id="name" class="form-control required" placeholder="Nombre de la categoría" value="{{ old('name') }}" />
+                                            <input type="text" name="name" id="name"
+                                                class="form-control required" placeholder="Nombre de la categoría"
+                                                value="{{ old('name') }}" />
                                             @error('name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -74,11 +78,13 @@
                                             <select name="parent" id="parent" class="form-control">
                                                 <option value="">Seleccione una categoría padre</option>
                                                 @foreach ($categories as $category)
-                                                    <option value="{{ $category->id }}" {{ old('parent') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                                    <option value="{{ $category->id }}"
+                                                        {{ old('parent') == $category->id ? 'selected' : '' }}>
+                                                        {{ $category->name }}</option>
                                                 @endforeach
                                             </select>
                                             @error('parent')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -88,7 +94,7 @@
                                         <div class="col-sm-8">
                                             <textarea name="description" id="description" class="form-control" rows="3">{{ old('description') }}</textarea>
                                             @error('description')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -96,7 +102,8 @@
 
 
                                     <div class="inside_form_buttons">
-                                        <button type="submit" name="submit" class="btn btn-wide btn-primary">Guardar Categoría</button>
+                                        <button type="submit" name="submit" class="btn btn-wide btn-primary">Guardar
+                                            Categoría</button>
                                     </div>
                                 </form>
 
@@ -115,13 +122,13 @@
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 
-    <script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
-    <script src="{{asset('includes/js/jquery.validations.js')}}"></script>
-    <script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>
-    <script src="{{asset('includes/js/jen/jen.js')}}"></script>
-    <script src="{{asset('includes/js/js.cookie.js')}}"></script>
-    <script src="{{asset('includes/js/main.js')}}"></script>
-    <script src="{{asset('includes/js/js.functions.php')}}"></script>
+    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
+    <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
+    <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
+    <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
+    <script src="{{ asset('includes/js/main.js') }}"></script>
+    <script src="{{ asset('includes/js/js.functions.php') }}"></script>
 </body>
 
 </html>

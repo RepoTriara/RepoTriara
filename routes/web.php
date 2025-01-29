@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -64,9 +65,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/files/download-compressed', [FilesController::class, 'downloadCompressed'])->name('files.download-compressed');
     Route::get('/download', [FilesController::class, 'download'])->name('download.file');
     Route::get('/files/{fileId}/edit-basic', [FilesController::class, 'editBasic'])->name('files.editBasic');
-
-
-
 });
 
 // Rutas para la gestión de empresas
@@ -127,7 +125,7 @@ Route::middleware('auth')->group(function () {
 
 // Rutas para la gestión de categorías
 Route::middleware('auth')->group(function () {
-    Route::prefix('categories')->group(function() {
+    Route::prefix('categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
         Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
         Route::post('/', [CategoryController::class, 'store'])->name('categories.store');
@@ -141,4 +139,4 @@ Route::middleware('auth')->group(function () {
 });
 
 // Incluir las rutas de autenticación
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

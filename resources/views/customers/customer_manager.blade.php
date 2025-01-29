@@ -12,12 +12,15 @@
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
 
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/footable.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('includes/js/footable/css/footable.core.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('includes/js/footable/css/footable.core.css') }}" />
 </head>
 
 <body class="clients logged-in logged-as-admin menu_hidden backend">
@@ -36,42 +39,52 @@
 
                 <div class="row">
                     @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
                     @if (session('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
+                        <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
                     <div class="col-xs-12">
                         <div class="form_actions_left">
                             <div class="form_actions_limit_results">
                                 <form action="{{ route('customer_manager') }}" method="get" class="form-inline">
                                     <div class="form-group group_float">
-                                        <input type="text" name="search" id="search" value="{{ request('search') }}" class="txtfield form_actions_search_box form-control" />
+                                        <input type="text" name="search" id="search"
+                                            value="{{ request('search') }}"
+                                            class="txtfield form_actions_search_box form-control" />
                                     </div>
-                                    <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-default">Búsqueda</button>
+                                    <button type="submit" id="btn_proceed_search"
+                                        class="btn btn-sm btn-default">Búsqueda</button>
                                 </form>
 
                                 <form action="{{ route('customer_manager') }}" method="get" class="form-inline">
                                     <div class="form-group group_float">
                                         <select name="active" id="active" class="txtfield form-control">
-                                            <option value="2" {{ request('active') == '2' ? 'selected' : '' }}>Todo los estados</option>
-                                            <option value="1" {{ request('active') == '1' ? 'selected' : '' }}>Activo</option>
-                                            <option value="0" {{ request('active') == '0' ? 'selected' : '' }}>Inactivo</option>
+                                            <option value="2" {{ request('active') == '2' ? 'selected' : '' }}>
+                                                Todo los estados</option>
+                                            <option value="1" {{ request('active') == '1' ? 'selected' : '' }}>
+                                                Activo</option>
+                                            <option value="0" {{ request('active') == '0' ? 'selected' : '' }}>
+                                                Inactivo</option>
                                         </select>
                                     </div>
-                                    <button type="submit" id="btn_proceed_filter_clients" class="btn btn-sm btn-default">Filtrar</button>
+                                    <button type="submit" id="btn_proceed_filter_clients"
+                                        class="btn btn-sm btn-default">Filtrar</button>
                                 </form>
                             </div>
                         </div>
 
-                        <form action="{{ route('customers.bulk_Action') }}" name="clients_list" method="post" class="form-inline">
+                        <form action="{{ route('customers.bulk_Action') }}" name="clients_list" method="post"
+                            class="form-inline">
                             @csrf
                             <div class="form_actions_right">
                                 <div class="form_actions">
                                     <div class="form_actions_submit">
                                         <div class="form-group group_float">
-                                            <label class="control-label hidden-xs hidden-sm"><i class="glyphicon glyphicon-check"></i> Acciones de cliente seleccionadas:</label>
+                                            <label class="control-label hidden-xs hidden-sm"><i
+                                                    class="glyphicon glyphicon-check"></i> Acciones de cliente
+                                                seleccionadas:</label>
                                             <select name="action" id="action" class="txtfield form-control">
                                                 <option value="none">Seleccione la acción</option>
                                                 <option value="activate">Activar</option>
@@ -79,7 +92,8 @@
                                                 <option value="delete">Eliminar</option>
                                             </select>
                                         </div>
-                                        <button type="submit" id="do_action" class="btn btn-sm btn-default">Proceder</button>
+                                        <button type="submit" id="do_action"
+                                            class="btn btn-sm btn-default">Proceder</button>
                                     </div>
                                 </div>
                             </div>
@@ -93,19 +107,28 @@
                             <table id="users_tbl" class="footable table default footable-loaded ">
                                 <thead>
                                     <tr>
-                                        <th><input type="checkbox" id="select_all" class="footable-sort-indicator"/></th>
+                                        <th><input type="checkbox" id="select_all" class="footable-sort-indicator" />
+                                        </th>
 
-                                        <th class="{{ request('orderby') === 'name' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
-                                            <a href="{{ route('customer_manager', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') ==='asc' ? 'desc' : 'asc']) }}">Nombre Completo</a>
+                                        <th class="{{ request('orderby') === 'name' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Nombre
+                                                Completo</a>
                                             <span class="footable-sort-indicator"></span>
                                         </th>
-                                        
-                                        <th class="{{ request('orderby') === 'user' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
-                                            <a href="{{ route('customer_manager', ['orderby' => 'user', 'order' => request('orderby') === 'user' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Ingresaraquo nombre de usuario</a>
+
+                                        <th class="{{ request('orderby') === 'user' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'user', 'order' => request('orderby') === 'user' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Ingresaraquo
+                                                nombre de usuario</a>
                                             <span class="footable-sort-indicator"></span>
                                         </th>
-                                        <th class="{{ request('orderby') === 'email' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
-                                            <a href="{{ route('customer_manager', ['orderby' => 'email', 'order' => request('orderby') === 'email' && request('order') === 'asc' ? 'desc' : 'asc']) }}">E-mail</a>
+                                        <th class="{{ request('orderby') === 'email' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'email', 'order' => request('orderby') === 'email' && request('order') === 'asc' ? 'desc' : 'asc']) }}">E-mail</a>
                                             <span class="footable-sort-indicator"></span>
                                         </th>
 
@@ -115,20 +138,28 @@
 
                                         <th data-hide="phone">Archivos Grupos</th>
 
-                                        <th class="{{ request('orderby') === 'active' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
-                                            <a href="{{ route('customer_manager', ['orderby' => 'active', 'order' => request('orderby') === 'active' && request('order') === 'asc' ? 'desc' : 'asc']) }}"> Estado</a>
+                                        <th class="{{ request('orderby') === 'active' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'active', 'order' => request('orderby') === 'active' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
+                                                Estado</a>
                                             <span class="footable-sort-indicator"></span>
 
                                         </th>
 
                                         <th data-hide="phone">Grupos Activos</th>
                                         <th data-hide="phone,tablet">Notificación</th>
-                                        <th class="{{ request('orderby') === 'max_file_size' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
-                                            <a href="{{ route('customer_manager', ['orderby' => 'max_file_size', 'order' => request('orderby') === 'max_file_size' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Max. tamaño permitido</a>
+                                        <th class="{{ request('orderby') === 'max_file_size' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'max_file_size', 'order' => request('orderby') === 'max_file_size' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Max.
+                                                tamaño permitido</a>
                                             <span class="footable-sort-indicator"></span>
                                         </th>
-                                        <th class="{{ request('orderby') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}" data-hide="phone,tablet">                                            
-                                            <a href="{{ route('customer_manager', ['orderby' => 'timestamp', 'order' => request('orderby') === 'timestamp' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Adicionado</a>
+                                        <th class="{{ request('orderby') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'timestamp', 'order' => request('orderby') === 'timestamp' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Adicionado</a>
                                             <span class="footable-sort-indicator"></span>
                                         </th>
                                         <th>Ver</th>
@@ -137,82 +168,99 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($clientes as $client)
-                                                    <tr>
-                                                        <td><input type="checkbox" name="batch[]" value="{{ $client->id }}" /></td>
-                                                        <td>{{ $client->name }}</td>
-                                                        <td>{{ $client->user }}</td>
-                                                        <td>{{ $client->email }}</td>
-                                                        <td>{{ $client->uploads_count }}</td>
-                                                        <td>{{ $client->own_files_count }}</td>
-                                                         <td>{{ $client->group_files_count}}</td>
-                                                        <td><span class="label {{ $client->active ? 'label-success' : 'label-danger' }}">{{ $client->active ? 'Activo' : 'Inactivo' }}</span></td>
-                                                        <td>
-                                                            @if ($client->group_count > 0)
-                                                                 {{ $client->group_count }}
-                                                                 @endif
-                                                            </td>
-                                                        <td>{{ $client->notification_status }}</td>  
-                                                        <td>@if($client->max_file_size == 0)Defecto @else{{ $client->max_file_size }} MB @endif</td>
-                                                        <td>{{ $client->timestamp ? \Carbon\Carbon::parse($client->timestamp)->format('Y/m/d') : 'No disponible' }}</td>
-                                                        
-                                                        <td>
-                                                        @if ($client->own_files_count > 0 || $client->group_files_count > 0)
-                                                          <a href="{{ route('file_manager', ['client_id' => $client->id]) }}" class="btn btn-primary">{{ __('Archivos') }}</a>
-                                                        @else
-                                                          <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">{{ __('Archivos') }}</a>
-                                                        @endif
-                                                             
-                                                        @if ($client->group_count > 0)
-                                                       <a href="{{ route('manage_company', ['member' => $client->id]) }}" class="btn btn-primary">{{ __('Grupos') }}</a>
-                                                       @else
-                                                       <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">{{ __('Grupos') }}</a>
-                                                       @endif
+                                        <tr>
+                                            <td><input type="checkbox" name="batch[]" value="{{ $client->id }}" />
+                                            </td>
+                                            <td>{{ $client->name }}</td>
+                                            <td>{{ $client->user }}</td>
+                                            <td>{{ $client->email }}</td>
+                                            <td>{{ $client->uploads_count }}</td>
+                                            <td>{{ $client->own_files_count }}</td>
+                                            <td>{{ $client->group_files_count }}</td>
+                                            <td><span
+                                                    class="label {{ $client->active ? 'label-success' : 'label-danger' }}">{{ $client->active ? 'Activo' : 'Inactivo' }}</span>
+                                            </td>
+                                            <td>
+                                                @if ($client->group_count > 0)
+                                                    {{ $client->group_count }}
+                                                @endif
+                                            </td>
+                                            <td>{{ $client->notification_status }}</td>
+                                            <td>
+                                                @if ($client->max_file_size == 0)
+                                                    Defecto @else{{ $client->max_file_size }} MB
+                                                @endif
+                                            </td>
+                                            <td>{{ $client->timestamp ? \Carbon\Carbon::parse($client->timestamp)->format('Y/m/d') : 'No disponible' }}
+                                            </td>
 
-                                                         <a href="{{ route('my_files', ['cliente_id' => $client->id]) }}" class="btn btn-primary">Como cliente</a>										                
-                                                        </td>
+                                            <td>
+                                                @if ($client->own_files_count > 0 || $client->group_files_count > 0)
+                                                    <a href="{{ route('file_manager', ['client_id' => $client->id]) }}"
+                                                        class="btn btn-primary">{{ __('Archivos') }}</a>
+                                                @else
+                                                    <a href="javascript:void(0);" class="btn disabled-btn"
+                                                        tabindex="-1">{{ __('Archivos') }}</a>
+                                                @endif
 
-                                                        <td><a href="{{ route('customer_manager.edit', ['id' => $client->id]) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i>
-                                                            <span class="button_label">Editar</span>
-                                                        </td>
-               
-                                                    </tr>
-                                                      @empty
-                                                    <tr>
-                                                    <td colspan="13">No hay clientes registrados.</td>
-                                                  </tr>
+                                                @if ($client->group_count > 0)
+                                                    <a href="{{ route('manage_company', ['member' => $client->id]) }}"
+                                                        class="btn btn-primary">{{ __('Grupos') }}</a>
+                                                @else
+                                                    <a href="javascript:void(0);" class="btn disabled-btn"
+                                                        tabindex="-1">{{ __('Grupos') }}</a>
+                                                @endif
+
+                                                <a href="{{ route('my_files', ['cliente_id' => $client->id]) }}"
+                                                    class="btn btn-primary">Como cliente</a>
+                                            </td>
+
+                                            <td><a href="{{ route('customer_manager.edit', ['id' => $client->id]) }}"
+                                                    class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i>
+                                                    <span class="button_label">Editar</span>
+                                            </td>
+
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="13">No hay clientes registrados.</td>
+                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>
 
                             <div class="container-fluid">
-    <div class="row">
-        <div class="col-xs-12 text-center">
-            <nav aria-label="Resultados de Navegación">
-                <div class="pagination_wrapper text-center">
-                    {{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->links('pagination::bootstrap-4') : '' }}
-                </div>
-            </nav>
-            <div style="margin-top: 50px;"></div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-center">
+                                        <nav aria-label="Resultados de Navegación">
+                                            <div class="pagination_wrapper text-center">
+                                                {{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->links('pagination::bootstrap-4') : '' }}
+                                            </div>
+                                        </nav>
+                                        <div style="margin-top: 50px;"></div>
 
-            <div class="d-inline-block" style="margin-top: 10px;">
-                <form class="form-inline d-inline-block" id="go_to_page_form_clientes">
-                    <div class="form-group">
-                        <label class="control-label hidden-xs hidden-sm">Vaya a:</label>
-                        <input type="number" class="form-control" style="width: 4em !important;" name="page" id="go_to_page_clientes"
-                            value="{{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->currentPage() : 1 }}"
-                            min="1"
-                            max="{{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->lastPage() : 1 }}" />
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-default" onclick="goToPageClientes()">
-                            <span class="glyphicon glyphicon-ok"></span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+                                        <div class="d-inline-block" style="margin-top: 10px;">
+                                            <form class="form-inline d-inline-block" id="go_to_page_form_clientes">
+                                                <div class="form-group">
+                                                    <label class="control-label hidden-xs hidden-sm">Vaya a:</label>
+                                                    <input type="number" class="form-control"
+                                                        style="width: 4em !important;" name="page"
+                                                        id="go_to_page_clientes"
+                                                        value="{{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->currentPage() : 1 }}"
+                                                        min="1"
+                                                        max="{{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->lastPage() : 1 }}" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="button" class="btn btn-default"
+                                                        onclick="goToPageClientes()">
+                                                        <span class="glyphicon glyphicon-ok"></span>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
 
 
@@ -250,11 +298,11 @@
                 });
 
                 function goToPageClientes() {
-                  const page = document.getElementById('go_to_page_clientes').value;
-                  const url = new URL(window.location.href);
-                  url.searchParams.set('page', page);
-                 window.location.href = url.toString();
-               }
+                    const page = document.getElementById('go_to_page_clientes').value;
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('page', page);
+                    window.location.href = url.toString();
+                }
             </script>
 
         </div> <!-- main_content -->

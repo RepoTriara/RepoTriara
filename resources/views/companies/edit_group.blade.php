@@ -12,8 +12,10 @@
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
 
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('includes/js/chosen/chosen.min.css') }}" />
@@ -44,7 +46,8 @@
                                     </div>
                                 @endif
 
-                                <form action="{{ route('groups.update', $group->id) }}" method="POST" class="form-horizontal">
+                                <form action="{{ route('groups.update', $group->id) }}" method="POST"
+                                    class="form-horizontal">
                                     @csrf
                                     @method('PUT')
 
@@ -52,7 +55,8 @@
                                     <div class="form-group">
                                         <label for="name" class="col-sm-4 control-label">Nombre del grupo</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $group->name) }}" required />
+                                            <input type="text" name="name" id="name" class="form-control"
+                                                value="{{ old('name', $group->name) }}" required />
                                             @error('name')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -61,29 +65,34 @@
 
                                     <!-- Descripción del grupo -->
                                     <div class="form-group">
-    <label for="add_group_form_description" class="col-sm-4 control-label">Descripción</label>
-    <div class="col-sm-8">
-        <textarea name="add_group_form_description" id="add_group_form_description" class="form-control">{{ old('add_group_form_description', $group->description) }}</textarea>
-        @error('add_group_form_description')
-            <span class="text-danger">{{ $message }}</span>
-        @enderror
-    </div>
-</div>
+                                        <label for="add_group_form_description"
+                                            class="col-sm-4 control-label">Descripción</label>
+                                        <div class="col-sm-8">
+                                            <textarea name="add_group_form_description" id="add_group_form_description" class="form-control">{{ old('add_group_form_description', $group->description) }}</textarea>
+                                            @error('add_group_form_description')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
 
 
 
-<div class="form-group assigns">
-    <label for="add_group_form_members" class="col-sm-4 control-label">Integrantes</label>
-    <div class="col-sm-8">
-        <select multiple="multiple" id="members-select" class="form-control chosen-select" name="add_group_form_members[]" data-placeholder="Seleccione una o más opciones. Escriba para buscar">
-            @foreach($members as $member)
-                <option value="{{ $member->id }}" {{ $selectedMembers->contains($member->id) ? 'selected' : '' }}>
-                    {{ $member->name }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-</div>
+                                    <div class="form-group assigns">
+                                        <label for="add_group_form_members"
+                                            class="col-sm-4 control-label">Integrantes</label>
+                                        <div class="col-sm-8">
+                                            <select multiple="multiple" id="members-select"
+                                                class="form-control chosen-select" name="add_group_form_members[]"
+                                                data-placeholder="Seleccione una o más opciones. Escriba para buscar">
+                                                @foreach ($members as $member)
+                                                    <option value="{{ $member->id }}"
+                                                        {{ $selectedMembers->contains($member->id) ? 'selected' : '' }}>
+                                                        {{ $member->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
 
 
 
@@ -91,9 +100,12 @@
                                     <div class="form-group">
                                         <div class="col-sm-8 col-sm-offset-4">
                                             <label for="public">
-                                            <input type="checkbox" name="public" id="public" value="1" {{ $group->public ? 'checked' : '' }}>
-                                            Público
-                                                <p class="field_note">Permite a los clientes solicitar acceso a este grupo durante el proceso de registro y al editar su propio perfil.</p>
+                                                <input type="checkbox" name="public" id="public" value="1"
+                                                    {{ $group->public ? 'checked' : '' }}>
+                                                Público
+                                                <p class="field_note">Permite a los clientes solicitar acceso a este
+                                                    grupo durante el proceso de registro y al editar su propio perfil.
+                                                </p>
                                             </label>
                                         </div>
                                     </div>
@@ -111,30 +123,29 @@
             </div> <!-- container-fluid -->
 
             <footer>
-    <div id="footer">
-        Claro Colombia
-    </div>
-</footer>
+                <div id="footer">
+                    Claro Colombia
+                </div>
+            </footer>
 
-<script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
-<script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
-<script src="{{ asset('includes/js/jen/jen.js') }}"></script>
-<script src="{{ asset('includes/js/js.cookie.js') }}"></script>
-<script src="{{ asset('includes/js/main.js') }}"></script>
-<script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
-<script src="{{ asset('includes/js/ckeditor/ckeditor.js') }}"></script>
+            <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
+            <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
+            <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
+            <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
+            <script src="{{ asset('includes/js/main.js') }}"></script>
+            <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
+            <script src="{{ asset('includes/js/ckeditor/ckeditor.js') }}"></script>
 
-<script>
-    $(document).ready(function() {
-        $('.chosen-select').chosen();
-        CKEDITOR.replace('add_group_form_description');
-    });
-</script>
+            <script>
+                $(document).ready(function() {
+                    $('.chosen-select').chosen();
+                    CKEDITOR.replace('add_group_form_description');
+                });
+            </script>
 
-</div> <!-- main_content -->
-</div> <!-- container-custom -->
+        </div> <!-- main_content -->
+    </div> <!-- container-custom -->
 </body>
 
 </html>
-

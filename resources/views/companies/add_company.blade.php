@@ -17,10 +17,13 @@
         <script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
     <![endif]-->
 
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('includes/js/chosen/chosen.min.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('includes/js/chosen/chosen.bootstrap.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('includes/js/chosen/chosen.bootstrap.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 </head>
@@ -49,56 +52,58 @@
                                         {{ session('success') }}
                                     </div>
                                 @else
-                                    <form action="{{ route('company.store') }}" name="addgroup" method="POST" class="form-horizontal">
+                                    <form action="{{ route('company.store') }}" name="addgroup" method="POST"
+                                        class="form-horizontal">
                                         @csrf <!-- Token CSRF necesario para formularios POST -->
 
                                         <div class="form-group">
-    <label for="add_group_form_name" class="col-sm-4 control-label">Nombre de la compañía</label>
-    <div class="col-sm-8">
-        <input type="text" name="add_group_form_name" id="add_group_form_name" class="form-control required"
-               value="{{ old('add_group_form_name') }}" />
-        @error('add_group_form_name')
-            <span class="text-danger">{{ $message }}</span>
-        @enderror
-    </div>
-</div>
+                                            <label for="add_group_form_name" class="col-sm-4 control-label">Nombre de la
+                                                compañía</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="add_group_form_name"
+                                                    id="add_group_form_name" class="form-control required"
+                                                    value="{{ old('add_group_form_name') }}" />
+                                                @error('add_group_form_name')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
 
 
-<div class="form-group">
-    <label for="add_group_form_description" class="col-sm-4 control-label">Descripción</label>
-    <div class="col-sm-8">
-        <textarea name="add_group_form_description" id="add_group_form_description" class="ckeditor form-control">
+                                        <div class="form-group">
+                                            <label for="add_group_form_description"
+                                                class="col-sm-4 control-label">Descripción</label>
+                                            <div class="col-sm-8">
+                                                <textarea name="add_group_form_description" id="add_group_form_description" class="ckeditor form-control">
             {{ old('add_group_form_description') }}
         </textarea>
-        @error('add_group_form_description')
-            <span class="text-danger">{{ $message }}</span>
-        @enderror
-    </div>
-</div>
+                                                @error('add_group_form_description')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
 
 
                                         <div class="form-group assigns">
-                                            <label for="add_group_form_members" class="col-sm-4 control-label">Integrantes</label>
+                                            <label for="add_group_form_members"
+                                                class="col-sm-4 control-label">Integrantes</label>
                                             <div class="col-sm-8">
-                                                <select multiple="multiple" id="members-select" class="form-control chosen-select" name="add_group_form_members[]" data-placeholder="Seleccione una o más opciones. Escriba para buscar">
+                                                <select multiple="multiple" id="members-select"
+                                                    class="form-control chosen-select" name="add_group_form_members[]"
+                                                    data-placeholder="Seleccione una o más opciones. Escriba para buscar">
                                                     @foreach ($members as $member)
-                                                        <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                                        <option value="{{ $member->id }}">{{ $member->name }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <div class="col-sm-8 col-sm-offset-4">
-                                                <label for="add_group_form_public">
-                                                    <input type="checkbox" name="add_group_form_public" id="add_group_form_public"> Público
-                                                    <p class="field_note">Permite a los clientes solicitar acceso a este grupo durante el proceso de registro y al editar su propio perfil. Esta característica requiere lo correspondiente en la página de OPCIONES DE CLIENTES.</p>
-                                                </label>
-                                            </div>
-                                        </div>
+
 
                                         <div class="inside_form_buttons">
-                                            <button type="submit" name="submit" class="btn btn-wide btn-primary">Crear grupo</button>
+                                            <button type="submit" name="submit" class="btn btn-wide btn-primary">Crear
+                                                grupo</button>
                                         </div>
                                     </form>
                                 @endif

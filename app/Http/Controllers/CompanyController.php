@@ -21,105 +21,105 @@ use App\Models\TblCategoryRelation;
 class CompanyController extends Controller
 {
     // Método para mostrar el formulario de agregar compañía
-   public function create()
-{
-    // Obtener todos los usuarios con nivel 0 (clientes)
-    $members = User::where('level', 0)->get(); // Filtramos solo los usuarios con level 0
+    public function create()
+    {
+        // Obtener todos los usuarios con nivel 0 (clientes)
+        $members = User::where('level', 0)->get(); // Filtramos solo los usuarios con level 0
 
-    // Retornar la vista con los integrantes
-    return view('companies.add_company', compact('members'));
-}
-
-
-   public function store(Request $request)
-{
-    Log::info('Solicitud recibida', $request->all());
-
-    // Convertir el checkbox a un valor booleano
-    $request->merge([
-        'add_group_form_public' => $request->has('add_group_form_public')
-    ]);
-
-    // Verificar si el nombre ya existe en la base de datos
-    $nombreExistente = DB::table('tbl_groups')->where('name', $request->input('add_group_form_name'))->exists();
-
-    if ($nombreExistente) {
-        Log::info('El nombre ya existe en la base de datos: ' . $request->input('add_group_form_name'));
-        return redirect()->back()
-            ->withErrors(['add_group_form_name' => '¡El nombre ya existe en la base de datos!'])
-            ->withInput();
+        // Retornar la vista con los integrantes
+        return view('companies.add_company', compact('members'));
     }
 
-    // Validar los datos del formulario
-    $request->validate([
-        'add_group_form_name' => 'required|string|max:255',
-        'add_group_form_description' => 'nullable|string',
-        'add_group_form_public' => 'nullable|boolean',
-        'add_group_form_members' => 'nullable|array',
-    ]);
 
-    $userId = auth()->id();
+    public function store(Request $request)
+    {
+        Log::info('Solicitud recibida', $request->all());
 
-    // Asignar un valor por defecto a la descripción si está vacía
-    $description = $request->input('add_group_form_description');
-    if (empty($description)) {
-        $description = ''; // Valor predeterminado como cadena vacía
-    }
+        // Convertir el checkbox a un valor booleano
+        $request->merge([
+            'add_group_form_public' => $request->has('add_group_form_public')
+        ]);
 
-    // Crear el grupo
-    $group = new \App\Models\Groups();
-    $group->created_by = $userId;
-    $group->name = $request->input('add_group_form_name');
-    $group->description = $description; // Asignar la descripción
-    $group->public = $request->input('add_group_form_public', false);
-    $group->public_token = substr(Str::uuid()->toString(), 0, 32);
+        // Verificar si el nombre ya existe en la base de datos
+        $nombreExistente = DB::table('tbl_groups')->where('name', $request->input('add_group_form_name'))->exists();
 
-    // Si el grupo es público, generar un token
-    if ($group->public) {
-        $group->public_token = substr(Str::uuid()->toString(), 0, 32); // Truncar a 32 caracteres
-    }
+        if ($nombreExistente) {
+            Log::info('El nombre ya existe en la base de datos: ' . $request->input('add_group_form_name'));
+            return redirect()->back()
+                ->withErrors(['add_group_form_name' => '¡El nombre ya existe en la base de datos!'])
+                ->withInput();
+        }
 
-    Log::info('Datos del grupo antes de guardar', $group->toArray());
+        // Validar los datos del formulario
+        $request->validate([
+            'add_group_form_name' => 'required|string|max:255',
+            'add_group_form_description' => 'nullable|string',
 
-    // Guardar el grupo en la base de datos
-    $group->save();
+            'add_group_form_members' => 'nullable|array',
+        ]);
 
-    Log::info('Grupo guardado exitosamente con ID: ' . $group->id);
+        $userId = auth()->id();
 
-    // **Aquí agregamos el Log para verificar los miembros seleccionados**
-    if ($request->has('add_group_form_members')) {
-        Log::info('Miembros seleccionados antes de procesar:', $request->input('add_group_form_members'));
+        // Asignar un valor por defecto a la descripción si está vacía
+        $description = $request->input('add_group_form_description');
+        if (empty($description)) {
+            $description = ''; // Valor predeterminado como cadena vacía
+        }
 
-        // Asegurarse de que los miembros seleccionados sean del tipo correcto (usuarios con level 0)
-        $memberIds = array_unique($request->input('add_group_form_members'));
+        // Crear el grupo
+        $group = new \App\Models\Groups();
+        $group->created_by = $userId;
+        $group->name = $request->input('add_group_form_name');
+        $group->description = $description; // Asignar la descripción
+        $group->public = $request->input('add_group_form_public', false);
+        $group->public_token = substr(Str::uuid()->toString(), 0, 32);
 
-        // Verificar que los miembros seleccionados sean solo de nivel 0
-        foreach ($memberIds as $memberId) {
-            $member = User::find($memberId);
-            if ($member && $member->level != 0) {
-                return redirect()->back()
-                    ->withErrors(['add_group_form_members' => 'Solo puedes seleccionar usuarios de nivel 0.'])
-                    ->withInput();
+        // Si el grupo es público, generar un token
+        if ($group->public) {
+            $group->public_token = substr(Str::uuid()->toString(), 0, 32); // Truncar a 32 caracteres
+        }
+
+        Log::info('Datos del grupo antes de guardar', $group->toArray());
+
+        // Guardar el grupo en la base de datos
+        $group->save();
+
+        Log::info('Grupo guardado exitosamente con ID: ' . $group->id);
+
+        // **Aquí agregamos el Log para verificar los miembros seleccionados**
+        if ($request->has('add_group_form_members')) {
+            Log::info('Miembros seleccionados antes de procesar:', $request->input('add_group_form_members'));
+
+            // Asegurarse de que los miembros seleccionados sean del tipo correcto (usuarios con level 0)
+            $memberIds = array_unique($request->input('add_group_form_members'));
+
+            // Verificar que los miembros seleccionados sean solo de nivel 0
+            foreach ($memberIds as $memberId) {
+                $member = User::find($memberId);
+                if ($member && $member->level != 0) {
+                    return redirect()->back()
+                        ->withErrors(['add_group_form_members' => 'Solo puedes seleccionar usuarios de nivel 0.'])
+                        ->withInput();
+                }
             }
+
+            // Eliminar todos los miembros asociados a este grupo antes de agregar los nuevos
+            Members::where('group_id', $group->id)->delete();
+
+            // Agregar los miembros seleccionados
+            foreach ($memberIds as $memberId) {
+                Members::create([
+                    'group_id' => $group->id,
+                    'client_id' => $memberId,
+                    'added_by' => auth()->user()->name,
+                ]);
+            }
+
+            Log::info('Miembros asociados al grupo exitosamente');
         }
 
-        // Eliminar todos los miembros asociados a este grupo antes de agregar los nuevos
-        Members::where('group_id', $group->id)->delete();
-
-        // Agregar los miembros seleccionados
-        foreach ($memberIds as $memberId) {
-            Members::create([
-                'group_id' => $group->id,
-                'client_id' => $memberId,
-                'added_by' => auth()->user()->name,
-            ]);
-        }
-
-        Log::info('Miembros asociados al grupo exitosamente');
+        return redirect()->route('add_company')->with('success', 'Grupo creado exitosamente.');
     }
-
-    return redirect()->route('add_company')->with('success', 'Grupo creado exitosamente.');
-}
 
 
     public function manageCompany(Request $request)
@@ -174,13 +174,6 @@ class CompanyController extends Controller
         // Total de grupos
         $totalGroups = Groups::count();
 
-        // Verificar si los tokens están presentes
-        foreach ($groups as $group) {
-            if (empty($group->public_token) && $group->public) {
-                $group->public_token = substr(Str::uuid()->toString(), 0, 32); // Generar un nuevo token
-                $group->save();
-            }
-        }
 
         return view('companies.manage_company', compact('groups', 'totalGroups'));
     }
@@ -238,7 +231,6 @@ class CompanyController extends Controller
             ]);
 
             Log::info('Validación exitosa.');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Errores de validación:', $e->errors());
             return redirect()->back()->withErrors($e->errors())->withInput();
@@ -280,7 +272,6 @@ class CompanyController extends Controller
         // Redirigir con un mensaje de éxito
         // Redirigir con un mensaje de éxito a la vista de administrar compañías
         return redirect()->route('manage_company')->with('success', 'Grupo actualizado correctamente.');
-
     }
 
     public function manageFiles($groupId, Request $request)
@@ -524,7 +515,4 @@ class CompanyController extends Controller
                 return redirect()->back()->with('error', 'Acción no válida.');
         }
     }
-
-
 }
-

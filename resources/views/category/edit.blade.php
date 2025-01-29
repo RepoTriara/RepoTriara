@@ -1,19 +1,23 @@
 <!doctype html>
 <html lang="es_CO">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Editar Categoría &raquo; Repositorio</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico')}}" />
-    <link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png" sizes="32x32')}}">
-    <link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png" sizes="152x152')}}">
-    <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/main.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/mobile.min.css')}}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png" sizes="32x32') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png" sizes="152x152') }}">
+    <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 </head>
+
 <body class="category-create logged-in logged-as-admin menu_hidden backend">
     <div class="container-custom">
         <div class="main_content">
@@ -40,7 +44,7 @@
                 @endif
 
                 <!-- Mostrar mensaje de éxito -->
-                @if(session('success'))
+                @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
                     </div>
@@ -52,14 +56,17 @@
                             <div class="white-box-interior">
 
                                 <!-- Formulario para editar categoría -->
-                                <form method="POST" action="{{ route('categories.update', $category->id) }}" class="form-horizontal">
+                                <form method="POST" action="{{ route('categories.update', $category->id) }}"
+                                    class="form-horizontal">
                                     @csrf
                                     @method('PUT')
 
                                     <div class="form-group">
                                         <label for="name" class="col-sm-4 control-label">Nombre</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="name" id="name" class="form-control required" placeholder="Nombre de la categoría" value="{{ old('name', $category->name) }}" />
+                                            <input type="text" name="name" id="name"
+                                                class="form-control required" placeholder="Nombre de la categoría"
+                                                value="{{ old('name', $category->name) }}" />
                                             @error('name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -73,7 +80,7 @@
                                                 <option value="">Seleccione una categoría padre</option>
                                                 @foreach ($categories as $parentCategory)
                                                     <option value="{{ $parentCategory->id }}"
-                                                            {{ old('parent', $category->parent_id) == $parentCategory->id ? 'selected' : '' }}>
+                                                        {{ old('parent', $category->parent_id) == $parentCategory->id ? 'selected' : '' }}>
                                                         {{ $parentCategory->name }}
                                                     </option>
                                                 @endforeach
@@ -95,7 +102,8 @@
                                     </div>
 
                                     <div class="inside_form_buttons">
-                                        <button type="submit" name="submit" class="btn btn-wide btn-primary">Actualizar Categoría</button>
+                                        <button type="submit" name="submit"
+                                            class="btn btn-wide btn-primary">Actualizar Categoría</button>
                                     </div>
                                 </form>
 
@@ -114,12 +122,13 @@
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 
-    <script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
-    <script src="{{asset('includes/js/jquery.validations.js')}}"></script>
-    <script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>
-    <script src="{{asset('includes/js/jen/jen.js')}}"></script>
-    <script src="{{asset('includes/js/js.cookie.js')}}"></script>
-    <script src="{{asset('includes/js/main.js')}}"></script>
-    <script src="{{asset('includes/js/js.functions.php')}}"></script>
+    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
+    <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
+    <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
+    <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
+    <script src="{{ asset('includes/js/main.js') }}"></script>
+    <script src="{{ asset('includes/js/js.functions.php') }}"></script>
 </body>
+
 </html>

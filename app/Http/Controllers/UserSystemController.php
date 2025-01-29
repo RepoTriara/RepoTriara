@@ -11,7 +11,7 @@ class UserSystemController extends Controller
 {
 
 
- /**
+    /**
      * Muestra el formulario de registro para usuarios del sistema.
      */
     public function create()
@@ -41,8 +41,8 @@ class UserSystemController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhere('user', 'like', "%$search%")
-                  ->orWhere('email', 'like', "%$search%");
+                    ->orWhere('user', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");
             });
         }
 
@@ -79,54 +79,54 @@ class UserSystemController extends Controller
 
 
 
-public function edit($id)
-{
-    // Buscar el usuario por ID
-    $user = User::findOrFail($id);
+    public function edit($id)
+    {
+        // Buscar el usuario por ID
+        $user = User::findOrFail($id);
 
-    // Retornar la vista de edición con los datos del usuario
-    return view('system_users.edit_user', compact('user'));
-}
-
-
-public function bulkAction(Request $request)
-{
-    // Validar la acción seleccionada
-    $request->validate([
-        'action' => 'required|in:activate,deactivate,delete',
-        'batch' => 'required|array|min:1',
-        'batch.*' => 'exists:tbl_users,id', // Validar que los IDs sean válidos
-    ]);
-
-    // Obtener los IDs seleccionados
-    $userIds = $request->batch;
-    $action = $request->action;
-
-    try {
-        // Dependiendo de la acción seleccionada, procesar
-        switch ($action) {
-            case 'activate':
-                User::whereIn('id', $userIds)->update(['active' => 1]);
-                session()->flash('success', 'Usuarios activados correctamente.');
-                break;
-
-            case 'deactivate':
-                User::whereIn('id', $userIds)->update(['active' => 0]);
-                session()->flash('success', 'Usuarios desactivados correctamente.');
-                break;
-
-            case 'delete':
-                User::whereIn('id', $userIds)->delete();
-                session()->flash('success', 'Usuarios eliminados correctamente.');
-                break;
-        }
-    } catch (\Exception $e) {
-        session()->flash('error', 'Hubo un error al procesar la acción seleccionada.');
+        // Retornar la vista de edición con los datos del usuario
+        return view('system_users.edit_user', compact('user'));
     }
 
-    // Redirigir de vuelta con el mensaje
-    return redirect()->route('system_users.index');
-}
+
+    public function bulkAction(Request $request)
+    {
+        // Validar la acción seleccionada
+        $request->validate([
+            'action' => 'required|in:activate,deactivate,delete',
+            'batch' => 'required|array|min:1',
+            'batch.*' => 'exists:tbl_users,id', // Validar que los IDs sean válidos
+        ]);
+
+        // Obtener los IDs seleccionados
+        $userIds = $request->batch;
+        $action = $request->action;
+
+        try {
+            // Dependiendo de la acción seleccionada, procesar
+            switch ($action) {
+                case 'activate':
+                    User::whereIn('id', $userIds)->update(['active' => 1]);
+                    session()->flash('success', 'Usuarios activados correctamente.');
+                    break;
+
+                case 'deactivate':
+                    User::whereIn('id', $userIds)->update(['active' => 0]);
+                    session()->flash('success', 'Usuarios desactivados correctamente.');
+                    break;
+
+                case 'delete':
+                    User::whereIn('id', $userIds)->delete();
+                    session()->flash('success', 'Usuarios eliminados correctamente.');
+                    break;
+            }
+        } catch (\Exception $e) {
+            session()->flash('error', 'Hubo un error al procesar la acción seleccionada.');
+        }
+
+        // Redirigir de vuelta con el mensaje
+        return redirect()->route('system_users.index');
+    }
 
 
     /**
@@ -139,7 +139,7 @@ public function bulkAction(Request $request)
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:tbl_users'],
             'password' => ['required', 'string', 'min:8'],
-            'user' => ['required', 'string', 'max:60','unique:tbl_users'],
+            'user' => ['required', 'string', 'max:60', 'unique:tbl_users'],
             'level' => ['required', 'in:10,8'], // Validar que level sea 10 o 8
             'notify' => ['nullable', 'boolean'], // Validar que notify sea booleano (0 o 1)
             'active' => ['nullable', 'boolean'], // Validar que active sea booleano (0 o 1)
@@ -160,7 +160,6 @@ public function bulkAction(Request $request)
 
             // Si todo va bien, mostramos el mensaje de éxito
             session()->flash('success', 'Usuario registrado correctamente');
-
         } catch (\Exception $e) {
             // Si algo falla, mostramos un mensaje de error
             session()->flash('error', 'Hubo un problema al registrar el usuario. Inténtalo nuevamente.');
@@ -168,7 +167,6 @@ public function bulkAction(Request $request)
 
         // Volver a la misma vista con los errores (si los hay)
         return back();
-
     }
 
 
@@ -204,10 +202,4 @@ public function bulkAction(Request $request)
         // Redirigir con un mensaje de éxito
         return redirect()->route('system_users.index')->with('success', 'Usuario actualizado correctamente.');
     }
-
-
-
-
-
-
 }

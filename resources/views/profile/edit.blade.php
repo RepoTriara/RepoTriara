@@ -11,8 +11,10 @@
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 
@@ -20,7 +22,7 @@
 
 <body class="users-edit logged-in logged-as-admin menu_hidden backend">
     <div class="container-custom">
-        @if(Auth::user()->level == 0)
+        @if (Auth::user()->level == 0)
             @include('layouts.app_level0')
         @else
             @include('layouts.app')
@@ -53,8 +55,9 @@
                                     <div class="form-group">
                                         <label for="name" class="col-sm-4 control-label">Nombre</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="name" id="name" class="form-control required"
-                                                placeholder="Nombre completo del usuario" value="{{ $user->name }}" />
+                                            <input type="text" name="name" id="name"
+                                                class="form-control required" placeholder="Nombre completo del usuario"
+                                                value="{{ $user->name }}" />
                                         </div>
                                     </div>
 
@@ -62,8 +65,9 @@
                                         <label for="user" class="col-sm-4 control-label">Ingresar nombre de
                                             usuario</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="user" id="user" placeholder="Usuario de RED"
-                                                class="form-control " maxlength="60" value="{{ $user->user }}" readonly
+                                            <input type="text" name="user" id="user"
+                                                placeholder="Usuario de RED" class="form-control " maxlength="60"
+                                                value="{{ $user->user }}" readonly
                                                 placeholder="Debe ser alfanumérico" />
                                         </div>
                                     </div>
@@ -73,41 +77,50 @@
                                         <label for="password" class="col-sm-4 control-label">Nueva contraseña</label>
                                         <div class="col-sm-8">
                                             <div class="input-group">
-                                                <input name="password" id="password" class="form-control password_toggle" type="password" maxlength="60" />
+                                                <input name="password" id="password"
+                                                    class="form-control password_toggle" type="password"
+                                                    maxlength="60" />
                                                 <div class="input-group-btn password_toggler">
-                                                    <button type="button" class="btn pass_toggler_show"><i class="glyphicon glyphicon-eye-open"></i></button>
+                                                    <button type="button" class="btn pass_toggler_show"><i
+                                                            class="glyphicon glyphicon-eye-open"></i></button>
                                                 </div>
                                             </div>
-                                            <button type="button" name="generate_password" id="generate_password" class="btn btn-default btn-sm btn_generate_password" data-ref="password" data-min="20" data-max="20">Generar</button>
+                                            <button type="button" name="generate_password" id="generate_password"
+                                                class="btn btn-default btn-sm btn_generate_password" data-ref="password"
+                                                data-min="20" data-max="20">Generar</button>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="email" class="col-sm-4 control-label">E-Mail</label>
                                         <div class="col-sm-8">
-                                            <input type="text" name="email" id="email" class="form-control required"
-                                                value="{{ $user->email }}" placeholder="Debe ser válido y único" />
+                                            <input type="text" name="email" id="email"
+                                                class="form-control required" value="{{ $user->email }}"
+                                                placeholder="Debe ser válido y único" />
                                         </div>
                                     </div>
 
-                                    @if(Auth::user()->level == 0)
+                                    @if (Auth::user()->level == 0)
                                         <div class="form-group">
                                             <label for="address" class="col-sm-4 control-label">Dirección</label>
                                             <div class="col-sm-8">
-                                                <input type="text" name="address" id="address" class="form-control" value="{{ $user->address }}" />
+                                                <input type="text" name="address" id="address"
+                                                    class="form-control" value="{{ $user->address }}" />
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="phone" class="col-sm-4 control-label">Teléfono</label>
                                             <div class="col-sm-8">
-                                                <input type="text" name="phone" id="phone" class="form-control" value="{{ $user->phone }}" />
+                                                <input type="text" name="phone" id="phone"
+                                                    class="form-control" value="{{ $user->phone }}" />
                                             </div>
                                         </div>
                                     @endif
 
                                     <div class="inside_form_buttons">
-                                        <button type="submit" name="submit" class="btn btn-wide btn-primary">Actualizar cuenta</button>
+                                        <button type="submit" name="submit"
+                                            class="btn btn-wide btn-primary">Actualizar cuenta</button>
                                     </div>
 
                                 </form>
@@ -117,17 +130,17 @@
                     </div>
                 </div> <!-- row -->
             </div> <!-- container-fluid -->
-	<footer>
-		<div id="footer">
-			Claro Colombia		</div>
-	</footer>
-            <script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
-            <script src="{{asset('includes/js/jquery.validations.js')}}"></script>
-            <script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>
-            <script src="{{asset('includes/js/jen/jen.js')}}"></script>
-            <script src="{{asset('includes/js/js.cookie.js')}}"></script>
-            <script src="{{asset('includes/js/main.js')}}"></script>
-            <script src="{{asset('includes/js/js.functions.php')}}"></script>
+            <footer>
+                <div id="footer">
+                    Claro Colombia </div>
+            </footer>
+            <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
+            <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
+            <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
+            <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
+            <script src="{{ asset('includes/js/main.js') }}"></script>
+            <script src="{{ asset('includes/js/js.functions.php') }}"></script>
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 

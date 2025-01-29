@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Groups;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -11,18 +13,17 @@ use Illuminate\Support\Facades\Log;
 
 
 class ClientController extends Controller
-{   
+{
 
     public function create()
     {
         $groups = Groups::all(); // Selecciona únicamente los campos necesarios
 
-    return view('customers.add_client', compact('groups'));
-
+        return view('customers.add_client', compact('groups'));
     }
-    
+
     public function index(Request $request)
-    {    
+    {
 
         // Obtener parámetros de la solicitud con valores por defecto
         $search = $request->input('search');
@@ -33,9 +34,9 @@ class ClientController extends Controller
 
         // Iniciar la consulta
         $query = User::query();
-        
+
         $query->where('level', 0);
-        
+
         // Aplicar filtros si existen
         if ($search) {
             $query->where(function ($query) use ($search) {
@@ -66,7 +67,7 @@ class ClientController extends Controller
             $uploads_count = TblFile::where('uploader', $cliente->user)->count();
             $cliente->uploads_count = $uploads_count > 0 ? $uploads_count : null;
 
-            // Contar los archivos propios del cliente. 
+            // Contar los archivos propios del cliente.
             $own_files = TblFileRelation::where('client_id', $cliente->id)
                 ->whereNull('group_id')
                 ->count();
@@ -76,7 +77,7 @@ class ClientController extends Controller
             $found_groups = Members::where('client_id', $cliente->id)
                 ->pluck('group_id')
                 ->toArray();
-                $cliente->group_count = count($found_groups);
+            $cliente->group_count = count($found_groups);
 
 
             // Inicializar el conteo de archivos de grupos.
@@ -91,21 +92,19 @@ class ClientController extends Controller
 
             // Determinar el estado de notificaciones del cliente;
             $cliente->notification_status = $cliente->notify ? 'Sí' : 'No';
-
         }
 
         return view('customers.customer_manager', compact('clientes', 'totalCliente'));
-
     }
 
 
     public function store(Request $request)
     {
-     
+
 
         // Validar los datos del formulario
         $request->validate([
-            
+
             'name' => ['required', 'string', 'max:255'],
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users'],
             'password' => ['required', 'string', 'min:8'],
@@ -121,7 +120,7 @@ class ClientController extends Controller
         ]);
 
         try {
-            
+
             $user = User::create([
                 'name' => $request->name,
                 'user' => $request->user,
@@ -132,32 +131,31 @@ class ClientController extends Controller
                 'contact' => $request->contact,
                 'max_file_size' => $request->max_file_size,
                 'level' => 0,
-                'active' => $request->has('active') ? $request->active : false, 
-                'notify' => $request->has('notify') ? $request->notify : false, 
-    
-            ]); 
-            
-        // codigo para asociar al cliente a uno o varios grupos
-        if ($request->has('group_request') && count($request->group_request) > 0) {
-            foreach ($request->group_request as $groupId) {
-               $member = Members::create([
-                    'client_id' => $user->id,
-                    'group_id' => $groupId,
-                    'added_by' => auth()->user()->user,
-                ]);
-                
+                'active' => $request->has('active') ? $request->active : false,
+                'notify' => $request->has('notify') ? $request->notify : false,
+
+            ]);
+
+            // codigo para asociar al cliente a uno o varios grupos
+            if ($request->has('group_request') && count($request->group_request) > 0) {
+                foreach ($request->group_request as $groupId) {
+                    $member = Members::create([
+                        'client_id' => $user->id,
+                        'group_id' => $groupId,
+                        'added_by' => auth()->user()->user,
+                    ]);
+                }
             }
-        }
 
             session()->flash('success', 'Cliente registrado correctamente');
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             // Puedes registrar el error en los logs para más información.
             Log::error('Error al registrar el cliente: ' . $e->getMessage());
-            
+
             // Mensaje genérico para el usuario.
             session()->flash('error', 'Hubo un problema al registrar el cliente. Verifica los datos ingresados o inténtalo nuevamente.');
         }
-        
+
         return back();
     }
 
@@ -208,79 +206,78 @@ class ClientController extends Controller
         }
 
         return redirect()->route('customer_manager');
-
     }
 
-  // Código para Editar un cliente
-public function edit($id)
-{
-    $client = User::findOrFail($id);
-    $groups = Groups::all(); 
-    $associatedGroups = Members::where('client_id', $id)->pluck('group_id')->toArray(); 
+    // Código para Editar un cliente
+    public function edit($id)
+    {
+        $client = User::findOrFail($id);
+        $groups = Groups::all();
+        $associatedGroups = Members::where('client_id', $id)->pluck('group_id')->toArray();
 
-    return view('customers.edit_client', compact('client', 'groups', 'associatedGroups'));
-}
-
-public function update(Request $request, $id)
-{
-    $validated = $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'user' => ['required', 'string', 'max:60', 'unique:tbl_users,user,' . $id],
-        'password' => ['nullable', 'string', 'min:8'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:tbl_users,email,' . $id],
-        'address' => ['nullable', 'string'],
-        'phone' => ['nullable', 'string', 'max:32'],
-        'contact' => ['nullable', 'string', 'max:255'],
-        'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'], // Validación de rango
-        'group_request' => ['nullable', 'array'],
-        'group_request.*' => ['integer'],
-        'active' => ['nullable', 'boolean'],
-        'notify' => ['nullable', 'boolean'],
-    ]);
-
-    $client = User::findOrFail($id);
-
-    // Actualizar datos del cliente
-    $client->name = $request->name;
-    $client->email = $request->email;
-    $client->user = $request->user;
-    $client->address = $request->address;
-    $client->phone = $request->phone;
-    $client->contact = $request->contact;
-    $client->max_file_size = $request->max_file_size;
-    $client->notify = $request->has('notify') ? $request->notify : $client->notify; 
-    $client->active = $request->has('active') ? $request->active : $client->active; 
-
-    if ($request->filled('password')) {
-        $client->password = bcrypt($request->password);
+        return view('customers.edit_client', compact('client', 'groups', 'associatedGroups'));
     }
 
-    // Guardar cambios del cliente
-    $client->save();
-
-    // Gestión de grupos
-    $newGroups = $request->input('group_request', []); 
-    $currentGroups = Members::where('client_id', $id)->pluck('group_id')->toArray(); // Grupos actuales
-
-    $groupsToRemove = array_diff($currentGroups, $newGroups); 
-    $groupsToAdd = array_diff($newGroups, $currentGroups); 
-
-    // Eliminar asociaciones de grupos
-    if (!empty($groupsToRemove)) {
-        Members::where('client_id', $id)
-            ->whereIn('group_id', $groupsToRemove)
-            ->delete();
-    }
-
-    // Agregar nuevas asociaciones de grupos
-    foreach ($groupsToAdd as $groupId) {
-        Members::create([
-            'client_id' => $id,
-            'group_id' => $groupId,
-            'added_by' => auth()->user()->user,
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'user' => ['required', 'string', 'max:60', 'unique:tbl_users,user,' . $id],
+            'password' => ['nullable', 'string', 'min:8'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:tbl_users,email,' . $id],
+            'address' => ['nullable', 'string'],
+            'phone' => ['nullable', 'string', 'max:32'],
+            'contact' => ['nullable', 'string', 'max:255'],
+            'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'], // Validación de rango
+            'group_request' => ['nullable', 'array'],
+            'group_request.*' => ['integer'],
+            'active' => ['nullable', 'boolean'],
+            'notify' => ['nullable', 'boolean'],
         ]);
-    }
 
-    return back()->with('success', 'Cliente actualizado correctamente.');
-}
+        $client = User::findOrFail($id);
+
+        // Actualizar datos del cliente
+        $client->name = $request->name;
+        $client->email = $request->email;
+        $client->user = $request->user;
+        $client->address = $request->address;
+        $client->phone = $request->phone;
+        $client->contact = $request->contact;
+        $client->max_file_size = $request->max_file_size;
+        $client->notify = $request->has('notify') ? $request->notify : $client->notify;
+        $client->active = $request->has('active') ? $request->active : $client->active;
+
+        if ($request->filled('password')) {
+            $client->password = bcrypt($request->password);
+        }
+
+        // Guardar cambios del cliente
+        $client->save();
+
+        // Gestión de grupos
+        $newGroups = $request->input('group_request', []);
+        $currentGroups = Members::where('client_id', $id)->pluck('group_id')->toArray(); // Grupos actuales
+
+        $groupsToRemove = array_diff($currentGroups, $newGroups);
+        $groupsToAdd = array_diff($newGroups, $currentGroups);
+
+        // Eliminar asociaciones de grupos
+        if (!empty($groupsToRemove)) {
+            Members::where('client_id', $id)
+                ->whereIn('group_id', $groupsToRemove)
+                ->delete();
+        }
+
+        // Agregar nuevas asociaciones de grupos
+        foreach ($groupsToAdd as $groupId) {
+            Members::create([
+                'client_id' => $id,
+                'group_id' => $groupId,
+                'added_by' => auth()->user()->user,
+            ]);
+        }
+
+        return back()->with('success', 'Cliente actualizado correctamente.');
+    }
 }

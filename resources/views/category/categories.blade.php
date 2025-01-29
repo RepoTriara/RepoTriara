@@ -1,21 +1,25 @@
 <!doctype html>
 <html lang="es_CO">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Administración de Categorías &raquo; Repositorio</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico')}}" />
-    <link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png')}}" sizes="32x32">
-    <link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png')}}" sizes="152x152">
-    <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('includes/js/footable/css/footable.core.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/footable.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/main.min.css')}}" />
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/mobile.min.css')}}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
+    <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('includes/js/footable/css/footable.core.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/footable.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 </head>
 
 <body class="categories logged-in logged-as-admin menu_hidden backend">
@@ -47,9 +51,11 @@
                             <!-- Formulario de búsqueda -->
                             <form action="{{ route('categories.index') }}" method="get" class="form-inline">
                                 <div class="form-group group_float">
-                                    <input type="text" name="search" id="search" value="{{ request('search') }}" class="txtfield form_actions_search_box form-control" />
+                                    <input type="text" name="search" id="search" value="{{ request('search') }}"
+                                        class="txtfield form_actions_search_box form-control" />
                                 </div>
-                                <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-default">Búsqueda</button>
+                                <button type="submit" id="btn_proceed_search"
+                                    class="btn btn-sm btn-default">Búsqueda</button>
                             </form>
 
                             <div class="form_actions">
@@ -81,7 +87,8 @@
                                     <tr>
                                         <th><input type="checkbox" id="select_all" /></th>
                                         <th>
-                                            <a href="{{ route('categories.index', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
+                                            <a
+                                                href="{{ route('categories.index', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
                                                 Nombre
                                             </a>
                                             <span class="footable-sort-indicator"></span>
@@ -95,17 +102,21 @@
                                 <tbody>
                                     @forelse ($categories as $category)
                                         <tr>
-                                            <td><input type="checkbox" name="categories[]" value="{{ $category->id }}" /></td>
+                                            <td><input type="checkbox" name="categories[]"
+                                                    value="{{ $category->id }}" /></td>
                                             <td>{{ $category->name }}</td>
                                             <td>{{ $category->description }}</td>
-                                            <td> <span class="label label-success">{{ $category->files_count }}</span></td> <!-- Mostrar cantidad de archivos -->
+                                            <td> <span class="label label-success">{{ $category->files_count }}</span>
+                                            </td> <!-- Mostrar cantidad de archivos -->
                                             <td>
-                                                <a href="{{ route('files.index', ['category_id' => $category->id]) }}" class="btn btn-sm btn-primary">
+                                                <a href="{{ route('files.index', ['category_id' => $category->id]) }}"
+                                                    class="btn btn-sm btn-primary">
                                                     Ver Archivos
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-primary">
+                                                <a href="{{ route('categories.edit', $category->id) }}"
+                                                    class="btn btn-sm btn-primary">
                                                     <i class="fa fa-pencil"></i>
                                                 </a>
                                             </td>
@@ -141,14 +152,14 @@
                 </div>
             </footer>
 
-            <script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
-            <script src="{{asset('includes/js/jquery.validations.js')}}"></script>
-            <script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>
-            <script src="{{asset('includes/js/jen/jen.js')}}"></script>
-            <script src="{{asset('includes/js/js.cookie.js')}}"></script>
-            <script src="{{asset('includes/js/main.js')}}"></script>
-            <script src="{{asset('includes/js/js.functions.php')}}"></script>
-            <script src="{{asset('includes/js/footable/footable.min.js')}}"></script>
+            <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
+            <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
+            <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
+            <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
+            <script src="{{ asset('includes/js/main.js') }}"></script>
+            <script src="{{ asset('includes/js/js.functions.php') }}"></script>
+            <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
             <script>
                 // Seleccionar/Deseleccionar todos los checkboxes
                 $('#select_all').on('click', function() {
@@ -173,4 +184,5 @@
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 </body>
+
 </html>

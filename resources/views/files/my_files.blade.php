@@ -7,38 +7,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Administraci&oacute;n del Sistema &raquo; Repositorio</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('favicon.ico')}}" />
-    <link rel="icon" type="image/png" href="{{asset('img/favicon/favicon-32.png')}}" sizes="32x32">
-    <link rel="apple-touch-icon" href="{{asset('img/favicon/favicon-152.png')}}" sizes="152x152">
-    <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
+    <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <!--[if lt IE 9]>
-		<script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
-		<script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
-	<![endif]-->
+  <script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
+  <script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
+ <![endif]-->
 
     <link rel="stylesheet" media="all" type="text/css"
-        href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" />
+        href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
 
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('includes/js/footable/css/footable.core.css')}}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('includes/js/footable/css/footable.core.css') }}" />
 
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/footable.css')}}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/footable.css') }}" />
 
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('assets/bootstrap/css/bootstrap.min.css')}}" />
+    <link rel="stylesheet" media="all" type="text/css"
+        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
 
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/main.min.css')}}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
 
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/mobile.min.css')}}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 
-    <link rel="stylesheet" media="all" type="text/css" href="{{asset('css/main.css')}}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.css') }}" />
 </head>
 
 <body class="body logged-in logged-as-client template default-template hide_title menu_hidden backend">
     <div class="container-custom">
 
 
-        @if(Auth::user()->level == 0)
+        @if (Auth::user()->level == 0)
             @include('layouts.app_level0')
         @else
             @include('layouts.app')
@@ -79,24 +81,29 @@
                                             </button>
                                         </form>
 
-                                    <!-- Formulario de filtro de categorías -->
-                                    <form action="{{ route('my_files') }}" name="files_filters" method="get" class="form-inline form_filters">
-                                        <!-- Campo oculto para mantener el parámetro cliente_id -->
-                                        <input type="hidden" name="cliente_id" value="{{ request('cliente_id', auth()->user()->id) }}">
-                                        <div class="form-group group_float">
-                                            <select name="categories[]" class="txtfield form-control">
-                                                <option value="all" {{ in_array('all', request()->input('categories', [])) ? 'selected' : '' }}>
-                                                    All categories
-                                                </option>
-                                                @foreach ($categories as $category)
-                                                    <option value="{{ $category->id }}" {{ in_array($category->id, request()->input('categories', [])) ? 'selected' : '' }}>
-                                                        {{ $category->name }}
+                                        <!-- Formulario de filtro de categorías -->
+                                        <form action="{{ route('my_files') }}" name="files_filters" method="get"
+                                            class="form-inline form_filters">
+                                            <!-- Campo oculto para mantener el parámetro cliente_id -->
+                                            <input type="hidden" name="cliente_id"
+                                                value="{{ request('cliente_id', auth()->user()->id) }}">
+                                            <div class="form-group group_float">
+                                                <select name="categories[]" class="txtfield form-control">
+                                                    <option value="all"
+                                                        {{ in_array('all', request()->input('categories', [])) ? 'selected' : '' }}>
+                                                        All categories
                                                     </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <button type="submit" id="btn_proceed_filter_files" class="btn btn-sm btn-default">Filtrar</button>
-                                    </form>
+                                                    @foreach ($categories as $category)
+                                                        <option value="{{ $category->id }}"
+                                                            {{ in_array($category->id, request()->input('categories', [])) ? 'selected' : '' }}>
+                                                            {{ $category->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <button type="submit" id="btn_proceed_filter_files"
+                                                class="btn btn-sm btn-default">Filtrar</button>
+                                        </form>
 
 
 
@@ -173,7 +180,8 @@
                                             @foreach ($files as $file)
                                                 <tr class="table_row">
                                                     <td>
-                                                        <input type="checkbox" name="file_ids[]" value="{{ $file->id }}"
+                                                        <input type="checkbox" name="file_ids[]"
+                                                            value="{{ $file->id }}"
                                                             class="footable-sort-indicator">
                                                     </td>
                                                     <td>
@@ -233,7 +241,8 @@
                                                         max="{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->lastPage() : 1 }}" />
                                                 </div>
                                                 <div class="form-group">
-                                                    <button type="button" class="btn btn-default" onclick="goToPage()">
+                                                    <button type="button" class="btn btn-default"
+                                                        onclick="goToPage()">
                                                         <span class="glyphicon glyphicon-ok"></span>
                                                     </button>
                                                 </div>
@@ -271,11 +280,11 @@
     <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
     <script>
         // Mostrar mensaje de espera al enviar el formulario
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const downloadForm = document.forms['files_list'];
             const delay = 3000; // Tiempo de espera (en milisegundos)
 
-            downloadForm.onsubmit = function (e) {
+            downloadForm.onsubmit = function(e) {
                 const action = document.getElementById('action').value;
 
                 if (action === 'zip') {
@@ -320,7 +329,7 @@
             @endif
 
             // Agregar funcionalidad para seleccionar todos los checkboxes
-            document.getElementById('select_all').addEventListener('click', function () {
+            document.getElementById('select_all').addEventListener('click', function() {
                 // Obtener el estado del checkbox principal
                 var isChecked = this.checked;
 
@@ -328,11 +337,12 @@
                 var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
 
                 // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
-                checkboxes.forEach(function (checkbox) {
+                checkboxes.forEach(function(checkbox) {
                     checkbox.checked = isChecked;
                 });
             });
         });
+
         function goToPage() {
             const form = document.getElementById('go_to_page_form');
             const page = document.getElementById('go_to_page').value;
@@ -340,13 +350,14 @@
             url.searchParams.set('page', page);
             window.location.href = url.toString();
         }
-         function goToPageClientes() {
-                const form = document.getElementById('go_to_page_form_clientes');
-                const page = document.getElementById('go_to_page_clientes').value;
-                const url = new URL(window.location.href);
-                url.searchParams.set('page', page);
-                window.location.href = url.toString();
-            }
+
+        function goToPageClientes() {
+            const form = document.getElementById('go_to_page_form_clientes');
+            const page = document.getElementById('go_to_page_clientes').value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            window.location.href = url.toString();
+        }
     </script>
 
 

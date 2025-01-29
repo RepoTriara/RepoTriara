@@ -20,7 +20,7 @@ class CategoryController extends Controller
         if ($request->has('search') && !empty($request->search)) {
             // Filtramos por nombre o descripción de la categoría
             $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
+                ->orWhere('description', 'like', '%' . $request->search . '%');
         }
 
         // Agregamos el conteo de archivos relacionados
