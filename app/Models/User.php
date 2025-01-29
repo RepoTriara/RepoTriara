@@ -83,20 +83,14 @@ class User extends Authenticatable
         return $this->level == 10;
     }
 
-    public function isLevel9()
-    {
-        return $this->level == 9;
-    }
+
 
     public function isLevel8()
     {
         return $this->level == 8;
     }
 
-    public function isLevel7()
-    {
-        return $this->level == 7;
-    }
+
 
     public function isStandardUser()
     {

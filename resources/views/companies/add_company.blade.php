@@ -81,12 +81,8 @@
                                             <label for="add_group_form_members" class="col-sm-4 control-label">Integrantes</label>
                                             <div class="col-sm-8">
                                                 <select multiple="multiple" id="members-select" class="form-control chosen-select" name="add_group_form_members[]" data-placeholder="Seleccione una o más opciones. Escriba para buscar">
-                                                    @foreach($members as $member)
-                                                        @if($member->client)
-                                                            <option value="{{ $member->client_id }}">{{ $member->client->name }}</option>
-                                                        @else
-                                                            <option disabled>Cliente no disponible (ID: {{ $member->id }})</option>
-                                                        @endif
+                                                    @foreach ($members as $member)
+                                                        <option value="{{ $member->id }}">{{ $member->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
