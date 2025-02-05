@@ -260,8 +260,8 @@
                                     </div>-
                                 </div>
                                 <div class="inside_form_buttons">
-                                    <button type="submit" name="submit" class="btn btn-wide btn-primary">Agregar
-                                        cliente</button>
+                                    <button type="submit" id="guardar" class="btn btn-primary">Agregar Cliente
+
                                 </div>
                                 <div class="alert alert-info">La información de cuenta será enviada al correo
                                     electrónico suministrado </div>
@@ -293,64 +293,140 @@
                 });
             });
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const button = document.querySelector(
-                '.inside_form_buttons button[type="submit"]'); // Selecciona el botón con el tipo "submit"
+       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const button = document.getElementById('guardar');
 
-                if (!button) {
-                    console.error('No se encontró el botón "Agregar cliente"');
-                    return;
+        if (!button) {
+            console.error('No se encontró el botón "Agregar cliente"');
+            return;
+        }
+
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const form = button.closest('form');
+            if (!form) {
+                console.error('Formulario no encontrado');
+                return;
+            }
+
+            // Función para validar campos con SweetAlert2
+            function validateForm() {
+                let errors = [];
+
+                if ($("#name").val().trim() === '') {
+                    errors.push({ field: 'Nombre', message: 'Complete el nombre.' });
+                }
+                if ($("#user").val().trim() === '') {
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Complete el usuario.' });
+                }
+                if ($("#email").val().trim() === '') {
+                    errors.push({ field: 'Correo Electrónico', message: 'Complete el correo electrónico.' });
+                }
+                if ($("#user").val().length < 5 || $("#user").val().length > 60) {
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe tener entre 5 y 60 caracteres.' });
+                }
+                if (!/^[a-zA-Z0-9.]+$/.test($("#user").val())) {
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe ser alfanumérico y puede contener (a-z, A-Z, 0-9, .).' });
+                }
+                if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
+                    errors.push({ field: 'E-Mail', message: 'Formato no válido.' });
                 }
 
-                button.addEventListener('click', function(e) {
-                    e.preventDefault(); // Evita el envío inmediato del formulario
+                // Agregar validadores adicionales
+                if ($("#password").val().trim() === '') {
+                    errors.push({ field: 'Contraseña', message: 'Complete la contraseña.' });
+                }
+                if ($("#password").val().length < 5 || $("#password").val().length > 60) {
+                    errors.push({ field: 'Contraseña', message: 'Contraseña Longitug debe estar entre 5 y 60 longitud de caracteres.' });
+                }
+                if (!/^[a-zA-Z0-9`!"?$%^&*()_+\-={}[\]:;@~#|<,>.?\'/\\]*$/.test($("#password").val())) {
+                    errors.push({ field: 'Contraseña', message: 'Su clave puede unicamente contener letras, numeros y los siguientes caracteres: ` ! \" ? $ ? % ^ & * ( ) _ - + = { [ } ] : ; @ ~ # | < , > . ? \' / \\ ' });
+                }
 
-                    const form = button.closest('form'); // Selecciona el formulario más cercano
+                // Validación del campo "Máximo tamaño de subida"
+                let maxFileSize = $("#max_file_size").val().trim();
+                if (maxFileSize === '') {
+                    errors.push({ field: 'Máximo tamaño de subida', message: 'Este campo es obligatorio.' });
+                } else if (isNaN(maxFileSize) || maxFileSize < 0 || maxFileSize > 2048) {
+                    errors.push({ field: 'Máximo tamaño de subida', message: 'El valor debe ser un número entre 0 y 2048 mb.' });
+                }
 
-                    if (form) {
-                        console.log('Formulario encontrado, enviando solicitud AJAX...');
-                        // Enviar la solicitud AJAX directamente
-                        fetch(form.action, {
-                                method: 'POST',
-                                body: new FormData(form),
-                            })
-                            .then(response => {
-                                if (response.ok) {
-                                    console.log('Respuesta OK recibida');
-                                    Swal.fire({
-                                        title: '¡Éxito!',
-                                        text: 'El cliente se ha agregado correctamente.',
-                                        icon: 'success',
-                                        timer: 2000, // El mensaje se quitará automáticamente después de 2 segundos
-                                        showConfirmButton: false,
-                                    });
-                                } else {
-                                    console.log('Respuesta no OK recibida');
-                                    Swal.fire({
-                                        title: 'Error',
-                                        text: 'Hubo un problema al agregar el cliente.',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK',
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error en la solicitud AJAX', error);
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Hubo un problema al agregar el cliente.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK',
-                                });
-                            });
-                    } else {
-                        console.error('Formulario no encontrado');
-                    }
+                if (errors.length > 0) {
+                    let errorHtml = errors.map((error, index) => 
+                        `<div style="margin-bottom: 10px;"><b>${index + 1}. ${error.field}:</b> ${error.message}</div>`
+                    ).join('<br>');
+
+                    Swal.fire({
+                        title: 'Errores de validación',
+                        html: `<div style="text-align: left;">${errorHtml}</div>`,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                    return false;
+                }
+                return true;
+            }
+
+            // Si la validación del frontend falla, se detiene el proceso
+            if (!validateForm()) return;
+
+            // Enviar la solicitud AJAX si todo está correcto
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: new FormData(form),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.errors) {
+                    let errorMessages = Object.entries(data.errors).map(([field, messages], index) => 
+                        `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
+                    ).join('<br>');
+
+                    Swal.fire({
+                        title: 'Errores de validación',
+                        html: `<div style="text-align: left;">${errorMessages}</div>`,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                } else if (data.success) {
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: data.success,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al registrar el cliente.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al procesar la solicitud.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
                 });
             });
-        </script>
+        });
+    });
+</script>
+
+
 
     </div> <!-- main_content -->
     </div> <!-- container-custom -->

@@ -130,17 +130,35 @@
                             </table>
                         </form>
 
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-xs-12 text-center">
-                                    <nav aria-label="Resultados de Navegación">
-                                        <div class="pagination_wrapper text-center">
-                                            {{ $categories->links('pagination::bootstrap-4') }}
-                                        </div>
-                                    </nav>
-                                </div>
-                            </div>
+                     <div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <nav aria-label="Resultados de Navegación">
+                <div class="pagination_wrapper text-center">
+                    {{ $categories->links('pagination::bootstrap-4') }}
+                </div>
+                <div class="d-inline-block" style="margin-top: 10px;">
+                    <form class="form-inline d-inline-block" id="go_to_page_form_categories">
+                        <div class="form-group">
+                            <label class="control-label hidden-xs hidden-sm">Vaya a:</label>
+                            <input type="number" class="form-control" style="width: 4em !important;"
+                                name="page" id="go_to_page_categories"
+                                value="{{ $categories instanceof \Illuminate\Pagination\LengthAwarePaginator ? $categories->currentPage() : 1 }}"
+                                min="1"
+                                max="{{ $categories instanceof \Illuminate\Pagination\LengthAwarePaginator ? $categories->lastPage() : 1 }}" />
                         </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default" onclick="goToPageCategories()">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+
 
                     </div>
                 </div> <!-- row -->
@@ -160,27 +178,93 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
-            <script>
-                // Seleccionar/Deseleccionar todos los checkboxes
-                $('#select_all').on('click', function() {
-                    $('input[name="categories[]"]').prop('checked', this.checked);
-                });
+           <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+           <script>
+    function goToPageCategories() {
+        var page = document.getElementById("go_to_page_categories").value;
+        var maxPage = parseInt("{{ $categories instanceof \Illuminate\Pagination\LengthAwarePaginator ? $categories->lastPage() : 1 }}");
 
-                // Función para eliminar las categorías seleccionadas
-                $('#btn_delete_selected').on('click', function() {
-                    // Verificar si se han seleccionado categorías
-                    var selectedCategories = $('input[name="categories[]"]:checked');
-                    if (selectedCategories.length === 0) {
-                        alert('Por favor, seleccione al menos una categoría para eliminar.');
-                        return;
-                    }
+        if (page >= 1 && page <= maxPage) {
+            window.location.href = "?page=" + page;
+        } else {
+            Swal.fire("Error", "Número de página inválido", "error");
+        }
+    }
+</script>
 
-                    // Confirmación antes de enviar el formulario
-                    if (confirm('¿Estás seguro de eliminar las categorías seleccionadas?')) {
-                        $('#bulk_delete_form').submit();
-                    }
-                });
-            </script>
+<script>
+    $(document).ready(function() {
+        // Función para mostrar el mensaje de éxito
+        function showSuccessMessage(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: message,
+                timer: 3000, // Tiempo en milisegundos (3000ms = 3 segundos)
+                showConfirmButton: false
+            }).then(() => {
+                location.reload(); // Recargar la página después de mostrar el mensaje de éxito
+            });
+        }
+
+        // Función para mostrar el mensaje de error
+        function showErrorMessage(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                confirmButtonText: 'OK'
+            });
+        }
+
+        // Seleccionar/Deseleccionar todos los checkboxes
+        $('#select_all').on('click', function() {
+            $('input[name="categories[]"]').prop('checked', this.checked);
+        });
+
+        // Función para eliminar las categorías seleccionadas
+        $('#btn_delete_selected').on('click', function() {
+            // Verificar si se han seleccionado categorías
+            var selectedCategories = $('input[name="categories[]"]:checked');
+            if (selectedCategories.length === 0) {
+                showErrorMessage('Por favor, seleccione al menos una categoría para eliminar.');
+                return;
+            }
+
+            // Confirmación antes de enviar el formulario
+            Swal.fire({
+                icon: 'warning',
+                title: 'Confirmación',
+                text: '¿Estás seguro de eliminar las categorías seleccionadas?',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Realizar la solicitud AJAX al servidor
+                    $.ajax({
+                        type: 'POST',
+                        url: $('#bulk_delete_form').attr('action'),
+                        data: $('#bulk_delete_form').serialize(),
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.error) {
+                                showErrorMessage(response.error);
+                            } else if (response.success) {
+                                showSuccessMessage(response.success);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            showErrorMessage('Hubo un error en el servidor. Por favor, inténtalo de nuevo más tarde.');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 </body>

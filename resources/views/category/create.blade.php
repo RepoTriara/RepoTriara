@@ -33,24 +33,7 @@
                     </div>
                 </div>
 
-                <!-- Mostrar errores de validación -->
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <!-- Mostrar mensaje de éxito -->
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
+                
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-lg-6">
                         <div class="white-box">
@@ -129,6 +112,53 @@
     <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
     <script src="{{ asset('includes/js/main.js') }}"></script>
     <script src="{{ asset('includes/js/js.functions.php') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+        
+    <script>
+    $(document).ready(function () {
+        $("form").submit(function (event) {
+            event.preventDefault(); // Evita la recarga de la página
+
+            let form = $(this);
+            let formData = form.serialize();
+
+            $.ajax({
+                url: form.attr("action"),
+                type: "POST",
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.success,
+                            timer: 3000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = "{{ route('categories.create') }}";
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessages = '';
+
+                    $.each(errors, function (key, value) {
+                        errorMessages += '<li>' + value + '</li>';
+                    });
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: '<ul>' + errorMessages + '</ul>',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 
 </html>

@@ -171,35 +171,36 @@ class UserSystemController extends Controller
 
 
     public function update(Request $request, $id)
-    {
-        // Validar los datos del formulario
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'user' => 'required|string|max:60',
-            'email' => 'required|email|max:255|unique:tbl_users,email,' . $id, // Ignora el correo del usuario actual
-            'level' => 'required|in:10,8',  // Asegúrate de que 'level' sea uno de los valores válidos
-            'password' => 'nullable|string|min:8', // Si no se cambia la contraseña, no es obligatorio
-            'active' => 'boolean',
-        ]);
+{
+    // Validar los datos del formulario
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'user' => 'required|string|max:60',
+        'email' => 'required|email|max:255|unique:tbl_users,email,' . $id, // Ignora el correo del usuario actual
+        'level' => 'required|in:10,8',  // Asegúrate de que 'level' sea uno de los valores válidos
+        'password' => 'nullable|string|min:8', // Si no se cambia la contraseña, no es obligatorio
+        'active' => 'boolean',
+    ]);
 
-        // Buscar el usuario por su ID
-        $user = User::findOrFail($id);
+    // Buscar el usuario por su ID
+    $user = User::findOrFail($id);
 
-        // Actualizar los datos del usuario
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->level = $request->level;  // Cambiar 'role' por 'level'
-        $user->active = $request->input('active', 0); // Si no se envía, establecer en 0
+    // Actualizar los datos del usuario
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->level = $request->level;  // Cambiar 'role' por 'level'
+    $user->active = $request->input('active', 0); // Si no se envía, establecer en 0
 
-        // Si la contraseña ha sido cambiada, actualizarla
-        if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
-        }
-
-        // Guardar los cambios
-        $user->save();
-
-        // Redirigir con un mensaje de éxito
-        return redirect()->route('system_users.index')->with('success', 'Usuario actualizado correctamente.');
+    // Si la contraseña ha sido cambiada, actualizarla
+    if ($request->filled('password')) {
+        $user->password = bcrypt($request->password);
     }
+
+    // Guardar los cambios
+    $user->save();
+
+    // Devolver una respuesta JSON
+    return response()->json(['success' => 'Usuario actualizado correctamente.']);
+}
+
 }

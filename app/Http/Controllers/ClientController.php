@@ -208,18 +208,19 @@ class ClientController extends Controller
         return redirect()->route('customer_manager');
     }
 
-    // Código para Editar un cliente
-    public function edit($id)
-    {
-        $client = User::findOrFail($id);
-        $groups = Groups::all();
-        $associatedGroups = Members::where('client_id', $id)->pluck('group_id')->toArray();
+   // Código para Editar un cliente
+public function edit($id)
+{
+    $client = User::findOrFail($id);
+    $groups = Groups::all();
+    $associatedGroups = Members::where('client_id', $id)->pluck('group_id')->toArray();
 
-        return view('customers.edit_client', compact('client', 'groups', 'associatedGroups'));
-    }
+    return view('customers.edit_client', compact('client', 'groups', 'associatedGroups'));
+}
 
-    public function update(Request $request, $id)
-    {
+public function update(Request $request, $id)
+{
+    try {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users,user,' . $id],
@@ -228,7 +229,7 @@ class ClientController extends Controller
             'address' => ['nullable', 'string'],
             'phone' => ['nullable', 'string', 'max:32'],
             'contact' => ['nullable', 'string', 'max:255'],
-            'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'], // Validación de rango
+            'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'],
             'group_request' => ['nullable', 'array'],
             'group_request.*' => ['integer'],
             'active' => ['nullable', 'boolean'],
@@ -257,7 +258,7 @@ class ClientController extends Controller
 
         // Gestión de grupos
         $newGroups = $request->input('group_request', []);
-        $currentGroups = Members::where('client_id', $id)->pluck('group_id')->toArray(); // Grupos actuales
+        $currentGroups = Members::where('client_id', $id)->pluck('group_id')->toArray();
 
         $groupsToRemove = array_diff($currentGroups, $newGroups);
         $groupsToAdd = array_diff($newGroups, $currentGroups);
@@ -278,6 +279,13 @@ class ClientController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Cliente actualizado correctamente.');
+        return response()->json(['success' => 'Cliente actualizado correctamente.'], 200);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json(['errors' => $e->errors()], 422);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Hubo un problema al actualizar el cliente.'], 500);
     }
+}
+
+
 }

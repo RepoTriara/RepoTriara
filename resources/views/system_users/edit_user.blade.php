@@ -162,7 +162,7 @@
                                     </div>
 
                                     <div class="inside_form_buttons">
-                                        <button type="submit" name="submit"
+                                        <button type="submit" id="guardar" name="submit" 
                                             class="btn btn-wide btn-primary">Actualizar Usuario</button>
                                     </div>
 
@@ -186,8 +186,124 @@
             <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
-        </div> <!-- main_content -->
-    </div> <!-- container-custom -->
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const button = document.getElementById('guardar'); 
+
+        if (!button) {
+            console.error('No se encontró el botón "Actualizar Usuario"');
+            return;
+        }
+
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const form = button.closest('form');
+            if (!form) {
+                console.error('Formulario no encontrado');
+                return;
+            }
+
+            function validateForm() {
+                let errors = [];
+
+                if ($("#name").val().trim() === '') {
+                    errors.push({ field: 'Nombre', message: 'Complete el nombre.' });
+                }
+               
+                if ($("#email").val().trim() === '') {
+                    errors.push({ field: 'Correo Electrónico', message: 'Complete el correo electrónico.' });
+                }
+              
+                if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
+                    errors.push({ field: 'E-Mail', message: 'Formato no válido.' });
+                }
+
+                if (errors.length > 0) {
+                    let errorHtml = errors.map((error, index) => 
+                        `<div style="margin-bottom: 10px;"><b>${index + 1}. ${error.field}:</b> ${error.message}</div>`
+                    ).join('');
+
+                    Swal.fire({
+                        title: 'Errores de validación',
+                        html: `<div style="text-align: left;">${errorHtml}</div>`,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                    return false;
+                }
+                return true;
+            }
+
+            // Si la validación del frontend falla, se detiene el proceso
+            if (!validateForm()) return;
+
+            // Enviar la solicitud AJAX si todo está correcto
+            console.log('Enviando solicitud AJAX...');
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: new FormData(form),
+            })
+            .then(response => {
+                console.log('Respuesta del servidor:', response);
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Datos recibidos:', data);
+
+                if (data.errors) {
+                    let errorMessages = Object.entries(data.errors).map(([field, messages], index) => 
+                        `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
+                    ).join('');
+
+                    Swal.fire({
+                        title: 'Errores de validación',
+                        html: `<div style="text-align: left;">${errorMessages}</div>`,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                } else if (data.success) {
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: data.success,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al actualizar el usuario.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error durante el procesamiento:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al procesar la solicitud.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
+            });
+        });
+    });
+</script>
+
+        </div> 
+    </div> 
 
 </body>
 

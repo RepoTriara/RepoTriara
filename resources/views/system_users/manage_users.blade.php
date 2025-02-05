@@ -33,21 +33,11 @@
                         <div class="col-xs-12">
                             <h2>Administración de usuarios</h2>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="row">
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-
-                    @if (session('error'))
-                        <div class="alert alert-danger">{{ session('error') }}</div>
-                    @endif
-
                     <div class="col-xs-12">
-
                         <div class="form_actions_left">
                             <div class="form_actions_limit_results">
                                 <!-- Formulario de búsqueda -->
@@ -222,7 +212,6 @@
                                                     <span class="button_label">Editar</span>
                                                 </a>
                                             </td>
-
                                         </tr>
                                     @empty
                                         <tr>
@@ -259,24 +248,19 @@
                                             </form>
                                         </div>
                                     </div>
-
-
-
-
-
                                 </div>
-
                             </div>
                         </form>
                     </div>
-
                 </div> <!-- row -->
             </div> <!-- container-fluid -->
 
             <footer>
                 <div id="footer">
-                    Claro Colombia </div>
+                    Claro Colombia
+                </div>
             </footer>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
             <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
             <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
             <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
@@ -287,15 +271,10 @@
             <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
             <script>
                 document.getElementById('select_all').addEventListener('click', function() {
-                    // Obtener el estado del checkbox principal
                     var isChecked = this.checked;
-
-                    // Seleccionar todos los checkboxes que están en el grupo 'batch[]'
                     var checkboxes = document.querySelectorAll('input[name="batch[]"]');
-
-                    // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
                     checkboxes.forEach(function(checkbox) {
-                        checkbox.checked = isChecked; // Establecer el mismo estado de 'checked'
+                        checkbox.checked = isChecked;
                     });
                 });
 
@@ -305,12 +284,50 @@
                     url.searchParams.set('page', page);
                     window.location.href = url.toString();
                 }
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.querySelector('form[action="{{ route('system_users.bulk_action') }}"]').addEventListener('submit', function (e) {
+                        var action = document.getElementById('action').value;
+                        var selectedUsers = [];
+
+                        document.querySelectorAll('input[name="batch[]"]:checked').forEach(function (checkbox) {
+                            selectedUsers.push(checkbox.value);
+                        });
+
+                        if (action === 'delete' && selectedUsers.length > 0) {
+                            e.preventDefault();
+
+                            Swal.fire({
+                                title: '¿Estás seguro?',
+                                text: "¡No podrás revertir esta acción!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Sí, eliminar',
+                                cancelButtonText: 'Cancelar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    this.submit();
+                                }
+                            });
+                        } else if (action === 'delete' && selectedUsers.length === 0) {
+                            e.preventDefault();
+                            Swal.fire('Error', 'Debes seleccionar al menos un usuario para eliminar.', 'error');
+                        }
+                    });
+
+                    @if(session('success'))
+                        Swal.fire('Éxito', '{{ session('success') }}', 'success');
+                    @endif
+
+                    @if(session('error'))
+                        Swal.fire('Error', '{{ session('error') }}', 'error');
+                    @endif
+                });
             </script>
-
-
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
-
 </body>
 
 </html>

@@ -129,6 +129,7 @@
             <script src="https://repo.triara.co/repositorio/includes/js/js.functions.php"></script>
             <script src="https://repo.triara.co/repositorio/includes/js/chosen/chosen.jquery.min.js"></script>
             <script src="https://repo.triara.co/repositorio/includes/js/ckeditor/ckeditor.js"></script>
+            
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 </body>

@@ -96,19 +96,7 @@
 
 
 
-                                    <!-- Público -->
-                                    <div class="form-group">
-                                        <div class="col-sm-8 col-sm-offset-4">
-                                            <label for="public">
-                                                <input type="checkbox" name="public" id="public" value="1"
-                                                    {{ $group->public ? 'checked' : '' }}>
-                                                Público
-                                                <p class="field_note">Permite a los clientes solicitar acceso a este
-                                                    grupo durante el proceso de registro y al editar su propio perfil.
-                                                </p>
-                                            </label>
-                                        </div>
-                                    </div>
+                                    
 
                                     <!-- Botón de guardar cambios -->
                                     <div class="inside_form_buttons">

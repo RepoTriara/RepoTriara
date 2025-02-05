@@ -9,7 +9,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
-    <script type="text/javascript" src="https://repo.triara.co/repositorio/includes/js/jquery.1.12.4.min.js"></script>
+    <script type="text/javascript" src="{{asset('includes/js/jquery.1.12.4.min.js')}}"></script>
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
     <!--[if lt IE 9]>
@@ -62,35 +62,7 @@
                 <div class="col-xs-12 col-sm-12 col-lg-6">
                     <div class="white-box">
                         <div class="white-box-interior">
-                            <script type="text/javascript">
-                                $(document).ready(function() {
-                                    $("form").submit(function() {
-                                        clean_form(this);
-                                        is_complete(this.add_client_form_name, 'Llene el nombre');
-                                        is_complete(this.add_client_form_user, 'Complete el usuario');
-                                        is_complete(this.add_client_form_email, 'Llene el correo electrónico');
-                                        is_length(this.add_client_form_user, 5, 60,
-                                            'Usuario Longitug debe estar entre 5 y 60 longitud de caracteres');
-                                        is_email(this.add_client_form_email, 'Correo electrónico no válido');
-                                        is_alpha_or_dot(this.add_client_form_user,
-                                            'El usuario debe ser alfanumérico y puede contener (a-z,A-Z,0-9,.).');
-                                        is_number(this.add_client_form_maxfilesize,
-                                            'El tamaño deñ archivo debe ser un valor entero');
-                                        is_complete(this.add_client_form_pass, 'Complete la contraseña');
-                                        //is_complete(this.add_client_form_pass2,'la verificación de la contraseña n fue completa');
-                                        is_length(this.add_client_form_pass, 5, 60,
-                                            'Contraseña Longitug debe estar entre 5 y 60 longitud de caracteres');
-                                        is_password(this.add_client_form_pass,
-                                            'Su clave puede unicamente contener letras, numeros y los siguientes caracteres: ` ! \" ? $ ? % ^ & * ( ) _ - + = { [ } ] : ; @ ~ # | < , > . ? \' / \\ '
-                                            );
-                                        //is_match(this.add_client_form_pass,this.add_client_form_pass2,'La contraseña no coincide ');
-                                        // show the errors or continue if everything is ok
-                                        if (show_form_errors() == false) {
-                                            return false;
-                                        }
-                                    });
-                                });
-                            </script>
+                            
                             <form method="POST" action="{{ route('customer_manager.update', $client->id) }}"
                                 class="form-horizontal">
                                 @csrf
@@ -256,6 +228,7 @@
             <div id="footer">
                 Claro Colombia </div>
         </footer>
+        
         <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
@@ -272,59 +245,134 @@
                 });
             });
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const button = document.getElementById('guardar'); // Selecciona el botón con id "guardar"
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const button = document.getElementById('guardar');
 
-                if (!button) {
-                    console.error('No se encontró el botón "Actualizar cliente"');
-                    return;
+        if (!button) {
+            console.error('No se encontró el botón "Actualizar cliente"');
+            return;
+        }
+
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const form = button.closest('form');
+            if (!form) {
+                console.error('Formulario no encontrado');
+                return;
+            }
+
+            // Función para validar campos con SweetAlert2
+            function validateForm() {
+                let errors = [];
+
+                if ($("#name").val().trim() === '') {
+                    errors.push({ field: 'Nombre', message: 'Complete el nombre.' });
+                }
+                if ($("#user").val().trim() === '') {
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Complete el usuario.' });
+                }
+                if ($("#email").val().trim() === '') {
+                    errors.push({ field: 'Correo Electrónico', message: 'Complete el correo electrónico.' });
+                }
+                if ($("#user").val().length < 5 || $("#user").val().length > 60) {
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe tener entre 5 y 60 caracteres.' });
+                }
+                if (!/^[a-zA-Z0-9.]+$/.test($("#user").val())) {
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe ser alfanumérico y puede contener (a-z, A-Z, 0-9, .).' });
+                }
+                if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
+                    errors.push({ field: 'E-Mail', message: 'Formato no válido.' });
                 }
 
-                button.addEventListener('click', function(e) {
-                    e.preventDefault(); // Evita el envío inmediato del formulario
+                // Validación del campo "Máximo tamaño de subida"
+                let maxFileSize = $("#max_file_size").val().trim();
+                if (maxFileSize === '') {
+                    errors.push({ field: 'Máximo tamaño de subida', message: 'Este campo es obligatorio.' });
+                } else if (isNaN(maxFileSize) || maxFileSize < 0 || maxFileSize > 2048) {
+                    errors.push({ field: 'Máximo tamaño de subida', message: 'El valor debe ser un número entre 0 y 2048 mb.' });
+                }
 
-                    const form = button.closest('form'); // Selecciona el formulario más cercano
+                if (errors.length > 0) {
+                    let errorHtml = errors.map((error, index) => 
+                        `<div style="margin-bottom: 10px;"><b>${index + 1}. ${error.field}:</b> ${error.message}</div>`
+                    ).join('');
 
-                    if (form) {
-                        // Enviar la solicitud AJAX directamente
-                        fetch(form.action, {
-                                method: 'POST',
-                                body: new FormData(form),
-                            })
-                            .then(response => {
-                                if (response.ok) {
-                                    Swal.fire({
-                                        title: '¡Éxito!',
-                                        text: 'El cliente se ha actualizado correctamente.',
-                                        icon: 'success',
-                                        timer: 2000, // El mensaje se quitará automáticamente después de 2 segundos
-                                        showConfirmButton: false,
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: 'Error',
-                                        text: 'Hubo un problema al actualizar el cliente.',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK',
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Hubo un problema al actualizar el cliente.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK',
-                                });
-                            });
-                    } else {
-                        console.error('Formulario no encontrado');
-                    }
+                    Swal.fire({
+                        title: 'Errores de validación',
+                        html: `<div style="text-align: left;">${errorHtml}</div>`,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                    return false;
+                }
+                return true;
+            }
+
+            // Si la validación del frontend falla, se detiene el proceso
+            if (!validateForm()) return;
+
+            // Enviar la solicitud AJAX si todo está correcto
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: new FormData(form),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.errors) {
+                    let errorMessages = Object.entries(data.errors).map(([field, messages], index) => 
+                        `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
+                    ).join('');
+
+                    Swal.fire({
+                        title: 'Errores de validación',
+                        html: `<div style="text-align: left;">${errorMessages}</div>`,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                } else if (data.success) {
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: data.success,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al actualizar el cliente.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al procesar la solicitud.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
                 });
             });
-        </script>
+        });
+    });
+</script>
+
+
+
+
+
+
+
     </div> <!-- main_content -->
     </div> <!-- container-custom -->
 

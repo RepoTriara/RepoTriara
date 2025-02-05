@@ -42,27 +42,28 @@ class CategoryController extends Controller
         return view('category.create', compact('categories'));
     }
 
-    // Guardar una nueva categoría
-    public function store(Request $request)
-    {
-        // Validación de los campos
-        $request->validate([
-            'name' => 'required',
-            'parent' => 'nullable|exists:tbl_categories,id',  // Validar que el padre exista
-            'description' => 'nullable',
-        ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required',
+        'parent' => 'nullable|exists:tbl_categories,id',
+        'description' => 'nullable',
+    ]);
 
-        // Crear la categoría, incluyendo el campo created_by con el nombre del usuario
-        TblCategory::create([
-            'name' => $request->name,
-            'parent' => $request->parent,
-            'description' => $request->description,
-            'created_by' => Auth::user()->user, // Aquí asignas el nombre de usuario
-        ]);
+    TblCategory::create([
+        'name' => $request->name,
+        'parent' => $request->parent,
+        'description' => $request->description,
+        'created_by' => Auth::user()->user,
+    ]);
 
-        // Redirigir con mensaje de éxito
-        return redirect()->route('categories.index')->with('success', 'Categoría creada correctamente.');
+    if ($request->ajax()) {
+        return response()->json(['success' => 'Categoría creada correctamente.']);
     }
+
+    return redirect()->route('categories.create')->with('success', 'Categoría creada correctamente.');
+}
+
 
     // Mostrar detalles de una categoría (incluyendo el padre y los hijos)
     public function show($id)
@@ -104,8 +105,8 @@ class CategoryController extends Controller
         $category = TblCategory::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('categories.index')->with('success', 'Categoría eliminada correctamente.');
-    }
+    return response()->json(['success' => 'Categoría eliminada correctamente.']);    
+}
 
     // Eliminar categorías seleccionadas (eliminación masiva)
     public function bulkDelete(Request $request)
@@ -115,11 +116,9 @@ class CategoryController extends Controller
         // Verificar que se haya seleccionado al menos una categoría
         if ($categoryIds && is_array($categoryIds) && count($categoryIds) > 0) {
             TblCategory::whereIn('id', $categoryIds)->delete();
-            return redirect()->route('categories.index')->with('success', 'Categorías eliminadas correctamente.');
-        }
+        return response()->json(['success' => 'Categorías eliminadas correctamente.']);        }
 
-        return redirect()->route('categories.index')->with('error', 'No se seleccionaron categorías para eliminar.');
-    }
+    return response()->json(['error' => 'No se seleccionaron categorías para eliminar.']);    }
 
     // Mostrar archivos relacionados a una categoría
     public function showFiles($id)

@@ -129,6 +129,64 @@
     <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
     <script src="{{ asset('includes/js/main.js') }}"></script>
     <script src="{{ asset('includes/js/js.functions.php') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script>
+    $(document).ready(function() {
+        // Función para mostrar el mensaje de éxito
+        function showSuccessMessage(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: message,
+                confirmButtonText: 'OK'
+            });
+        }
+// Función para mostrar el mensaje de error
+        function showErrorMessage(messages) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                html: `<ul>${messages.map(message => `<li>${message}</li>`).join('')}</ul>`,
+                confirmButtonText: 'OK'
+            });
+        }
+
+        // Mostrar mensajes de error al cargar la página
+        if ({{ $errors->any() ? 'true' : 'false' }}) {
+            let errorMessages = {!! json_encode($errors->all()) !!};
+            showErrorMessage(errorMessages);
+        }
+
+        // Mostrar mensajes de éxito o error al enviar el formulario
+        $('form').submit(function(event) {
+            // Validar el formulario aquí
+            clean_form(this);
+
+            $(this).find('input[name$="[name]"]').each(function() {
+                is_complete($(this)[0], 'Título está incompleto');
+            });
+
+            // Mostrar los errores o continuar si todo está bien
+            if (show_form_errors() == false) {
+                showErrorMessage('Hay errores en el formulario. Por favor, corrígelos.');
+                return false; // Impedir el envío del formulario
+            } else {
+                // Permitir que el formulario se envíe normalmente
+                showSuccessMessage('Categoría actualizada exitosamente.');
+                return true; // Permitir el envío del formulario
+            }
+        });
+
+        // Manejar el clic en el botón "Cancelar"
+        $('a[name="cancel"]').click(function(event) {
+            event.preventDefault();
+            showSuccessMessage('Operación cancelada.');
+            window.location.href = '{{ route('categories.index') }}';
+        });
+    });
+</script>
+
+
 </body>
 
 </html>
