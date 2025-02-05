@@ -12,7 +12,7 @@
         sizes="32x32">
     <link rel="apple-touch-icon" href="https://repo.triara.co/repositorio/img/favicon/favicon-152.png" sizes="152x152">
     <script type="text/javascript" src="https://repo.triara.co/repositorio/includes/js/jquery.1.12.4.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
@@ -95,34 +95,38 @@
                         </div>
 
                         <form action="{{ route('files.bulk-action') }}" method="POST" id="bulkActionForm">
-                      
-     @csrf
-    <div class="form_actions_right">
-        <div class="form_actions">
-            <div class="form_actions_submit" style="display: flex; align-items: center;">
-                <label class="control-label hidden-xs hidden-sm" style="margin-right: 10px;">
-                    <i class="glyphicon glyphicon-check"></i> Acciones de archivos seleccionados:
-                </label>
-                <select name="action" id="action" class="txtfield form-control">
-                    <option value="none">Seleccione la acción</option>
-                    <option value="delete">Eliminar</option>
-                    <option value="zip">Descarga comprimida</option>
-                </select>
-                <button type="submit" id="do_action" class="btn btn-sm btn-default">Proceder</button>
-            </div>
-        </div>
-    </div>
-   
+
+                            @csrf
+                            <div class="form_actions_right">
+                                <div class="form_actions">
+                                    <div class="form_actions_submit" style="display: flex; align-items: center;">
+                                        <label class="control-label hidden-xs hidden-sm" style="margin-right: 10px;">
+                                            <i class="glyphicon glyphicon-check"></i> Acciones de archivos
+                                            seleccionados:
+                                        </label>
+                                        <select name="action" id="action" class="txtfield form-control">
+                                            <option value="none">Seleccione la acción</option>
+                                            <option value="delete">Eliminar</option>
+                                            <option value="zip">Descarga comprimida</option>
+                                        </select>
+                                        <button type="submit" id="do_action"
+                                            class="btn btn-sm btn-default">Proceder</button>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <div class="clear"></div>
 
                             <div class="form_actions_count">
                                 @if (request()->has('category_id'))
                                     <p class="form_count_total">Total de archivos en la categoría:
-                                        <span>{{ $filteredTotal }}</span></p>
+                                        <span>{{ $filteredTotal }}</span>
+                                    </p>
                                 @elseif(request()->has('search') || request()->has('uploader'))
                                     <p class="form_count_total">Resultados filtrados:
-                                        <span>{{ $filteredTotal }}</span></p>
+                                        <span>{{ $filteredTotal }}</span>
+                                    </p>
                                 @else
                                     <p class="form_count_total">Total de archivos: <span>{{ $totalFiles }}</span>
                                     </p>
@@ -201,15 +205,16 @@
                                                     <span class="label label-danger">No</span>
                                                 @endif
                                             </td>
-                                           <td>
+                                            <td>
                                                 @if ($file->public_allow)
                                                     <button type="button" class="btn btn-primary btn-sm"
-                                                            data-toggle="modal" data-target="#urlModal"
-                                                            data-url="{{ route('file.showDownload', ['id' => $file->id, 'token' => $file->public_token]) }}">
+                                                        data-toggle="modal" data-target="#urlModal"
+                                                        data-url="{{ route('file.showDownload', ['id' => $file->id, 'token' => $file->public_token]) }}">
                                                         Descarga
                                                     </button>
                                                 @else
-                                                    <button type="button" class="btn btn-secondary btn-sm" disabled>Privado</button>
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        disabled>Privado</button>
                                                 @endif
                                             </td>
                                             <td>
@@ -234,7 +239,7 @@
                                                     <span class="btn btn-success disabled btn-sm">No expira</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $file->downloads->count() ?? 0 }} veces</td>
+                                            <td>{{ $file->downloads->count() }} veces</td>
                                             <td><a href="{{ route('files.edit', $file->id) }}"
                                                     class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a>
                                             </td>
@@ -287,144 +292,145 @@
         <script src="{{ asset('includes/js/main.js') }}"></script>
         <script src="{{ asset('includes/js/js.functions.php') }}"></script>
         <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
-        
+
     </div>
 
-   <script>
-    document.getElementById('select_all').addEventListener('click', function() {
-        let isChecked = this.checked;
-        let checkboxes = document.querySelectorAll('input[name="batch[]"]');
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = isChecked;
-        });
-    });
-
-    document.getElementById('bulkActionForm').addEventListener('submit', function(event) {
-        const action = document.getElementById('action').value;
-        const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
-
-        if (action === 'none' || selectedFiles.length === 0) {
-            event.preventDefault();
-            alert('Seleccione una acción válida y al menos un archivo.');
-            return;
-        }
-
-        if (action === 'delete') {
-            event.preventDefault();
-            const message =
-                `Está a punto de eliminar ${selectedFiles.length} archivo(s). Esta acción no se puede deshacer. ¿Está seguro de continuar?`;
-            document.getElementById('confirmationMessage').innerText = message;
-            $('#confirmationModal').modal('show');
-            document.getElementById('confirmAction').onclick = function() {
-                document.getElementById('bulkActionForm').submit();
-            };
-        }
-    });
-
-    $(document).ready(function() {
-        $('#urlModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var url = button.data('url');
-            var modal = $(this);
-            modal.find('#publicUrl').val(url);
-            modal.find('#publicUrl').click(function() {
-                $(this).select();
+    <script>
+        document.getElementById('select_all').addEventListener('click', function() {
+            let isChecked = this.checked;
+            let checkboxes = document.querySelectorAll('input[name="batch[]"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = isChecked;
             });
         });
-    });
 
-    function goToPageFiles() {
-        const page = document.getElementById('go_to_page_files').value;
-        const url = new URL(window.location.href);
-        url.searchParams.set('page', page);
-        window.location.href = url.toString();
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const downloadForm = document.getElementById('bulkActionForm');
-        const delay = 3000; // Tiempo de espera (en milisegundos)
-
-        downloadForm.onsubmit = function(e) {
+        document.getElementById('bulkActionForm').addEventListener('submit', function(event) {
             const action = document.getElementById('action').value;
             const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
 
             if (action === 'none' || selectedFiles.length === 0) {
-                e.preventDefault();
-                // Mostrar mensaje de error con SweetAlert
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No se ha seleccionado ningún archivo.',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
+                event.preventDefault();
+                alert('Seleccione una acción válida y al menos un archivo.');
                 return;
             }
 
             if (action === 'delete') {
-                e.preventDefault();
-                const message = `Está a punto de eliminar ${selectedFiles.length} archivo(s). Esta acción no se puede deshacer. ¿Está seguro de continuar?`;
+                event.preventDefault();
+                const message =
+                    `Está a punto de eliminar ${selectedFiles.length} archivo(s). Esta acción no se puede deshacer. ¿Está seguro de continuar?`;
                 document.getElementById('confirmationMessage').innerText = message;
                 $('#confirmationModal').modal('show');
                 document.getElementById('confirmAction').onclick = function() {
                     document.getElementById('bulkActionForm').submit();
                 };
-            } else if (action === 'zip') {
-                e.preventDefault(); // Evitar envío inmediato
+            }
+        });
 
-                // Mostrar mensaje de carga con SweetAlert
-                Swal.fire({
-                    title: 'Por favor, espera',
-                    html: `
+        $(document).ready(function() {
+            $('#urlModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                var modal = $(this);
+                modal.find('#publicUrl').val(url);
+                modal.find('#publicUrl').click(function() {
+                    $(this).select();
+                });
+            });
+        });
+
+        function goToPageFiles() {
+            const page = document.getElementById('go_to_page_files').value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            window.location.href = url.toString();
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadForm = document.getElementById('bulkActionForm');
+            const delay = 3000; // Tiempo de espera (en milisegundos)
+
+            downloadForm.onsubmit = function(e) {
+                const action = document.getElementById('action').value;
+                const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
+
+                if (action === 'none' || selectedFiles.length === 0) {
+                    e.preventDefault();
+                    // Mostrar mensaje de error con SweetAlert
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se ha seleccionado ningún archivo.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
+                if (action === 'delete') {
+                    e.preventDefault();
+                    const message =
+                        `Está a punto de eliminar ${selectedFiles.length} archivo(s). Esta acción no se puede deshacer. ¿Está seguro de continuar?`;
+                    document.getElementById('confirmationMessage').innerText = message;
+                    $('#confirmationModal').modal('show');
+                    document.getElementById('confirmAction').onclick = function() {
+                        document.getElementById('bulkActionForm').submit();
+                    };
+                } else if (action === 'zip') {
+                    e.preventDefault(); // Evitar envío inmediato
+
+                    // Mostrar mensaje de carga con SweetAlert
+                    Swal.fire({
+                        title: 'Por favor, espera',
+                        html: `
                     <p>Estamos procesando tu descarga comprimida...</p>
                     <div style="margin-top: 10px;">
                         <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando..." width="50">
                     </div>
                 `,
-                    allowOutsideClick: false,
-                    showConfirmButton: false
+                        allowOutsideClick: false,
+                        showConfirmButton: false
+                    });
+
+                    // Configurar el temporizador para cerrar automáticamente el mensaje y enviar el formulario
+                    setTimeout(() => {
+                        Swal.close(); // Cerrar el mensaje
+                        e.target.submit(); // Enviar el formulario
+                    }, delay); // Tiempo sincronizado
+                }
+            };
+
+            // Verificar si hay un mensaje de error o éxito (esto dependerá de cómo manejes la respuesta en el backend)
+            @if (session('success'))
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
                 });
+            @elseif (session('error'))
+                Swal.fire({
+                    title: 'Error',
+                    text: '{{ session('error') }}',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            @endif
 
-                // Configurar el temporizador para cerrar automáticamente el mensaje y enviar el formulario
-                setTimeout(() => {
-                    Swal.close(); // Cerrar el mensaje
-                    e.target.submit(); // Enviar el formulario
-                }, delay); // Tiempo sincronizado
-            }
-        };
+            // Agregar funcionalidad para seleccionar todos los checkboxes
+            document.getElementById('select_all').addEventListener('click', function() {
+                // Obtener el estado del checkbox principal
+                var isChecked = this.checked;
 
-        // Verificar si hay un mensaje de error o éxito (esto dependerá de cómo manejes la respuesta en el backend)
-        @if (session('success'))
-            Swal.fire({
-                title: '¡Éxito!',
-                text: '{{ session('success') }}',
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-            });
-        @elseif (session('error'))
-            Swal.fire({
-                title: 'Error',
-                text: '{{ session('error') }}',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        @endif
+                // Seleccionar todos los checkboxes que están en el grupo 'file_ids[]'
+                var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
 
-        // Agregar funcionalidad para seleccionar todos los checkboxes
-        document.getElementById('select_all').addEventListener('click', function() {
-            // Obtener el estado del checkbox principal
-            var isChecked = this.checked;
-
-            // Seleccionar todos los checkboxes que están en el grupo 'file_ids[]'
-            var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
-
-            // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = isChecked;
+                // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = isChecked;
+                });
             });
         });
-    });
-</script>
+    </script>
 
 
 

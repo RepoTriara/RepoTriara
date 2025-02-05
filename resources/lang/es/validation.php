@@ -86,8 +86,19 @@ return [
     'uploaded' => 'El :attribute no se pudo subir.',
     'url' => 'El formato de :attribute es inválido.',
     'uuid' => 'El :attribute debe ser un UUID válido.',
+    'after' => 'El :attribute debe ser una fecha posterior a :date.',
+    'after_or_equal' => 'El :attribute debe ser una fecha posterior o igual a :date.',
+    'before' => 'El :attribute debe ser una fecha anterior a :date.',
+    'before_or_equal' => 'El :attribute debe ser una fecha anterior o igual a :date.',
+
+    // ...
+
+    'attributes' => [
+        'expiry_date' => 'fecha de expiración',
+    ],
 
     // Agregar mensajes personalizados si es necesario
+    
     'custom' => [
         'name' => [
             'required' => 'El nombre es obligatorio.',
@@ -111,5 +122,9 @@ return [
         'login' => [
             'required' => 'El campo de Email o usuario es obligatorio.',
         ],
+        'expiry_date' => [
+            'after_or_equal' => 'La :attribute debe ser una fecha posterior o igual a hoy.', // Mensaje modificado
+        ],
     ],
+    
 ];

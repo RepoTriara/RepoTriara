@@ -10,8 +10,10 @@ use App\Models\User;
 use App\Models\TblCategory;
 use App\Models\TblCategoryRelation;
 use ZipArchive;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\Members;
+use App\Models\TblDownload;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -199,7 +201,7 @@ else {
     if (!$fileIds || $action === 'none') {
         return redirect()->back()->with('error', 'Seleccione una acción válida y al menos un archivo.');
     }
-    
+
 
     // Lógica para procesar las acciones
     switch ($action) {
@@ -211,10 +213,10 @@ else {
             return redirect()->back()->with('success', 'Archivos visibles nuevamente.');
         case 'delete':
             $files = TblFile::whereIn('id', $fileIds)->get();
- 
+
             foreach ($files as $file) {
                 $filePath = storage_path('app/private/uploads/' . $file->url);
- 
+
                 if (File::exists($filePath)) {
                     File::delete($filePath);
                 }
@@ -256,7 +258,7 @@ else {
 {
     $file = TblFile::findOrFail($fileId);
 
-    // Generar token público si no existe
+    //  token público si no existe
     if (!$file->public_token) {
         $file->public_token = Str::random(32);
         $file->save();
@@ -292,9 +294,15 @@ else {
     ));
 }
 
-     public function editBasic($fileId)
+    public function editBasic($fileId)
     {
-         $file = TblFile::findOrFail($fileId);
+        $user = Auth::user();
+
+        $file = TblFile::findOrFail($fileId);
+
+        if ($user->level == 0 && $file->uploader !== $user->name) {
+            return redirect()->route('manage-files')->with('error', 'No tienes permiso para editar este archivo.');
+        }
 
         // Generar token público si no existe
         if (!$file->public_token) {
@@ -307,43 +315,70 @@ else {
             ->pluck('group_id')
             ->toArray();
 
-          return view('files.edit-file', compact(    'file','selectedGroups','fileId'));
+        return view('files.edit-file', compact('file', 'selectedGroups', 'fileId'));
     }
 
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'filename' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'expiry_date' => 'nullable|date',
-        'expires' => 'boolean',
-        'public_allow' => 'boolean',
-        'assignments' => 'nullable|array',
-        'assignments.*' => 'string',
-        'categories' => 'nullable|array',
-        'categories.*' => 'integer|exists:tbl_categories,id',
-    ]);
+    {
+        $file = TblFile::findOrFail($id);
 
-    $file = TblFile::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'filename' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'expiry_date' => 'nullable|date',
+            'expires' => 'boolean',
+            'public_allow' => 'boolean',
+            'assignments' => 'nullable|array',
+            'assignments.*' => 'string',
+            'categories' => 'nullable|array',
+            'categories.*' => 'integer|exists:tbl_categories,id',
+        ]);
 
-    $file->update([
-        'filename' => $request->input('filename'),
-        'description' => $request->input('description') ?? '',
-        'expiry_date' => $request->input('expires') ? $request->input('expiry_date') : null,
-        'expires' => $request->boolean('expires'),
-        'public_allow' => $request->boolean('public_allow'),
-    ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput($request->all(['filename', 'description', 'expires', 'public_allow', 'expiry_date']));
+        }
 
-    // Determinar desde qué vista se envió el formulario
-    $viewType = $request->input('viewType'); // Puede ser 'edit' o 'editBasic'
+        if ($request->has('expires') && $request->boolean('expires')) {
+            $expiryDate = $request->input('expiry_date');
 
-    if ($viewType === 'edit') {
-        return redirect()->route('files.edit', $id)->with('success', 'El archivo se ha actualizado correctamente.');
-    } elseif ($viewType === 'editBasic') {
-        $selectedGroups = TblFileRelation::where('file_id', $file->id)
-            ->whereNotNull('group_id')
-            ->pluck('group_id')
-            ->toArray();
+            if (empty($expiryDate)) {
+                return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración es requerida.'])->withInput($request->all());
+            }
+
+            $expiryDate = Carbon::parse($expiryDate);
+            $maxExpiryDate = $file->timestamp->copy()->addYear(); // Un año desde la creación
+
+            if ($expiryDate->greaterThan($maxExpiryDate)) {
+                return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración no puede ser mayor a un año desde la fecha de creación.'])->withInput($request->all());
+            }
+
+            if ($expiryDate->lessThan($file->timestamp)) {
+                return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración no puede ser anterior a la fecha de creación del archivo.'])->withInput($request->all());
+            }
+
+            $file->expiry_date = $expiryDate;
+        } else {
+            $file->expiry_date = null;
+        }
+
+        $file->filename = $request->input('filename');
+        $file->description = $request->input('description') ?? '';
+        $file->expires = $request->boolean('expires');
+        $file->public_allow = $request->boolean('public_allow');
+        $file->save();
+
+        // Determinar desde qué vista se envió el formulario
+        $viewType = $request->input('viewType');
+
+        if ($viewType === 'edit') {
+            return redirect()->route('files.edit', $id)->with('success', 'El archivo se ha actualizado correctamente.');
+        } elseif ($viewType === 'editBasic') {
+            $selectedGroups = TblFileRelation::where('file_id', $file->id)
+                ->whereNotNull('group_id')
+                ->pluck('group_id')
+                ->toArray();
 
             return view('files.edit-file', [
                 'file' => $file,
@@ -351,49 +386,47 @@ else {
                 'fileId' => $id,
                 'success' => 'El archivo se ha actualizado correctamente.',
             ]);
-
         }
 
-    // Actualizar asignaciones
-    TblFileRelation::where('file_id', $file->id)->delete();
+        // Actualizar asignaciones
+        TblFileRelation::where('file_id', $file->id)->delete();
 
-    if ($request->has('assignments')) {
-        foreach ($request->input('assignments') as $assignment) {
-            if (Str::startsWith($assignment, 'user_')) {
-                $userId = Str::after($assignment, 'user_');
-                TblFileRelation::create([
+        if ($request->has('assignments')) {
+            foreach ($request->input('assignments') as $assignment) {
+                if (Str::startsWith($assignment, 'user_')) {
+                    $userId = Str::after($assignment, 'user_');
+                    TblFileRelation::create([
+                        'file_id' => $file->id,
+                        'client_id' => $userId,
+                        'timestamp' => now(),
+                        'hidden' => 0,
+                    ]);
+                } elseif (Str::startsWith($assignment, 'group_')) {
+                    $groupId = Str::after($assignment, 'group_');
+                    TblFileRelation::create([
+                        'file_id' => $file->id,
+                        'group_id' => $groupId,
+                        'timestamp' => now(),
+                        'hidden' => 0,
+                    ]);
+                }
+            }
+        }
+
+        // Actualizar categorías
+        TblCategoryRelation::where('file_id', $file->id)->delete();
+
+        if ($request->has('categories')) {
+            foreach ($request->input('categories') as $categoryId) {
+                TblCategoryRelation::create([
                     'file_id' => $file->id,
-                    'client_id' => $userId,
-                    'timestamp' => now(),
-                    'hidden' => 0,
-                ]);
-            } elseif (Str::startsWith($assignment, 'group_')) {
-                $groupId = Str::after($assignment, 'group_');
-                TblFileRelation::create([
-                    'file_id' => $file->id,
-                    'group_id' => $groupId,
-                    'timestamp' => now(),
-                    'hidden' => 0,
+                    'cat_id' => $categoryId,
                 ]);
             }
         }
-    }
 
-    // Actualizar categorías
-    TblCategoryRelation::where('file_id', $file->id)->delete();
-
-    if ($request->has('categories')) {
-        foreach ($request->input('categories') as $categoryId) {
-            TblCategoryRelation::create([
-                'file_id' => $file->id,
-                'cat_id' => $categoryId,
-            ]);
-        }
+        return redirect()->route('files.edit', $file->id)->with('success', 'El archivo se ha actualizado correctamente.');
     }
-    
-    
-    return redirect()->route('files.edit', parameters: $file->id)->with('success', 'El archivo se ha actualizado correctamente.');
-}
 
 
     public function resetUploadSession()
@@ -417,190 +450,183 @@ else {
     }
 
 
-public function uploadProcess(Request $request)
-{
-    try {
-        $request->validate([
-            'file' => 'required|file|max:20480',
-            'name' => 'required|string',
-            'chunk' => 'nullable|integer',
-            'chunks' => 'nullable|integer',
-        ]);
+    public function uploadProcess(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $maxSize = $user->max_file_size > 0 ? $user->max_file_size * 1024 * 1024 : 2048 * 1024 * 1024; // Convertir MB a Bytes
 
-        $tempDir = storage_path('app/private/uploads/tmp');
-        if (!file_exists($tempDir)) {
-            mkdir($tempDir, 0777, true);
+            $request->validate([
+                'file' => "required|file|max:$maxSize",
+                'name' => 'required|string',
+                'chunk' => 'nullable|integer',
+                'chunks' => 'nullable|integer',
+            ], [
+                'file.max' => 'El archivo supera el tamaño máximo permitido de ' . ($user->max_file_size ?: 2048) . ' MB.'
+            ]);
+
+            $tempDir = storage_path('app/private/uploads/tmp');
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0777, true);
+            }
+
+            $file = $request->file('file');
+            $chunk = $request->input('chunk', 0);
+            $chunks = $request->input('chunks', 1);
+            $fileName = $request->input('name');
+
+            $partFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileName . '.part';
+
+            $out = fopen($partFilePath, $chunk == 0 ? 'wb' : 'ab');
+            $in = fopen($file->getPathname(), 'rb');
+            while ($buff = fread($in, 4096)) {
+                fwrite($out, $buff);
+            }
+            fclose($in);
+            fclose($out);
+
+            if ($chunk == $chunks - 1) {
+                $finalFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileName;
+                rename($partFilePath, $finalFilePath);
+
+                $uploadSessionId = session('upload_session_id', Str::uuid()->toString());
+                session(['upload_session_id' => $uploadSessionId]);
+
+                $uploadedFiles = session("uploaded_files_$uploadSessionId", []);
+                $uploadedFiles[] = $fileName;
+                session(["uploaded_files_$uploadSessionId" => $uploadedFiles]);
+
+                return response()->json([
+                    'success' => true,
+                    'redirect' => route('files.upload_process.view')
+                ], 200);
+            }
+
+            return response()->json(['success' => true], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
-        $file = $request->file('file');
-        $chunk = $request->input('chunk', 0);
-        $chunks = $request->input('chunks', 1);
-        $fileName = $request->input('name');
-
-        // Ruta del archivo PART único
-        $partFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileName . '.part';
-
-        // Abrir el archivo PART en modo de escritura binaria (append)
-        $out = fopen($partFilePath, $chunk == 0 ? 'wb' : 'ab');
-
-        // Leer el contenido del fragmento y escribirlo en el archivo PART
-        $in = fopen($file->getPathname(), 'rb');
-        while ($buff = fread($in, 4096)) {
-            fwrite($out, $buff);
-        }
-        fclose($in);
-        fclose($out);
-
-        // Si es el último fragmento, renombrar el archivo PART al nombre final
-        if ($chunk == $chunks - 1) {
-            $finalFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileName;
-            rename($partFilePath, $finalFilePath);
-
-            // Guardar el archivo en la sesión
-            $uploadSessionId = session('upload_session_id', Str::uuid()->toString());
-            session(['upload_session_id' => $uploadSessionId]);
-
-            $uploadedFiles = session("uploaded_files_$uploadSessionId", []);
-            $uploadedFiles[] = $fileName;
-            session(["uploaded_files_$uploadSessionId" => $uploadedFiles]);
-
-            return response()->json([
-                'success' => true,
-                'redirect' => route('files.upload_process.view')
-            ], 200);
-        }
-
-        return response()->json(['success' => true], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
     }
-}
-
 
     public function store(Request $request)
-{
-    try {
-        $rules = [
-            'file' => 'required|array',
-            'file.*.file' => 'required|string',
-            'file.*.name' => 'required|string',
-            'file.*.description' => 'nullable|string',
-        ];
-
-        if (Auth::user()->level != 0) {
-            $rules = array_merge($rules, [
-                'file.*.categories' => 'required|array',
-                'file.*.assignments' => 'required|array',
-                'file.*.expiry_date' => 'nullable|date',
-                'file.*.public' => 'nullable|boolean',
-                'file.*.hidden' => 'nullable|boolean',
-            ]);
-        }
-
-        $data = $request->validate($rules);
-
-        $tempDir = storage_path('app/private/uploads/tmp');
-        $finalDir = storage_path('app/private/uploads');
-        $savedFiles = [];
-
-        if (!file_exists($finalDir)) {
-            mkdir($finalDir, 0777, true);
-        }
-
-        foreach ($data['file'] as $key => $fileData) {
-            $fileData['public'] = isset($fileData['public']) ? (int) $fileData['public'] : 0;
-            $fileData['hidden'] = isset($fileData['hidden']) ? (int) $fileData['hidden'] : 0;
-
-            // Verificar si el cliente tiene el rol 0 y ajustar la fecha de expiración
-            if (Auth::user()->level == 0) {
-                $fileData['expiry_date'] = Carbon::now()->addYear();
-            }
-
-            $tempFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileData['file'];
-
-            if (!file_exists($tempFilePath)) {
-                continue;
-            }
-
-            $fileExtension = pathinfo($fileData['file'], PATHINFO_EXTENSION);
-            $uniqueFileName = uniqid() . '-' . sha1(uniqid() . microtime()) . ($fileExtension ? '.' . $fileExtension : '');
-            $finalFilePath = $finalDir . DIRECTORY_SEPARATOR . $uniqueFileName;
-
-            if (!rename($tempFilePath, $finalFilePath)) {
-                throw new \Exception('Error al mover el archivo a su ubicación final: ' . $finalFilePath);
-            }
-
-            $fileDataForDatabase = [
-                'filename' => $fileData['name'],
-                'url' => $uniqueFileName,
-                'original_url' => preg_replace('/^\d+_/', '', $fileData['file']),
-                'description' => $fileData['description'] ?? 'Sin descripción',
-                'uploader' => Auth::user()->name ?? 'anónimo',
-                'expires' => isset($fileData['expiry_date']) ? 1 : 0,
-                'expiry_date' => $fileData['expiry_date'] ?? null,
-                'public_allow' => $fileData['public'],
-                'hidden' => $fileData['hidden'],
-                'public_token' => $fileData['public'] ? bin2hex(random_bytes(16)) : null,
+    {
+        try {
+            $rules = [
+                'file' => 'required|array',
+                'file.*.file' => 'required|string',
+                'file.*.name' => 'required|string',
+                'file.*.description' => 'nullable|string',
             ];
 
-            $file = TblFile::create($fileDataForDatabase);
-
-            if (Auth::user()->level == 0) {
-                // Asignar automáticamente el archivo al usuario autenticado si su nivel es 0
-                TblFileRelation::create([
-                    'file_id' => $file->id,
-                    'client_id' => Auth::user()->id,
-                    'timestamp' => now(),
-                    'hidden' => $fileData['hidden'] ?? 0,
+            if (Auth::user()->level != 0) {
+                $rules = array_merge($rules, [
+                    'file.*.categories' => 'required|array',
+                    'file.*.assignments' => 'required|array',
+                    'file.*.expiry_date' => 'nullable|date',
+                    'file.*.public' => 'nullable|boolean',
+                    'file.*.hidden' => 'nullable|boolean',
                 ]);
             }
 
-            if (Auth::user()->level != 0) {
-                foreach ($fileData['assignments'] as $assignment) {
-                    if (Str::startsWith($assignment, 'user_')) {
-                        $userId = Str::after($assignment, 'user_');
-                        TblFileRelation::create([
+            $data = $request->validate($rules);
+
+            $tempDir = storage_path('app/private/uploads/tmp');
+            $finalDir = storage_path('app/private/uploads');
+            $savedFiles = [];
+
+            if (!file_exists($finalDir)) {
+                mkdir($finalDir, 0777, true);
+            }
+
+            foreach ($data['file'] as $fileData) {
+                $fileData['public'] = isset($fileData['public']) ? (int) $fileData['public'] : 0;
+                $fileData['hidden'] = isset($fileData['hidden']) ? (int) $fileData['hidden'] : 0;
+
+                // Verificar si el cliente tiene el rol 0 y ajustar la fecha de expiración
+                if (Auth::user()->level == 0) {
+                    $fileData['expiry_date'] = Carbon::now()->addYear();
+                }
+
+                $tempFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileData['file'];
+
+                if (!file_exists($tempFilePath)) {
+                    continue;
+                }
+
+                $fileExtension = pathinfo($fileData['file'], PATHINFO_EXTENSION);
+                $uniqueFileName = uniqid() . '-' . sha1(uniqid() . microtime()) . ($fileExtension ? '.' . $fileExtension : '');
+                $finalFilePath = $finalDir . DIRECTORY_SEPARATOR . $uniqueFileName;
+
+
+                if (!rename($tempFilePath, $finalFilePath)) {
+                    throw new \Exception('Error al mover el archivo a su ubicación final: ' . $finalFilePath);
+                }
+
+
+                $file = TblFile::create([
+                    'filename' => $fileData['name'],
+                    'url' => $uniqueFileName,
+                    'original_url' => preg_replace('/^\d+_/', '', $fileData['file']),
+                    'description' => $fileData['description'] ?? 'Sin descripción',
+                    'uploader' => Auth::user()->user ?? 'anónimo',
+                    'expires' => isset($fileData['expiry_date']) ? 1 : 0,
+                    'expiry_date' => $fileData['expiry_date'] ?? null,
+                    'public_allow' => $fileData['public'],
+                    'hidden' => $fileData['hidden'],
+                    'public_token' => $fileData['public'] ? bin2hex(random_bytes(16)) : null,
+                ]);
+
+                // Asignar el archivo al usuario autenticado si su nivel es 0
+                if (Auth::user()->level == 0) {
+                    TblFileRelation::create([
+                        'file_id' => $file->id,
+                        'client_id' => Auth::user()->id,
+                        'timestamp' => now(),
+                        'hidden' => $fileData['hidden'] ?? 0,
+                    ]);
+                }
+
+                if (Auth::user()->level != 0) {
+                    foreach ($fileData['assignments'] as $assignment) {
+                        if (Str::startsWith($assignment, 'user_')) {
+                            $userId = Str::after($assignment, 'user_');
+                            TblFileRelation::create([
+                                'file_id' => $file->id,
+                                'client_id' => $userId,
+                                'timestamp' => now(),
+                                'hidden' => $fileData['hidden'] ?? 0,
+                            ]);
+                        } elseif (Str::startsWith($assignment, 'group_')) {
+                            $groupId = Str::after($assignment, 'group_');
+                            TblFileRelation::create([
+                                'file_id' => $file->id,
+                                'group_id' => $groupId,
+                                'timestamp' => now(),
+                                'hidden' => $fileData['hidden'] ?? 0,
+                            ]);
+                        }
+                    }
+
+                    foreach ($fileData['categories'] as $categoryId) {
+                        TblCategoryRelation::create([
                             'file_id' => $file->id,
-                            'client_id' => $userId,
+                            'cat_id' => $categoryId,
                             'timestamp' => now(),
-                            'hidden' => $fileData['hidden'] ?? 0,
-                        ]);
-                    } elseif (Str::startsWith($assignment, 'group_')) {
-                        $groupId = Str::after($assignment, 'group_');
-                        TblFileRelation::create([
-                            'file_id' => $file->id,
-                            'group_id' => $groupId,
-                            'timestamp' => now(),
-                            'hidden' => $fileData['hidden'] ?? 0,
                         ]);
                     }
                 }
 
-                foreach ($fileData['categories'] as $categoryId) {
-                    TblCategoryRelation::create([
-                        'file_id' => $file->id,
-                        'cat_id' => $categoryId,
-                        'timestamp' => now(),
-                    ]);
-                }
+                // Añadir a la lista de archivos guardados
+                $savedFiles[] = $file->loadCount(['fileRelations', 'categoryRelations']);
             }
 
-            $assignmentsCount = TblFileRelation::where('file_id', $file->id)->count();
-            $categoriesCount = TblCategoryRelation::where('file_id', $file->id)->count();
+            session(['savedFiles' => $savedFiles]);
 
-            $file->assignments_count = $assignmentsCount;
-            $file->categories_count = $categoriesCount;
-
-            $savedFiles[] = $file->loadCount(['fileRelations', 'categoryRelations']);
+            return redirect()->route('files.upload_process.view');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Error al guardar los archivos: ' . $e->getMessage()]);
         }
-
-        session(['savedFiles' => $savedFiles]);
-
-        return redirect()->route('files.upload_process.view');
-    } catch (\Exception $e) {
-        return redirect()->back()->withErrors(['error' => 'Error al guardar los archivos: ' . $e->getMessage()]);
     }
-}
 
    public function uploadProcessView(Request $request)
 {
@@ -658,7 +684,35 @@ public function uploadProcess(Request $request)
     }
 }
 
+    public function clearTemporaryFiles(Request $request)
+    {
+        try {
+            // Verificar si hay sesión de carga activa
+            $uploadSessionId = session('upload_session_id');
+            if (!$uploadSessionId) {
+                return response()->json(['message' => 'No hay sesión de carga activa.'], 200);
+            }
 
+            // Obtener archivos temporales guardados en sesión
+            $uploadedFiles = session("uploaded_files_$uploadSessionId", []);
+            $tempDir = storage_path('app/private/uploads/tmp');
+
+            foreach ($uploadedFiles as $filename) {
+                $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+                if (file_exists($filePath)) {
+                    unlink($filePath); // Eliminar archivo
+                }
+            }
+
+            // Limpiar la sesión
+            session()->forget("uploaded_files_$uploadSessionId");
+            session()->forget('upload_session_id');
+
+            return response()->json(['message' => 'Archivos temporales eliminados correctamente.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al limpiar archivos temporales: ' . $e->getMessage()], 500);
+        }
+    }
 
    public function myFiles(Request $request)
     {
@@ -886,44 +940,64 @@ public function uploadProcess(Request $request)
 
         return round($fileSize, 2) . ' ' . $units[$unitIndex];
     }
-  public function directDownload($id)
+    public function directDownload($id)
     {
-        // Buscar el archivo por su ID
         $file = TblFile::find($id);
- 
+
         if (!$file) {
             return back()->with(['error' => 'El archivo no existe.']);
         }
- 
-        // Verificar si el archivo es público
-        if (!$file->public_allow) {
-            return back()->with(['error' => 'Este archivo no está disponible para descarga pública.']);
-        }
- 
+
         $url = $file->url;
         if (empty($url)) {
             return back()->with(['error' => 'El archivo no tiene una URL asociada.']);
         }
- 
-        // Ruta del archivo en el almacenamiento privado
+
         $path = storage_path('app/private/uploads/' . $url);
- 
-        // Verificar si el archivo existe en la ruta
+
         if (!file_exists($path)) {
-            return back()->with(['error' => 'El archivo no está disponible para descargar.'], 404);
+            return back()->with(['error' => 'El archivo no está disponible para descargar.']);
         }
- 
-        // Obtener la extensión original del archivo
+
+        // Verifica si el archivo ha expirado usando el campo expiry_date
+        if ($file->expiry_date && $file->expiry_date < now()) {
+            return back()->with(['error' => 'El archivo ha expirado y ya no está disponible para descarga.']);
+        }
+
+        // Verifica si la descarga pública está permitida (campo public_allow)
+        if (!$file->public_allow) {
+            return back()->with(['error' => 'La descarga pública de este archivo no está permitida.']);
+        }
+
+
+        $download = new TblDownload();
+        $download->file_id = $id;
+
+        // Check if the user is authenticated. If not, set anonymous to 1.
+        if (Auth::check()) {
+            $download->user_id = Auth::id();
+            $download->anonymous = 0; // Explicitly set to 0 for logged-in users
+        } else {
+            $download->user_id = null; // Or perhaps a specific guest user ID if you have one
+            $download->anonymous = 1;
+        }
+
+        $download->remote_ip = request()->ip();
+        $download->timestamp = now();
+        $download->save();
+
         $fileExtension = pathinfo($url, PATHINFO_EXTENSION);
- 
-        // Obtener el contenido del archivo
-        $fileContent = file_get_contents($path);
- 
-        // Retornar la respuesta para la descarga
-        return response()->make($fileContent, 200, [
-            'Content-Type' => mime_content_type($path), // Obtener el tipo MIME del archivo
-            'Content-Disposition' => 'attachment; filename="' . $file->filename . '.' . $fileExtension . '"', // Mantener la extensión original
-            'Content-Length' => strlen($fileContent),
+        $fileName = $file->filename . '.' . $fileExtension;
+
+        return response()->streamDownload(function () use ($path) {
+            $stream = fopen($path, 'rb');
+            while ($chunk = fread($stream, 4096)) {
+                echo $chunk;
+                flush();
+            }
+            fclose($stream);
+        }, $fileName, [
+            'Content-Type' => mime_content_type($path),
         ]);
     }
 
@@ -993,11 +1067,11 @@ public function uploadProcess(Request $request)
     {
         // Buscar el archivo por ID
         $file = TblFile::find($id);
- 
+
         if (!$file || $file->public_token !== $token) {
             return back()->with(['error' => 'El enlace de descarga es inválido o ha expirado.']);
         }
- 
+
         // Verificar si el archivo es público
         if ($file->public_allow == 0) {
             return view('files.download', [
@@ -1005,7 +1079,7 @@ public function uploadProcess(Request $request)
                 'error' => 'No tienes permisos para acceder a este archivo.'
             ]);
         }
- 
+
         // Si el archivo es público, muestra la vista de descarga normal
         return view('files.download', compact('file'));
     }

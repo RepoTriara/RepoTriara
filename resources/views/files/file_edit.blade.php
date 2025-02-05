@@ -47,6 +47,15 @@
                         </div>
                     </div>
                 </div>
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <div class="row">
                     <div class="col-xs-12">
@@ -87,7 +96,7 @@
                                                             <h3>Información de archivo</h3>
                                                             <div class="form-group">
                                                                 <label>Título</label>
-                                                                <input type="text" name="filename"
+                                                                <input type="text" name="filename" required
                                                                     value="{{ old('filename', $file->filename ?? '') }}"
                                                                     class="form-control file_title" />
                                                             </div>
@@ -99,31 +108,22 @@
                                                     </div>
                                                     @if (Auth::user()->level == 8 || Auth::user()->level == 10)
                                                         <!-- Fecha de expiración -->
-                                                        <div class="col-sm-6 col-md-3 column_even column">
+                                                       <div class="col-sm-6 col-md-3 column_even column">
                                                             <div class="file_data">
                                                                 <h3>Fecha de expiración</h3>
                                                                 <div class="form-group">
-                                                                    <label for="file_expiry_date">Seleccione una
-                                                                        fecha</label>
+                                                                    <label for="file_expiry_date">Seleccione una fecha</label>
                                                                     <div class="input-group date-container">
-                                                                        <input type="text" id="file_expiry_date"
-                                                                            name="expiry_date"
+                                                                        <input type="date" id="file_expiry_date" name="expiry_date"
                                                                             value="{{ old('expiry_date', $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '') }}"
                                                                             class="form-control"
-                                                                            {{ old('expires', $file->expires ?? 0) == 1 ? '' : 'readonly' }} />
+                                                                            data-original-value="{{ $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '' }}" />
                                                                         <div class="input-group-addon">
                                                                             <i class="glyphicon glyphicon-time"></i>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="checkbox">
-                                                                    <label for="exp_checkbox">
-                                                                        <input type="checkbox" id="exp_checkbox"
-                                                                            name="expires" value="1"
-                                                                            {{ old('expires', $file->expires ?? 0) == 1 ? 'checked' : '' }}>
-                                                                        El archivo expira en
-                                                                    </label>
-                                                                </div>
+                                                                  <input type="hidden" name="expires" value="1"> <input type="hidden" name="expiry_date_original" value="{{ $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '' }}" />
 
                                                                 <div class="divider"></div>
                                                                 <h3>Descarga pública</h3>
@@ -141,7 +141,7 @@
                                                                 <div class="public_url">
                                                                     <div class="form-group">
                                                                         <textarea class="form-control" readonly>
-                                                                        {{ $file->public_allow ? url('download.php?id=' . $file->id . '&token=' . $file->public_token) : 'La descarga pública está deshabilitada para este archivo.' }}
+                                                                          {{ $file->public_allow ? route('file.showDownload', ['id' => $file->id, 'token' => $file->public_token]) : 'La descarga pública está deshabilitada para este archivo.' }}
                                                                     </textarea>
                                                                     </div>
                                                                 </div>
@@ -179,6 +179,22 @@
                                                                         class="btn btn-xs btn-primary remove-all"
                                                                         data-type="assigns">Borrar todo</a>
                                                                 </div>
+                                                                 <div class="divider"></div>
+                                                            <div class="checkbox">
+                                                                <label for="hid_checkbox">
+                                                                    <input type="checkbox" id="hid_checkbox"
+                                                                        name="file[1][hidden]" value="1" />
+                                                                    Marcar como oculto (no se enviaran notificaciones)
+                                                                    para clientes y grupos nuevos.
+                                                                </label>
+                                                            </div>
+                                                            <div class="checkbox">
+                                                                <label for="hid_existing_checkbox">
+                                                                    <input type="checkbox" id="hid_existing_checkbox"
+                                                                        name="file[1][hideall]" value="1" />
+                                                                    Ocultar a todos los clientes y grupos ya asignados.
+                                                                </label>
+                                                            </div>
                                                             </div>
                                                         </div>
 
@@ -206,22 +222,6 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="divider"></div>
-                                                            <div class="checkbox">
-                                                                <label for="hid_checkbox">
-                                                                    <input type="checkbox" id="hid_checkbox"
-                                                                        name="file[1][hidden]" value="1" />
-                                                                    Marcar como oculto (no se enviaran notificaciones)
-                                                                    para clientes y grupos nuevos.
-                                                                </label>
-                                                            </div>
-                                                            <div class="checkbox">
-                                                                <label for="hid_existing_checkbox">
-                                                                    <input type="checkbox" id="hid_existing_checkbox"
-                                                                        name="file[1][hideall]" value="1" />
-                                                                    Ocultar a todos los clientes y grupos ya asignados.
-                                                                </label>
-                                                            </div>
                                                     @endif
                                                 </div>
                                             </div>
@@ -319,23 +319,17 @@
                     .trigger("chosen:updated");
             });
         });
+        // Funcion para url publica
+        document.addEventListener('DOMContentLoaded', function() {
+            const publicAllowCheckbox = document.getElementById('public_allow');
+            const publicUrlTextarea = document.getElementById('public_url');
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // Gestión del checkbox de Fecha de expiración
-            const expCheckbox = document.getElementById("exp_checkbox");
-            const expiryDateField = document.getElementById("expiry_date");
-
-            // Estado inicial
-            if (!expCheckbox.checked) {
-                expiryDateField.setAttribute("disabled", "disabled");
-            }
-
-            expCheckbox.addEventListener("change", function() {
+            publicAllowCheckbox.addEventListener('change', function() {
                 if (this.checked) {
-                    expiryDateField.removeAttribute("disabled");
+                    const publicUrl = `{{ route('file.showDownload', ['id' => $file->id, 'token' => $file->public_token]) }}`;
+                    publicUrlTextarea.value = publicUrl;
                 } else {
-                    expiryDateField.setAttribute("disabled", "disabled");
-                    expiryDateField.value = ""; // Limpia el campo si se deselecciona
+                    publicUrlTextarea.value = 'La descarga pública está deshabilitada para este archivo.';
                 }
             });
 
@@ -360,16 +354,72 @@
                 expiryDateField.setAttribute('readonly', 'readonly');
             }
 
-            expCheckbox.addEventListener('change', function() {
+              expCheckbox.addEventListener('change', function() {
                 if (this.checked) {
-                    expiryDateField.removeAttribute('readonly');
+                    expiryDateField.removeAttribute('disabled');
                 } else {
-                    expiryDateField.setAttribute('readonly', 'readonly');
-                    expiryDateField.value = ''; // Limpia el campo si se deselecciona
+                    expiryDateField.setAttribute('disabled', 'disabled');
+                    expiryDateField.value = expiryDateField.dataset.originalValue; // Restaura el valor original
                 }
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script>
+    $(document).ready(function() {
+        var userLevel = {{ Auth::user()->level }};
+
+        // Función para mostrar el mensaje de éxito
+        function showSuccessMessage(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: message,
+                confirmButtonText: 'OK'
+            });
+        }
+
+        // Función para mostrar el mensaje de error
+        function showErrorMessage(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                confirmButtonText: 'OK'
+            });
+        }
+
+        // Mostrar mensajes de éxito o error al enviar el formulario
+        $("form").submit(function(event) {
+            clean_form(this);
+
+            $(this).find('input[name$="[name]"]').each(function() {
+                is_complete($(this)[0], 'Título está incompleto');
+            });
+
+            // Mostrar los errores o continuar si todo está bien
+            if (show_form_errors() == false) {
+                showErrorMessage('Hay errores en el formulario. Por favor, corrígelos.');
+                return false;
+            }
+
+            // Mostrar mensaje de éxito
+            showSuccessMessage('Archivo actualizado exitosamente.');
+
+            // Redirigir según el nivel del usuario
+            if (userLevel == 0) {
+                event.preventDefault();
+                window.location.href = '{{ route('manage-files') }}';
+            } else {
+                // Permitir que el formulario se envíe
+                return true;
+            }
+        });
+
+
+    });
+</script>
+
     </div>
 </body>
 

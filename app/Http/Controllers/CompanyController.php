@@ -13,8 +13,8 @@ use App\Models\TblFile;
 use App\Models\TblFileRelation;
 use App\Models\TblCategory;
 use App\Models\TblCategoryRelation;
-
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -58,7 +58,7 @@ class CompanyController extends Controller
             'add_group_form_members' => 'nullable|array',
         ]);
 
-        $userId = auth()->id();
+        $userId = Auth::id();
 
         // Asignar un valor por defecto a la descripción si está vacía
         $description = $request->input('add_group_form_description');
@@ -111,7 +111,7 @@ class CompanyController extends Controller
                 Members::create([
                     'group_id' => $group->id,
                     'client_id' => $memberId,
-                    'added_by' => auth()->user()->name,
+                    'added_by' => Auth::user()->name,
                 ]);
             }
 
@@ -258,7 +258,7 @@ class CompanyController extends Controller
             foreach ($memberIds as $memberId) {
                 $group->members()->create([
                     'client_id' => $memberId,
-                    'added_by' => auth()->user()->name,
+                    'added_by' => Auth::user()->name,
                 ]);
             }
 
@@ -340,12 +340,12 @@ class CompanyController extends Controller
         // Verificar que la ruta del archivo exista
         $filePath = $file->url;
 
-        if (!\Storage::exists($filePath)) {
+        if (!Storage::exists($filePath)) {
             return redirect()->back()->with('error', 'El archivo no está disponible.');
         }
 
         // Descargar el archivo
-        return \Storage::download($filePath, $file->filename);
+        return Storage::download($filePath, $file->filename);
     }
     public function editFile($fileId)
     {

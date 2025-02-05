@@ -14,11 +14,10 @@ class Kernel extends ConsoleKernel
      * @return void
      */
     protected function schedule(Schedule $schedule)
-    {
-        // Registrar el comando files:delete-expired
-        $schedule->command('files:delete-expired')->dailyAt('00:00');
-        \Log::info('Scheduler ejecutado a las: ' . now());
-    }
+{
+    $schedule->command('clean:expired-files')->everyMinute();
+    // $schedule->command('clean:expired-files')->dailyAt('03:00');
+}
 
     /**
      * Registra los comandos para la aplicación.

@@ -81,9 +81,12 @@ protected static function boot()
     });
 }
 
-public function groups()
-{
-    return $this->belongsToMany(Groups::class, 'tbl_files_relations', 'file_id', 'group_id');
-}
-
+    public function groups()
+    {
+        return $this->belongsToMany(Groups::class, 'tbl_files_relations', 'file_id', 'group_id');
+    }
+    public function uploaderUser()
+    {
+        return $this->belongsTo(User::class, 'uploader', 'id');
+    }
 }
