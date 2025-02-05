@@ -119,7 +119,7 @@
                                                         <div class="form-group">
                                                             <label style="font-weight: bold;">Fecha de
                                                                 expiración</label>
-                                                            <input type="date" class="form-control"
+                                                            <input type="date" class="form-control" readonly
                                                                 name="file[{{ $file->id }}][expiry_date]"
                                                                 value="{{ old('file.' . $file->id . '.expiry_date', $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '') }}" />
                                                         </div>
@@ -157,7 +157,7 @@
                                                                 @foreach ($users as $user)
                                                                     <option value="user_{{ $user->id }}"
                                                                         {{ in_array($user->id, $file->assignments->pluck('id')->toArray()) ? 'selected' : '' }}>
-                                                                        {{ $user->user }}
+                                                                        {{ $user->name }}
                                                                     </option>
                                                                 @endforeach
                                                             </optgroup>
@@ -344,115 +344,157 @@
 
                     </div>
                 </div>
-                <script type="text/javascript">
-                    $(document).ready(function() {
-                        // Configurar la tabla para ordenación
-                        function sortTable(columnIndex, ascending) {
-                            const table = $('.table-sortable tbody');
-                            const rows = table.find('tr').toArray();
+               <script type="text/javascript">
+    $(document).ready(function() {
+        let isSaved = false; // Indica si el usuario ha guardado los archivos
+        let isReloading = false; // Indica si la página se está recargando
 
-                            rows.sort(function(a, b) {
-                                const cellA = $(a).find('td').eq(columnIndex).text().toLowerCase();
-                                const cellB = $(b).find('td').eq(columnIndex).text().toLowerCase();
+        // Guardar la última URL visitada en sessionStorage para detectar cambios de módulo
+        let previousPage = sessionStorage.getItem('lastPage') || '';
+        sessionStorage.setItem('lastPage', window.location.href);
 
-                                if (cellA < cellB) return ascending ? -1 : 1;
-                                if (cellA > cellB) return ascending ? 1 : -1;
-                                return 0;
-                            });
+        // Si la URL anterior es la misma, significa que el usuario solo recargó la página
+        if (previousPage === window.location.href) {
+            isReloading = true;
+        }
 
-                            // Reconstruir la tabla con las filas ordenadas
-                            rows.forEach(function(row) {
-                                table.append(row);
-                            });
+        // Detectar cuando el usuario hace clic en "Guardar"
+        $("form").submit(function() {
+            isSaved = true; // Marcar que los archivos han sido guardados
+        });
+
+        // Detectar si el usuario cierra la pestaña o cambia de módulo sin guardar
+        window.addEventListener("beforeunload", function(event) {
+            if (!isSaved && !isReloading) {
+                clearTempFiles();
+            }
+        });
+
+        // Detectar si el usuario navega a otra parte de la aplicación sin guardar
+        $(document).on("click", "a", function(event) {
+            let newPage = $(this).attr("href");
+
+            // Si el enlace es interno y no es una recarga, eliminar archivos
+            if (newPage && newPage !== "#" && newPage !== window.location.href) {
+                if (!isSaved) {
+                    clearTempFiles();
+                }
+            }
+        });
+
+        function clearTempFiles() {
+            fetch("{{ route('files.clearTemporaryFiles') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
+            }).then(response => response.json())
+              .then(data => console.log("Archivos temporales eliminados:", data.message))
+              .catch(error => console.error("Error al eliminar archivos:", error));
+        }
+
+        // -----------------------
+        // FUNCIONES EXISTENTES (MANTENIDAS)
+        // -----------------------
+
+        function sortTable(columnIndex, ascending) {
+            const table = $('.table-sortable tbody');
+            const rows = table.find('tr').toArray();
+
+            rows.sort(function(a, b) {
+                const cellA = $(a).find('td').eq(columnIndex).text().toLowerCase();
+                const cellB = $(b).find('td').eq(columnIndex).text().toLowerCase();
+
+                if (cellA < cellB) return ascending ? -1 : 1;
+                if (cellA > cellB) return ascending ? 1 : -1;
+                return 0;
+            });
+
+            // Reconstruir la tabla con las filas ordenadas
+            rows.forEach(function(row) {
+                table.append(row);
+            });
+        }
+
+        $('.table-sortable th a').on('click', function(e) {
+            e.preventDefault();
+
+            const th = $(this).closest('th');
+            const columnIndex = th.index();
+            const currentDirection = th.data('direction') || 'asc';
+            const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+
+            $('.table-sortable th i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+            const icon = newDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down';
+            $(this).find('i').removeClass('fa-sort').addClass(icon);
+
+            th.data('direction', newDirection);
+            sortTable(columnIndex, newDirection === 'asc');
+        });
+
+        $('#urlModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const url = button.data('url');
+
+            console.log('URL enviada al modal:', url);
+            const modal = $(this);
+            modal.find('#publicUrl').val(url);
+        });
+
+        $('.copy-all').click(function() {
+            if (confirm("¿Copiar la selección a todos los archivos?")) {
+                const type = $(this).data('type');
+                const selector = $(`select[data-type="${type}"]`);
+
+                const selected = [];
+                $(selector).find('option:selected').each(function() {
+                    selected.push($(this).val());
+                });
+
+                $(`select[data-type="${type}"]`).each(function() {
+                    $(this).find('option').each(function() {
+                        if ($.inArray($(this).val(), selected) === -1) {
+                            $(this).removeAttr('selected');
+                        } else {
+                            $(this).attr('selected', 'selected');
                         }
-
-                        // Manejar clic en los enlaces de ordenación
-                        $('.table-sortable th a').on('click', function(e) {
-                            e.preventDefault();
-
-                            const th = $(this).closest('th');
-                            const columnIndex = th.index();
-                            const currentDirection = th.data('direction') || 'asc';
-                            const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
-
-                            // Actualizar íconos de las flechas
-                            $('.table-sortable th i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-                            const icon = newDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down';
-                            $(this).find('i').removeClass('fa-sort').addClass(icon);
-
-                            // Actualizar la dirección en el th
-                            th.data('direction', newDirection);
-
-                            // Ordenar la tabla
-                            sortTable(columnIndex, newDirection === 'asc');
-                        });
-
-                        // Modal para URL pública
-                        $('#urlModal').on('show.bs.modal', function(event) {
-                            const button = $(event.relatedTarget); // Botón que activó el modal
-                            const url = button.data('url'); // Extraer la URL del atributo data-url
-
-                            // Depuración: verifica que la URL esté correctamente asignada
-                            console.log('URL enviada al modal:', url);
-
-                            const modal = $(this);
-                            modal.find('#publicUrl').val(url); // Asignar la URL al textarea
-                        });
-
-                        // Copiar la selección a todos los archivos
-                        $('.copy-all').click(function() {
-                            if (confirm("¿Copiar la selección a todos los archivos?")) {
-                                const type = $(this).data('type');
-                                const selector = $(`select[data-type="${type}"]`);
-
-                                const selected = [];
-                                $(selector).find('option:selected').each(function() {
-                                    selected.push($(this).val());
-                                });
-
-                                $(`select[data-type="${type}"]`).each(function() {
-                                    $(this).find('option').each(function() {
-                                        if ($.inArray($(this).val(), selected) === -1) {
-                                            $(this).removeAttr('selected');
-                                        } else {
-                                            $(this).attr('selected', 'selected');
-                                        }
-                                    });
-                                    $(this).trigger('chosen:updated');
-                                });
-                            }
-
-                            return false;
-                        });
-
-                        // Agregar todo
-                        $('.add-all').click(function(e) {
-                            e.preventDefault();
-                            const type = $(this).data('type');
-                            $(`select[data-type="${type}"]`).each(function() {
-                                $(this).find('option').prop('selected', true);
-                                $(this).trigger('chosen:updated');
-                            });
-                        });
-
-                        // Borrar todo
-                        $('.remove-all').click(function(e) {
-                            e.preventDefault();
-                            const type = $(this).data('type');
-                            $(`select[data-type="${type}"]`).each(function() {
-                                $(this).find('option').prop('selected', false);
-                                $(this).trigger('chosen:updated');
-                            });
-                        });
-
-                        // Configurar el plugin Chosen
-                        $('.chosen-select').chosen({
-                            width: '100%',
-                            no_results_text: 'No se encontraron resultados.',
-                            placeholder_text_multiple: 'Seleccione una o más opciones.',
-                        });
                     });
-                </script>
+                    $(this).trigger('chosen:updated');
+                });
+            }
+            return false;
+        });
+
+        $('.add-all').click(function(e) {
+            e.preventDefault();
+            const type = $(this).data('type');
+            $(`select[data-type="${type}"]`).each(function() {
+                $(this).find('option').prop('selected', true);
+                $(this).trigger('chosen:updated');
+            });
+        });
+
+        $('.remove-all').click(function(e) {
+            e.preventDefault();
+            const type = $(this).data('type');
+            $(`select[data-type="${type}"]`).each(function() {
+                $(this).find('option').prop('selected', false);
+                $(this).trigger('chosen:updated');
+            });
+        });
+
+        $('.chosen-select').chosen({
+            width: '100%',
+            no_results_text: 'No se encontraron resultados.',
+            placeholder_text_multiple: 'Seleccione una o más opciones.',
+        });
+
+    });
+</script>
+
+
             </div>
             <!-- row -->
         </div>

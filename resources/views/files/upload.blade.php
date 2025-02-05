@@ -46,92 +46,101 @@
                             nombre y descripción de cada archivo cargado. Recuerde que el tamaño maximo permitido por
                             archivo (en mb.) es <strong>2048</strong></div>
                         </p>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var totalFiles = 0; // Contador para archivos que se están subiendo
+        var uploadedFiles = 0; // Contador para archivos subidos correctamente
+        var isUploading = false; // Variable para rastrear si se está subiendo algún archivo
 
-                        <script type="text/javascript">
-                            $(document).ready(function() {
-                                var totalFiles = 0; // Contador para archivos que se están subiendo
-                                var uploadedFiles = 0; // Contador para archivos subidos correctamente
-                                var isUploading = false; // Variable para rastrear si se está subiendo algún archivo
+        // Obtener el tamaño máximo permitido para el usuario (en MB)
+        var maxFileSizeMB = {{ Auth::user()->max_file_size > 0 ? Auth::user()->max_file_size : 2048 }};
+        var maxFileSizeBytes = maxFileSizeMB * 1024 * 1024; // Convertir MB a Bytes
 
-                                var uploader = $("#uploader").pluploadQueue({
-                                    runtimes: 'html5,flash,silverlight,html4',
-                                    url: '{{ route('files.upload_process') }}',
-                                    max_file_size: '2048mb',
-                                    chunk_size: '1mb', // Ajusta el tamaño de los fragmentos a 1 MB
-                                    multipart: true,
-                                    multipart_params: {
-                                        _token: '{{ csrf_token() }}',
-                                    },
-                                    filters: [{
-                                        title: "Archivos permitidos",
-                                        extensions: "7z,ace,ai,avi,bin,bmp,bz2,cdr,doc,docm,docx,eps,fla,flv,gif,gz,gzip,htm,html,iso,jpeg,jpg,mp3,mp4,mpg,odt,oog,ppt,pptx,pptm,pps,ppsx,pdf,png,psd,rar,rtf,tar,tif,tiff,tgz,txt,wav,xls,xlsm,xlsx,xz,zip",
-                                    }],
-                                    init: {
-                                        FilesAdded: function(up, files) {
-                                            totalFiles += files
-                                            .length; // Aumentamos el total de archivos que se van a subir
-                                            console.log("Archivos añadidos: ", files);
-                                            $('#btn-submit').prop('disabled', false);
-                                        },
-                                        BeforeUpload: function(up, file) {
-                                            isUploading = true; // Comienza la subida
-                                            console.log("Subiendo archivo:", file.name);
-                                        },
-                                        FileUploaded: function(up, file, info) {
-                                            console.log("Archivo subido:", file.name);
-                                            console.log("Respuesta del servidor:", info.response);
-                                            var response = JSON.parse(info.response);
+        var uploader = $("#uploader").pluploadQueue({
+            runtimes: 'html5,flash,silverlight,html4',
+            url: '{{ route('files.upload_process') }}',
+            max_file_size: '9999mb', // Desactivamos la validación interna de Plupload
+            chunk_size: '1mb',
+            multipart: true,
+            multipart_params: {
+                _token: '{{ csrf_token() }}',
+            },
+            filters: [{
+                title: "Archivos permitidos",
+                extensions: "7z,ace,ai,avi,bin,bmp,bz2,cdr,doc,docm,docx,eps,fla,flv,gif,gz,gzip,htm,html,iso,jpeg,jpg,mp3,mp4,mpg,odt,oog,ppt,pptx,pptm,pps,ppsx,pdf,png,psd,rar,rtf,tar,tif,tiff,tgz,txt,wav,xls,xlsm,xlsx,xz,zip",
+            }],
+            init: {
+                FilesAdded: function(up, files) {
+                    var validFiles = [];
 
-                                            if (response.success) {
-                                                uploadedFiles++; // Aumentamos el contador de archivos subidos correctamente
-                                                // Si todos los archivos han sido subidos, realizamos la redirección
-                                                if (uploadedFiles === totalFiles) {
-                                                    isUploading = false; // Termina la subida
-                                                    // Realizar la redirección a la vista upload_process
-                                                    window.location.href = response.redirect;
-                                                }
-                                            }
-                                        },
-                                        UploadComplete: function(up, files) {
-                                            console.log("Todos los archivos subidos.");
-                                            isUploading = false; // Termina la subida
-                                            $('#btn-submit').prop('disabled', true); // Deshabilitar el botón de envío
-                                            up
-                                        .stop(); // Detener el cargador (en caso de que haya más fragmentos por cargar)
-                                        },
-                                        Error: function(up, err) {
-                                            console.error("Error en la carga:", err.message);
-                                            alert("Error en la carga: " + err.message);
-                                        }
-                                    }
-                                });
+                    $.each(files, function(i, file) {
+                        if (file.size > maxFileSizeBytes) {
+                            alert("El archivo '" + file.name + "' supera el tamaño máximo permitido de " + maxFileSizeMB + " MB.");
+                            up.removeFile(file); // Elimina el archivo antes de que Plupload lo procese
+                        } else {
+                            validFiles.push(file);
+                        }
+                    });
 
-                                var uploaderInstance = $("#uploader").pluploadQueue();
+                    if (validFiles.length > 0) {
+                        totalFiles += validFiles.length;
+                        $('#btn-submit').prop('disabled', false);
+                    }
+                },
+                BeforeUpload: function(up, file) {
+                    isUploading = true;
+                    console.log("Subiendo archivo:", file.name);
+                },
+                FileUploaded: function(up, file, info) {
+                    console.log("Archivo subido:", file.name);
+                    console.log("Respuesta del servidor:", info.response);
+                    var response = JSON.parse(info.response);
 
-                                $('#btn-submit').on('click', function(e) {
-                                    e.preventDefault();
+                    if (response.success) {
+                        uploadedFiles++;
+                        if (uploadedFiles === totalFiles) {
+                            isUploading = false;
+                            window.location.href = response.redirect;
+                        }
+                    }
+                },
+                UploadComplete: function(up, files) {
+                    console.log("Todos los archivos subidos.");
+                    isUploading = false;
+                    $('#btn-submit').prop('disabled', true);
+                    up.stop();
+                },
+                Error: function(up, err) {
+                    console.error("Error en la carga:", err.message);
+                    alert("Error en la carga: " + err.message);
+                }
+            }
+        });
 
-                                    // Comienza la carga de archivos solo si hay archivos para cargar
-                                    if (uploaderInstance.files.length > 0) {
-                                        uploaderInstance.start(); // Comienza la carga de archivos
-                                    } else {
-                                        alert('Por favor, selecciona al menos un archivo para subir.');
-                                    }
-                                });
+        var uploaderInstance = $("#uploader").pluploadQueue();
 
-                                // Deshabilitar el botón de envío si no hay archivos
-                                $('#btn-submit').prop('disabled', true);
+        $('#btn-submit').on('click', function(e) {
+            e.preventDefault();
 
-                                // Evento beforeunload para mostrar un aviso si el usuario intenta salir durante la subida
-                                window.addEventListener('beforeunload', function(event) {
-                                    if (isUploading) {
-                                        event.preventDefault();
-                                        event.returnValue =
-                                            '¿Estás seguro de que quieres salir? Perderás el progreso de la subida de archivos.';
-                                    }
-                                });
-                            });
-                        </script>
+            if (uploaderInstance.files.length > 0) {
+                uploaderInstance.start();
+            } else {
+                alert('Por favor, selecciona al menos un archivo para subir.');
+            }
+        });
+
+        $('#btn-submit').prop('disabled', true);
+
+        window.addEventListener('beforeunload', function(event) {
+            if (isUploading) {
+                event.preventDefault();
+                event.returnValue = '¿Estás seguro de que quieres salir? Perderás el progreso de la subida de archivos.';
+            }
+        });
+    });
+</script>
+
+
 
                         <form action="{{ route('files.upload_process') }}" method="POST"
                             enctype="multipart/form-data">
