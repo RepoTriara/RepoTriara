@@ -11,12 +11,6 @@
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
-
-    <!--[if lt IE 9]>
-        <script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
-        <script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
-    <![endif]-->
-
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/social-login.css') }}" />
@@ -50,8 +44,10 @@
                         </div>
                         <div class="white-box">
                             <div class="white-box-interior">
+                                <!-- Mensajes de éxito o error generales -->
                                 <div class="ajax_response alert"></div>
 
+                                <!-- Manejo de errores de validación -->
                                 @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
@@ -62,23 +58,41 @@
                                     </div>
                                 @endif
 
+                                <!-- Formulario de inicio de sesión -->
                                 <form method="POST" action="{{ route('login') }}">
                                     @csrf
                                     <input type="hidden" name="do" value="login">
                                     <fieldset>
+                                        <!-- Campo de correo electrónico o usuario -->
                                         <div class="form-group">
                                             <label for="login">E-Mail o Usuario</label>
                                             <input type="text" name="login" id="login"
                                                 value="{{ old('login') }}"
-                                                class="form-control @error('login') is-invalid @enderror" autofocus />
+                                                class="form-control @error('login') is-invalid @enderror" required
+                                                autofocus aria-describedby="loginHelp" />
+                                            @error('login')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small id="loginHelp" class="form-text text-muted">
+                                                Ingrese su correo electrónico o nombre de usuario.
+                                            </small>
                                         </div>
 
+                                        <!-- Campo de contraseña -->
                                         <div class="form-group">
                                             <label for="password">Contraseña</label>
                                             <input type="password" name="password" id="password"
-                                                class="form-control @error('password') is-invalid @enderror" />
+                                                class="form-control @error('password') is-invalid @enderror" required
+                                                aria-describedby="passwordHelp" />
+                                            @error('password')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                            <small id="passwordHelp" class="form-text text-muted">
+                                                Ingrese su contraseña.
+                                            </small>
                                         </div>
 
+                                        <!-- Botón de envío -->
                                         <div class="inside_form_buttons">
                                             <button type="submit" id="submit"
                                                 class="btn btn-wide btn-primary">Ingresar</button>
@@ -86,11 +100,16 @@
                                     </fieldset>
                                 </form>
 
+                                <!-- Enlaces adicionales -->
                                 <div class="login_form_links">
-                                    <p id="reset_pass_link">Olvidó su contraseña? <a
-                                            href="{{ route('password.request') }}">Cámbiela aquí.</a></p>
-                                    <p>Si necesitas una cuenta, por favor radica tu solicitud a través de nuestros
-                                        canales de soporte técnico</p>
+                                    <p id="reset_pass_link">
+                                        ¿Olvidó su contraseña? <a href="{{ route('password.request') }}">Cámbiela
+                                            aquí.</a>
+                                    </p>
+                                    <p>
+                                        Si necesitas una cuenta, por favor radica tu solicitud a través de nuestros
+                                        canales de soporte técnico.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -105,6 +124,7 @@
             </div>
         </footer>
 
+        <!-- Scripts -->
         <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>

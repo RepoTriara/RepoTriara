@@ -8,5 +8,8 @@
     "[php]": {
         "editor.defaultFormatter": "DEVSENSE.phptools-vscode"
     },
-    "CodeGPT.apiKey": "LM Studio"
+    "CodeGPT.apiKey": "CodeGPT Plus Beta",
+    "[css]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    }
 }

@@ -30,16 +30,13 @@ Route::get('/dashboard', function () {
 
 
 //Estadisticas Temporales
-Route::get('/statistics', function () {
-    return view('statistics.index');
-});
 
 Route::get('/statistics/data', [StatisticsController::class, 'getStatistics']);
 
 
 //Limpiar archivos temporales
 Route::post('/clear-temporary-files', [FilesController::class, 'clearTemporaryFiles'])->middleware(['auth', 'level:0,8,10'])->name('files.clearTemporaryFiles');
-
+Route::post('/files/clearTemporaryFiles', [FilesController::class, 'clearTemporaryFiles'])->middleware(['auth', 'level:0,8,10'])->name('files.clearTemporaryFiles');
 // Ruta para el level 0
 Route::get('/my_files', action: [FilesController::class, 'myFiles'])->name('my_files');
 Route::get('/manage-files', action: [FilesController::class, 'manageFiles'])->middleware(['auth', 'level:0'])->name('manage-files');

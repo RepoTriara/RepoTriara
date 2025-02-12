@@ -45,9 +45,9 @@ class CompanyController extends Controller
 
         if ($nombreExistente) {
             Log::info('El nombre ya existe en la base de datos: ' . $request->input('add_group_form_name'));
-            return redirect()->back()
-                ->withErrors(['add_group_form_name' => '¡El nombre ya existe en la base de datos!'])
-                ->withInput();
+            return response()->json([
+                'error' => '¡El nombre ya existe en la base de datos!',
+            ], 400); // Código de estado HTTP 400 para errores de validación
         }
 
         // Validar los datos del formulario
@@ -97,9 +97,9 @@ class CompanyController extends Controller
             foreach ($memberIds as $memberId) {
                 $member = User::find($memberId);
                 if ($member && $member->level != 0) {
-                    return redirect()->back()
-                        ->withErrors(['add_group_form_members' => 'Solo puedes seleccionar usuarios de nivel 0.'])
-                        ->withInput();
+                    return response()->json([
+                        'error' => 'Solo puedes seleccionar usuarios de nivel 0.',
+                    ], 400); // Código de estado HTTP 400 para errores de validación
                 }
             }
 
@@ -118,13 +118,15 @@ class CompanyController extends Controller
             Log::info('Miembros asociados al grupo exitosamente');
         }
 
-        return redirect()->route('add_company')->with('success', 'Grupo creado exitosamente.');
+        return response()->json([
+            'success' => 'Grupo creado exitosamente.',
+        ]);
     }
-
 
     public function manageCompany(Request $request)
     {
         $memberId = $request->query('member');
+        $groupId = $request->query('group_id'); // Filtrar por group_id
 
         if ($memberId) {
             // Obtener la información del cliente (usuario) por su ID
@@ -136,7 +138,7 @@ class CompanyController extends Controller
 
                 // Obtener los grupos a los que el cliente pertenece con relaciones y conteo
                 $groups = $user->groups()
-                    ->with(['members', 'fileRelations'])
+                ->with(['members', 'fileRelations'])
                     ->withCount(['members', 'fileRelations'])
                     ->paginate(10);
 
@@ -148,9 +150,33 @@ class CompanyController extends Controller
             }
         }
 
-        // Incluir las columnas necesarias en la consulta
+        // Filtrar por group_id
+        if ($groupId) {
+            $group = Groups::find($groupId);
+
+            if ($group) {
+                // Cambiar el título de la página basado en el nombre del grupo
+                $pageTitle = __('Grupo') . ' ' . $group->name . ' ' . __('y sus miembros');
+
+                // Obtener los miembros de este grupo con relaciones y conteo
+                $groups = $group->members()
+                ->with(['groups', 'fileRelations'])
+                    ->withCount(['members', 'fileRelations'])
+                    ->paginate(10);
+
+                $filteredTotal = $groups->total(); // Total de miembros en el grupo
+
+                return view('companies.manage_company', compact('pageTitle', 'group', 'groups', 'filteredTotal'));
+            } else {
+                // Si el grupo no existe, devolver error
+                $error = 'group_not_exists';
+                return view('companies.manage_company', compact('error'));
+            }
+        }
+
+        // Incluir las columnas necesarias en la consulta para mostrar todos los grupos
         $query = Groups::select('id', 'name', 'description', 'public', 'created_by', 'timestamp', 'public_token')
-            ->withCount(['members', 'fileRelations']); // Contar las relaciones necesarias
+        ->withCount(['members', 'fileRelations']); // Contar las relaciones necesarias
 
         // Filtro de búsqueda
         if ($request->has('search') && !empty($request->search)) {
@@ -158,7 +184,8 @@ class CompanyController extends Controller
         }
 
         // Aplicar clasificación
-        if ($request->has('sort') && $request->has('direction')) {
+        if ($request->has('sort') && $request->has('direction')
+        ) {
             $allowedSorts = ['name', 'description', 'members_count', 'file_relations_count', 'created_by', 'timestamp'];
             if (in_array($request->sort, $allowedSorts)) {
                 $query->orderBy($request->sort, $request->direction);
@@ -174,9 +201,9 @@ class CompanyController extends Controller
         // Total de grupos
         $totalGroups = Groups::count();
 
-
-        return view('companies.manage_company', compact('groups', 'totalGroups'));
+        return view('companies.manage_company', compact('groups', 'totalGroups', 'filteredTotal'));
     }
+
 
 
 
@@ -233,9 +260,10 @@ class CompanyController extends Controller
             Log::info('Validación exitosa.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Errores de validación:', $e->errors());
-            return redirect()->back()->withErrors($e->errors())->withInput();
+            return response()->json([
+                'error' => $e->errors(),
+            ], 422);
         }
-
         // Encontrar el grupo
         $group = Groups::findOrFail($id);
 
@@ -271,7 +299,9 @@ class CompanyController extends Controller
 
         // Redirigir con un mensaje de éxito
         // Redirigir con un mensaje de éxito a la vista de administrar compañías
-        return redirect()->route('manage_company')->with('success', 'Grupo actualizado correctamente.');
+        return response()->json([
+            'success' => 'Grupo actualizado correctamente.',
+        ]);
     }
 
     public function manageFiles($groupId, Request $request)

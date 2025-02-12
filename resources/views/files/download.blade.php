@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
- 
+
     <title>Información de archivo &raquo; Repositorio</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico')}}" />
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png')}}" sizes="32x32">
@@ -18,7 +18,7 @@
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css')}}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css')}}" />
 </head>
- 
+
 <body class="download logged-in logged-as-admin backend">
     <div class="container-custom">
         <header id="header" class="navbar navbar-static-top navbar-fixed-top header_unlogged">
@@ -28,7 +28,7 @@
                 </span>
             </div>
         </header>
- 
+
         <div class="main_content_unlogged">
             <div class="container-fluid">
                 <div class="row">
@@ -43,7 +43,7 @@
                                 <div class="text-center">
                                     <h3>Información de archivo</h3>
                                 </div>
- 
+
                                 @if(isset($error))
                                     <!-- Si hay un error, mostrar el mensaje de acceso denegado -->
                                     <div class="alert alert-danger">
@@ -56,40 +56,49 @@
                                         <div class="download_description">
                                             Cordial saludo <br />
                                         </div>
- 
+
                                         <!-- Mostrar el original_url sin interacción -->
                                         <p><strong>URL Original:</strong> {{ $file->original_url }}</p>
- 
+
                                         <a href="{{ route('file.directDownload', ['id' => $file->id]) }}" class="btn btn-primary">
                                             Descargar archivo
                                         </a>
                                     </div>
                                 @endif
- 
+
                             </div>
                         </div>
- 
+
                         <div class="login_form_links">
-                            <p><a href="{{ route('login') }}" target="_self">Regrese al sitio de inicio</a></p>
+                            @auth
+                                @if (auth()->user()->level == 8 || auth()->user()->level == 10)
+                                    <p><a href="{{ route('login') }}" target="_self">Regresar al sitio de inicio</a></p>
+                                @elseif (auth()->user()->level == 0)
+                                    <p><a href="{{ route('my_files') }}" target="_self">Ir a mis archivos</a></p>
+                                @else
+                                    <p><a href="{{ url('/dashboard') }}" target="_self">Ir al panel de control</a></p> {{-- Redirección por defecto para otros niveles --}}
+                                @endif
+                            @else
+                                <p><a href="{{ route('login') }}" target="_self">Ir al inicio de sesión</a></p>
+                            @endauth
                         </div>
                     </div>
                 </div> <!-- row -->
             </div> <!-- container-fluid -->
- 
+
             <footer>
                 <div id="footer">
                     Claro Colombia
                 </div>
             </footer>
- 
-            <script src="https://repo.triara.co/repositorio/assets/bootstrap/js/bootstrap.min.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/jquery.validations.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/jquery.psendmodal.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/jen/jen.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/js.cookie.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/main.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/js.functions.php"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/chosen/chosen.jquery.min.js"></script>
+
+            <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
+            <script src="{{ asset('includes/js/jquery.validations.js')}}"></script>
+            <script src="{{ asset('includes/js/jquery.psendmodal.js')}}"></script>
+            <script src="{{ asset('includes/js/jen/jen.js')}}"></script>
+            <script src="{{ asset('includes/js/js.cookie.js')}}"></script>
+            <script src="{{ asset('includes/js/main.js')}}"></script>
+            <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js')}}"></script>
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 </body>

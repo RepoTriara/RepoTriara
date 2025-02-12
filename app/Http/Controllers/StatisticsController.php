@@ -5,66 +5,63 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TblFile;
 use App\Models\TblDownload;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class StatisticsController extends Controller
 {
     public function getStatistics(Request $request)
     {
-        $days = $request->input('days', 15);
-        $startDate = now()->subDays($days)->format('Y-m-d');
+        try {
+            $days = $request->input('days', 15);
+            $startDate = now()->subDays($days)->format('Y-m-d');
 
-        // 📌 Subidos por clientes (level = 0)
-        $uploadedByClients = TblFile::whereHas('uploaderUser', function ($query) {
-            $query->where('level', 0);  // Filtramos por clientes
-        })
-        ->whereDate('timestamp', '>=', $startDate)
-        ->selectRaw('DATE(timestamp) as date, COUNT(*) as count')
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
+            Log::info("Consultando estadísticas desde: " . $startDate);
 
-        // 📌 Subidos por Administradores de Sistema (level = 8)
-        $uploadedByAdminsSystem = TblFile::whereHas('uploaderUser', function ($query) {
-            $query->where('level', 8);  // Filtramos por administradores de sistema
-        })
-        ->whereDate('timestamp', '>=', $startDate)
-        ->selectRaw('DATE(timestamp) as date, COUNT(*) as count')
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
+            $uploadedCounts = TblFile::whereDate('tbl_files.timestamp', '>=', $startDate)
+                ->leftJoin('tbl_users', 'tbl_files.uploader', '=', 'tbl_users.user')
+                ->selectRaw('DATE(tbl_files.timestamp) as date,
+                    SUM(CASE WHEN tbl_users.level = 0 THEN 1 ELSE 0 END) as uploaded_by_clients,
+                    SUM(CASE WHEN tbl_users.level = 8 THEN 1 ELSE 0 END) as uploaded_by_admins_system,
+                    SUM(CASE WHEN tbl_users.level = 10 THEN 1 ELSE 0 END) as uploaded_by_admins_access')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
 
-        // 📌 Subidos por Administradores de Accesos (level = 10)
-        $uploadedByAdminsAccess = TblFile::whereHas('uploaderUser', function ($query) {
-            $query->where('level', 10);  // Filtramos por administradores de accesos
-        })
-        ->whereDate('timestamp', '>=', $startDate)
-        ->selectRaw('DATE(timestamp) as date, COUNT(*) as count')
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
-        // 📌 Descargas totales
-        $downloads = TblDownload::whereDate('timestamp', '>=', $startDate)
-            ->selectRaw('DATE(timestamp) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+            Log::info("Resultados de uploadedCounts:", $uploadedCounts->toArray());
 
-        // 📌 Descargas públicas (anónimas)
-        $publicDownloads = TblDownload::where('anonymous', true)
-            ->whereDate('timestamp', '>=', $startDate)
-            ->selectRaw('DATE(timestamp) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+            // 3. Consultar las estadísticas de descargas (NO INCLUYE las públicas)
+            $downloads = TblDownload::whereDate('timestamp', '>=', $startDate)
+                ->where('anonymous', false) // Excluir descargas anónimas (públicas)
+                ->selectRaw('DATE(timestamp) as date, COUNT(*) as count')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
 
-        return response()->json([
-            'uploadedByClients' => $uploadedByClients,
-            'uploadedByAdminsSystem' => $uploadedByAdminsSystem,
-            'uploadedByAdminsAccess' => $uploadedByAdminsAccess,
-            'downloads' => $downloads,
-            'publicDownloads' => $publicDownloads,
-        ]);
+            Log::info("Resultados de downloads (sin publicas):", $downloads->toArray());
+
+            // 4. Consultar las estadísticas de descargas públicas (INCLUYE logueados y deslogueados)
+            $publicDownloads = TblDownload::whereDate('timestamp', '>=', $startDate)
+                ->where('anonymous', true) // Descargas anónimas (públicas)
+                ->selectRaw('DATE(timestamp) as date, COUNT(*) as count')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+
+            Log::info("Resultados de publicDownloads:", $publicDownloads->toArray());
+
+            return response()->json([
+                'uploadedCounts' => $uploadedCounts,
+                'downloads' => $downloads,
+                'publicDownloads' => $publicDownloads,
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            if (config('app.debug')) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            } else {
+                return response()->json(['error' => 'Error interno del servidor.'], 500);
+            }
+        }
     }
-
 }
