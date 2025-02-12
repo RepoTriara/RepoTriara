@@ -199,7 +199,7 @@
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
              <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+   document.addEventListener('DOMContentLoaded', function () {
         const button = document.getElementById('guardar');
 
         if (!button) {
@@ -207,7 +207,7 @@
             return;
         }
 
-        button.addEventListener('click', function(e) {
+        button.addEventListener('click', function (e) {
             e.preventDefault();
 
             const form = button.closest('form');
@@ -259,7 +259,7 @@
                 }
 
                 if (errors.length > 0) {
-                    let errorHtml = errors.map((error, index) => 
+                    let errorHtml = errors.map((error, index) =>
                         `<div style="margin-bottom: 10px;"><b>${index + 1}. ${error.field}:</b> ${error.message}</div>`
                     ).join('<br>');
 
@@ -267,7 +267,7 @@
                         title: 'Errores de validación',
                         html: `<div style="text-align: left;">${errorHtml}</div>`,
                         icon: 'error',
-                        confirmButtonText: 'OK',
+                        confirmButtonText: 'Aceptar',
                     });
                     return false;
                 }
@@ -286,46 +286,50 @@
                 },
                 body: new FormData(form),
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.errors) {
-                    let errorMessages = Object.entries(data.errors).map(([field, messages], index) => 
-                        `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
-                    ).join('<br>');
+                .then(response => response.json())
+                .then(data => {
+                    if (data.errors) {
+                        // Si hay errores de validación del servidor
+                        let errorMessages = Object.entries(data.errors).map(([field, messages], index) =>
+                            `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
+                        ).join('<br>');
 
-                    Swal.fire({
-                        title: 'Errores de validación',
-                        html: `<div style="text-align: left;">${errorMessages}</div>`,
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                    });
-                } else if (data.success) {
-                    Swal.fire({
-                        title: '¡Éxito!',
-                        text: data.success,
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false,
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
+                        Swal.fire({
+                            title: 'Errores de validación',
+                            html: `<div style="text-align: left;">${errorMessages}</div>`,
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar',
+                        });
+                    } else if (data.message) {
+                        // Si hay un mensaje de éxito
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: data.message,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false,
+                        }).then(() => {
+                            window.location.reload(); // Recargar la página después de 2 segundos
+                        });
+                    } else {
+                        // Si no hay mensaje de éxito ni errores, mostrar un error genérico
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Hubo un problema al registrar el cliente.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar',
+                        });
+                    }
+                })
+                .catch(error => {
+                    // Si hay un error en la solicitud AJAX
                     Swal.fire({
                         title: 'Error',
-                        text: 'Hubo un problema al registrar el cliente.',
+                        text: 'Hubo un problema al procesar la solicitud.',
                         icon: 'error',
-                        confirmButtonText: 'OK',
+                        confirmButtonText: 'Aceptar',
                     });
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un problema al procesar la solicitud.',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
                 });
-            });
         });
     });
 </script>

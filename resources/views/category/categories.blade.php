@@ -193,7 +193,7 @@
 </script>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Función para mostrar el mensaje de éxito
         function showSuccessMessage(message) {
             Swal.fire({
@@ -218,12 +218,12 @@
         }
 
         // Seleccionar/Deseleccionar todos los checkboxes
-        $('#select_all').on('click', function() {
+        $('#select_all').on('click', function () {
             $('input[name="categories[]"]').prop('checked', this.checked);
         });
 
         // Función para eliminar las categorías seleccionadas
-        $('#btn_delete_selected').on('click', function() {
+        $('#btn_delete_selected').on('click', function () {
             // Verificar si se han seleccionado categorías
             var selectedCategories = $('input[name="categories[]"]:checked');
             if (selectedCategories.length === 0) {
@@ -237,8 +237,10 @@
                 title: 'Confirmación',
                 text: '¿Estás seguro de eliminar las categorías seleccionadas?',
                 showCancelButton: true,
-                confirmButtonText: 'Sí',
-                cancelButtonText: 'No'
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Si, Eliminar', // Cambiado de "Sí" a "Eliminar"
+                cancelButtonText: 'Cancelar' // Mantener "Cancelar"
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Realizar la solicitud AJAX al servidor
@@ -247,14 +249,14 @@
                         url: $('#bulk_delete_form').attr('action'),
                         data: $('#bulk_delete_form').serialize(),
                         dataType: 'json',
-                        success: function(response) {
+                        success: function (response) {
                             if (response.error) {
                                 showErrorMessage(response.error);
                             } else if (response.success) {
                                 showSuccessMessage(response.success);
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             showErrorMessage('Hubo un error en el servidor. Por favor, inténtalo de nuevo más tarde.');
                         }
                     });

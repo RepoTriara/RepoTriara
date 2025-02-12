@@ -93,7 +93,15 @@
 
                             <div class="clear"></div>
                             <div class="form_actions_count">
-                                <p>Encontró: <span>{{ $totalCliente }} clientes</span></p>
+                                @if (request()->has('search') || request()->has('category') || request()->has('client_id'))
+                                    <p>
+                                        Total de clientes: {{ $filteredClientesCount }}
+                                    </p>
+                                @else
+                                    <p>
+                                        Total de clientes:{{ $filteredClientesCount }}
+                                    </p>
+                                @endif
                             </div>
 
                             <table id="users_tbl" class="footable table default footable-loaded ">
@@ -275,62 +283,89 @@
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
             <script>
-                document.getElementById('select_all').addEventListener('click', function() {
-                    var isChecked = this.checked;
-                    var checkboxes = document.querySelectorAll('input[name="batch[]"]');
-                    checkboxes.forEach(function(checkbox) {
-                        checkbox.checked = isChecked;
-                    });
+    document.getElementById('select_all').addEventListener('click', function() {
+        var isChecked = this.checked;
+        var checkboxes = document.querySelectorAll('input[name="batch[]"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = isChecked;
+        });
+    });
+
+    function goToPageClientes() {
+        const page = document.getElementById('go_to_page_clientes').value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page);
+        window.location.href = url.toString();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('form[name="clients_list"]').addEventListener('submit', function (e) {
+            var action = document.getElementById('action').value;
+            var selectedClients = [];
+
+            document.querySelectorAll('input[name="batch[]"]:checked').forEach(function (checkbox) {
+                selectedClients.push(checkbox.value);
+            });
+
+            if (action === 'none') {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Debes seleccionar una acción para proceder.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
                 });
+                return;
+            }
 
-                function goToPageClientes() {
-                    const page = document.getElementById('go_to_page_clientes').value;
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('page', page);
-                    window.location.href = url.toString();
-                }
+            if (action === 'delete' && selectedClients.length > 0) {
+                e.preventDefault();
 
-                document.addEventListener('DOMContentLoaded', function () {
-                    document.querySelector('form[name="clients_list"]').addEventListener('submit', function (e) {
-                        var action = document.getElementById('action').value;
-                        var selectedClients = [];
-
-                        document.querySelectorAll('input[name="batch[]"]:checked').forEach(function (checkbox) {
-                            selectedClients.push(checkbox.value);
-                        });
-
-                        if (action === 'delete' && selectedClients.length > 0) {
-                            e.preventDefault();
-
-                            Swal.fire({
-                                title: '¿Estás seguro?',
-                                text: "¡No podrás revertir esta acción!",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Sí, eliminar',
-                                cancelButtonText: 'Cancelar'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    this.submit();
-                                }
-                            });
-                        } else if (action === 'delete' && selectedClients.length === 0) {
-                            e.preventDefault();
-                            Swal.fire('Error', 'Debes seleccionar al menos un cliente para eliminar.', 'error');
-                        }
-                    });
-
-                    @if(session('success'))
-                        Swal.fire('Éxito', '{{ session('success') }}', 'success');
-                    @endif
-
-                    @if(session('error'))
-                        Swal.fire('Error', '{{ session('error') }}', 'error');
-                    @endif
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡No podrás revertir esta acción!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
                 });
-            </script>
+            } else if (action === 'delete' && selectedClients.length === 0) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Debes seleccionar al menos un cliente para eliminar.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
+                });
+            }
+        });
+
+         @if(session('success'))
+            Swal.fire({
+                title: 'Éxito',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                timer: 3000, // Se cierra automáticamente después de 3 segundos
+                showConfirmButton: false // No muestra el botón "OK"
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                title: 'Error',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'Aceptar' 
+            });
+        @endif
+    });
+</script>
 
         </div> <!-- main_content -->
     </div> <!-- container-custom -->

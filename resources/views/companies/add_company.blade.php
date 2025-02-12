@@ -120,18 +120,73 @@
                 </div>
             </footer>
 
-            <script src="https://repo.triara.co/repositorio/assets/bootstrap/js/bootstrap.min.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/jquery.validations.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/jquery.psendmodal.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/jen/jen.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/js.cookie.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/main.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/js.functions.php"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/chosen/chosen.jquery.min.js"></script>
-            <script src="https://repo.triara.co/repositorio/includes/js/ckeditor/ckeditor.js"></script>
+            <script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
+            <script src="{{asset('includes/js/jquery.validations.js')}}"></script>
+            <script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>
+            <script src="{{asset('includes/js/jen/jen.js')}}"></script>
+            <script src="{{asset('includes/js/js.cookie.js')}}"></script>
+            <script src="{{asset('includes/js/main.js')}}"></script>
+            <script src="{{asset('includes/js/js.functions.php')}}"></script>
+            <script src="{{asset('includes/js/chosen/chosen.jquery.min.js')}}"></script>
+            <script src="{{asset('includes/js/ckeditor/ckeditor.js')}}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                $(document).ready(function () {
+                    // Función para mostrar mensajes de éxito con SweetAlert2
+                    function showSuccessMessage(message) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: message,
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            // Recargar la página después de mostrar el mensaje de éxito
+                            window.location.reload();
+                        });
+                    }
+
+                    // Función para mostrar mensajes de error con SweetAlert2
+                    function showErrorMessage(message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+
+                    // Manejar el envío del formulario
+                    $('form[name="addgroup"]').on('submit', function (e) {
+                        e.preventDefault(); // Evitar el envío tradicional del formulario
+
+                        // Enviar la solicitud AJAX
+                        $.ajax({
+                            type: 'POST',
+                            url: $(this).attr('action'),
+                            data: $(this).serialize(),
+                            dataType: 'json',
+                            success: function (response) {
+                                if (response.success) {
+                                    showSuccessMessage(response.success);
+                                } else if (response.error) {
+                                    showErrorMessage(response.error);
+                                }
+                            },
+                            error: function (xhr) {
+                                // Manejar errores de validación del servidor
+                                if (xhr.status === 400 && xhr.responseJSON.error) {
+                                    showErrorMessage(xhr.responseJSON.error);
+                                } else {
+                                    showErrorMessage('Hubo un problema al procesar la solicitud.');
+                                }
+                            }
+                        });
+                    });
+                });
+            </script>
             
-        </div> <!-- main_content -->
-    </div> <!-- container-custom -->
+        </div> 
+    </div> 
 </body>
 
 </html>

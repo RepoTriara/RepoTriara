@@ -284,7 +284,7 @@
                                                 <td>{{ $savedFile->original_url }}</td>
                                                 <td>
                                                     @php
-                                                        $isHidden = $savedFile->fileRelations->contains('hidden', true);
+        $isHidden = $savedFile->fileRelations->contains('hidden', true);
                                                     @endphp
                                                     <span
                                                         class="label {{ $isHidden ? 'label-danger' : 'label-success' }}">
@@ -540,6 +540,78 @@
             </div>
         </div>
     </div>
+<!-- Asegúrate de incluir SweetAlert2 en tu proyecto -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script type="text/javascript">
+    // Función para mostrar un mensaje de éxito que se cierra automáticamente
+    function showSuccessMessage(title, text = '', icon = 'success', timer = 10000) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            showConfirmButton: false,  // Elimina el botón de confirmación
+            timer: timer,  // Tiempo antes de que se cierre automáticamente (3000ms)
+            timerProgressBar: true, // Muestra la barra de progreso mientras espera
+        });
+    }
+
+    // Función para mostrar un mensaje de error que se cierra automáticamente
+    function showErrorMessage(title, text = '', icon = 'error', timer = 10000) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            showConfirmButton: false,  // Elimina el botón de confirmación
+            timer: timer,  // Tiempo antes de que se cierre automáticamente (3000ms)
+            timerProgressBar: true, // Muestra la barra de progreso mientras espera
+        });
+    }
+
+    // Función para mostrar un mensaje de advertencia que se cierra automáticamente
+    function showWarningMessage(title, text = '', icon = 'warning', timer = 10000) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            showConfirmButton: false,  // Elimina el botón de confirmación
+            timer: timer,  // Tiempo antes de que se cierre automáticamente (3000ms)
+            timerProgressBar: true, // Muestra la barra de progreso mientras espera
+        });
+    }
+
+    function showInfoMessage(title, text = '', icon = 'info', timer = 10000) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            showConfirmButton: false,  // Elimina el botón de confirmación
+            timer: timer,  // Tiempo antes de que se cierre automáticamente (3000ms)
+            timerProgressBar: true, // Muestra la barra de progreso mientras espera
+        });
+    }
+
+    // Ejemplo de uso al enviar el formulario
+    $('form').submit(function (event) {
+        // Aquí puedes añadir lógica de validación o procesamiento
+        showSuccessMessage('¡Formulario enviado con éxito!', 'Los datos han sido guardados correctamente.');
+    });
+
+    // Ejemplo para manejar errores al intentar eliminar un archivo
+    function deleteFileError() {
+        showErrorMessage('Error al eliminar el archivo', 'Hubo un problema al eliminar el archivo, por favor intenta nuevamente.');
+    }
+
+    // Ejemplo para mostrar advertencia al no guardar cambios
+    function unsavedChangesWarning() {
+        showWarningMessage('Cambios no guardados', 'Asegúrate de guardar los cambios antes de abandonar la página.');
+    }
+
+    // Ejemplo para mostrar un mensaje de información
+    function showInfo() {
+        showInfoMessage('Información adicional', 'Este es un mensaje de información adicional.');
+    }
+</script>
 
 </body>
 

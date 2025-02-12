@@ -96,7 +96,7 @@ class CategoryController extends Controller
         $category = TblCategory::findOrFail($id);
         $category->update($request->all());
 
-        return redirect()->route('categories.index')->with('success', 'Categoría actualizada correctamente.');
+        return redirect()->route('categories.edit', $id)->with('sweetalert', 'Categoría actualizada correctamente.');
     }
 
     // Eliminar una categoría individual

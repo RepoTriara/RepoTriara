@@ -105,11 +105,22 @@
                             <div class="clear"></div>
 
                             <div class="form_actions_count">
-                                <p>
-                                    <strong>Encontró:</strong> {{ $filteredUsersCount }}
-                                    {{ Str::plural('usuario', $filteredUsersCount) }} de un total de
-                                    {{ $totalUsers }}
-                                </p>
+                               @if (request()->has('client_id'))
+                                    <p>
+                                         Total de usuarios: {{ $filteredUsersCount }}
+ 
+                                    </p>
+                                @elseif (request()->has('search') || request()->has('role'))
+                                    <p>
+                                         Total de usuarios: {{ $filteredUsersCount }}
+ 
+                                    </p>
+                                @else
+                                    <p>
+                                        Total de usuarios: {{ $totalUsers }}
+ 
+                                    </p>
+                                @endif
                             </div>
 
                             <div class="clear"></div>
@@ -294,6 +305,18 @@
                             selectedUsers.push(checkbox.value);
                         });
 
+                          if (action === 'none') {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Debes seleccionar una acción para proceder.',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
+                            });
+                            return;
+                        }
+
+
                         if (action === 'delete' && selectedUsers.length > 0) {
                             e.preventDefault();
 
@@ -317,12 +340,14 @@
                         }
                     });
 
-                    @if(session('success'))
-                        Swal.fire('Éxito', '{{ session('success') }}', 'success');
-                    @endif
-
-                    @if(session('error'))
-                        Swal.fire('Error', '{{ session('error') }}', 'error');
+                     @if(session('success'))
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: '{{ session('success') }}',
+                            icon: 'success',
+                            timer: 3000, // Se cierra automáticamente después de 3 segundos
+                            showConfirmButton: false // No muestra el botón "OK"
+                        });
                     @endif
                 });
             </script>

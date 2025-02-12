@@ -124,6 +124,71 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
             <script src="{{ asset('includes/js/ckeditor/ckeditor.js') }}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+    $(document).ready(function () {
+        // Función para mostrar mensajes de éxito con SweetAlert2
+        function showSuccessMessage(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: message,
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                // Recargar la misma página después de que se cierre la alerta
+                window.location.reload();
+            });
+        }
+
+        // Función para mostrar mensajes de error con SweetAlert2
+        function showErrorMessage(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                confirmButtonText: 'Aceptar'
+            });
+        }
+
+        // Manejar el envío del formulario
+        $('form').on('submit', function (e) {
+            e.preventDefault(); // Evitar el envío tradicional del formulario
+
+            // Enviar la solicitud AJAX
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        showSuccessMessage(response.success);
+                    } else if (response.error) {
+                        showErrorMessage(response.error);
+                    }
+                },
+                error: function (xhr) {
+                    // Manejar errores de validación del servidor
+                    if (xhr.status === 422 && xhr.responseJSON.error) {
+                        let errorMessages = Object.entries(xhr.responseJSON.error).map(([field, messages]) =>
+                            `<b>${field}:</b> ${messages.join(', ')}`
+                        ).join('<br>');
+
+                        showErrorMessage(errorMessages);
+                    } else {
+                        showErrorMessage('Hubo un problema al procesar la solicitud.');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
 
             <script>
                 $(document).ready(function() {

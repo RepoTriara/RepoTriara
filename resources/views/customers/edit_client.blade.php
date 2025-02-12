@@ -304,7 +304,7 @@
                         title: 'Errores de validación',
                         html: `<div style="text-align: left;">${errorHtml}</div>`,
                         icon: 'error',
-                        confirmButtonText: 'OK',
+                        confirmButtonText: 'Aceptar',
                     });
                     return false;
                 }
@@ -334,7 +334,7 @@
                         title: 'Errores de validación',
                         html: `<div style="text-align: left;">${errorMessages}</div>`,
                         icon: 'error',
-                        confirmButtonText: 'OK',
+                        confirmButtonText: 'aceptar',
                     });
                 } else if (data.success) {
                     Swal.fire({
@@ -351,7 +351,7 @@
                         title: 'Error',
                         text: 'Hubo un problema al actualizar el cliente.',
                         icon: 'error',
-                        confirmButtonText: 'OK',
+                        confirmButtonText: 'Aceptar',
                     });
                 }
             })
@@ -360,7 +360,7 @@
                     title: 'Error',
                     text: 'Hubo un problema al procesar la solicitud.',
                     icon: 'error',
-                    confirmButtonText: 'OK',
+                    confirmButtonText: 'Aceptar',
                 });
             });
         });

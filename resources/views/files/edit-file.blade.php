@@ -160,7 +160,7 @@
                                 title: 'Error',
                                 text: 'Hubo un problema al guardar los cambios.',
                                 icon: 'error',
-                                confirmButtonText: 'OK'
+                                confirmButtonText: 'Aceptar'
                             });
                         }
                     }).catch(error => {
@@ -168,7 +168,7 @@
                             title: 'Error',
                             text: 'Hubo un problema al guardar los cambios.',
                             icon: 'error',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'Aceptar'
                         });
                     });
                 });

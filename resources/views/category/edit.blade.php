@@ -32,24 +32,6 @@
                     </div>
                 </div>
 
-                <!-- Mostrar errores de validación -->
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <!-- Mostrar mensaje de éxito -->
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-lg-6">
                         <div class="white-box">
@@ -129,64 +111,39 @@
     <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
     <script src="{{ asset('includes/js/main.js') }}"></script>
     <script src="{{ asset('includes/js/js.functions.php') }}"></script>
+    <!-- Asegúrate de incluir SweetAlert2 en tu proyecto -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script>
-    $(document).ready(function() {
-        // Función para mostrar el mensaje de éxito
-        function showSuccessMessage(message) {
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Verificar si hay un mensaje de éxito en la sesión
+        @if(session('sweetalert'))
             Swal.fire({
                 icon: 'success',
                 title: 'Éxito',
-                text: message,
-                confirmButtonText: 'OK'
+                text: "{{ session('sweetalert') }}",
+                showConfirmButton: false, // Sin botón de confirmación
+                timer: 3000, // Desaparece después de 5 segundos
             });
-        }
-// Función para mostrar el mensaje de error
-        function showErrorMessage(messages) {
+        @endif
+
+        // Capturar errores de validación y mostrarlos con SweetAlert2
+        @if ($errors->any())
+            let errorMessage = "";
+            @foreach ($errors->all() as $error)
+                errorMessage += "{{ $error }}\n";
+            @endforeach
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                html: `<ul>${messages.map(message => `<li>${message}</li>`).join('')}</ul>`,
-                confirmButtonText: 'OK'
+                text: errorMessage,
+                showConfirmButton: true, // Con botón de confirmación
+                confirmButtonText: 'Aceptar'
             });
-        }
-
-        // Mostrar mensajes de error al cargar la página
-        if ({{ $errors->any() ? 'true' : 'false' }}) {
-            let errorMessages = {!! json_encode($errors->all()) !!};
-            showErrorMessage(errorMessages);
-        }
-
-        // Mostrar mensajes de éxito o error al enviar el formulario
-        $('form').submit(function(event) {
-            // Validar el formulario aquí
-            clean_form(this);
-
-            $(this).find('input[name$="[name]"]').each(function() {
-                is_complete($(this)[0], 'Título está incompleto');
-            });
-
-            // Mostrar los errores o continuar si todo está bien
-            if (show_form_errors() == false) {
-                showErrorMessage('Hay errores en el formulario. Por favor, corrígelos.');
-                return false; // Impedir el envío del formulario
-            } else {
-                // Permitir que el formulario se envíe normalmente
-                showSuccessMessage('Categoría actualizada exitosamente.');
-                return true; // Permitir el envío del formulario
-            }
-        });
-
-        // Manejar el clic en el botón "Cancelar"
-        $('a[name="cancel"]').click(function(event) {
-            event.preventDefault();
-            showSuccessMessage('Operación cancelada.');
-            window.location.href = '{{ route('categories.index') }}';
-        });
+        @endif
     });
 </script>
-
-
 </body>
 
 </html>

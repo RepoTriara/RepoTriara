@@ -119,7 +119,15 @@
                             <div class="clear"></div>
 
                             <div class="form_actions_count">
-                                @if (request()->has('category_id'))
+                                @if (request()->has('client_id'))
+                                    <p class="form_count_total">Total de archivos del cliente:
+                                        <span>{{ $filteredTotal }}</span>
+                                    </p>
+                                @elseif (request()->has('group_id'))
+                                    <p class="form_count_total">Total de archivos en el grupo:
+                                        <span>{{ $filteredTotal }}</span>
+                                    </p>
+                                @elseif (request()->has('category_id'))
                                     <p class="form_count_total">Total de archivos en la categoría:
                                         <span>{{ $filteredTotal }}</span>
                                     </p>
@@ -220,7 +228,7 @@
                                             <td>
                                                 @if ($file->expires && $file->expiry_date)
                                                     @php
-                                                        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
+        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
                                                     @endphp
                                                     @if ($expiryDate->isPast())
                                                         <span class="label label-danger"
@@ -304,27 +312,7 @@
             });
         });
 
-        document.getElementById('bulkActionForm').addEventListener('submit', function(event) {
-            const action = document.getElementById('action').value;
-            const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
-
-            if (action === 'none' || selectedFiles.length === 0) {
-                event.preventDefault();
-                alert('Seleccione una acción válida y al menos un archivo.');
-                return;
-            }
-
-            if (action === 'delete') {
-                event.preventDefault();
-                const message =
-                    `Está a punto de eliminar ${selectedFiles.length} archivo(s). Esta acción no se puede deshacer. ¿Está seguro de continuar?`;
-                document.getElementById('confirmationMessage').innerText = message;
-                $('#confirmationModal').modal('show');
-                document.getElementById('confirmAction').onclick = function() {
-                    document.getElementById('bulkActionForm').submit();
-                };
-            }
-        });
+       
 
         $(document).ready(function() {
             $('#urlModal').on('show.bs.modal', function(event) {
@@ -346,115 +334,91 @@
         }
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const downloadForm = document.getElementById('bulkActionForm');
-            const delay = 3000; // Tiempo de espera (en milisegundos)
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadForm = document.getElementById('bulkActionForm');
+        const delay = 3000; // Tiempo de espera (en milisegundos)
 
-            downloadForm.onsubmit = function(e) {
-                const action = document.getElementById('action').value;
-                const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
+        downloadForm.onsubmit = function(e) {
+            const action = document.getElementById('action').value;
+            const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
 
-                if (action === 'none' || selectedFiles.length === 0) {
-                    e.preventDefault();
-                    // Mostrar mensaje de error con SweetAlert
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'No se ha seleccionado ningún archivo.',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                    return;
-                }
-
-                if (action === 'delete') {
-                    e.preventDefault();
-                    const message =
-                        `Está a punto de eliminar ${selectedFiles.length} archivo(s). Esta acción no se puede deshacer. ¿Está seguro de continuar?`;
-                    document.getElementById('confirmationMessage').innerText = message;
-                    $('#confirmationModal').modal('show');
-                    document.getElementById('confirmAction').onclick = function() {
-                        document.getElementById('bulkActionForm').submit();
-                    };
-                } else if (action === 'zip') {
-                    e.preventDefault(); // Evitar envío inmediato
-
-                    // Mostrar mensaje de carga con SweetAlert
-                    Swal.fire({
-                        title: 'Por favor, espera',
-                        html: `
-                    <p>Estamos procesando tu descarga comprimida...</p>
-                    <div style="margin-top: 10px;">
-                        <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando..." width="50">
-                    </div>
-                `,
-                        allowOutsideClick: false,
-                        showConfirmButton: false
-                    });
-
-                    // Configurar el temporizador para cerrar automáticamente el mensaje y enviar el formulario
-                    setTimeout(() => {
-                        Swal.close(); // Cerrar el mensaje
-                        e.target.submit(); // Enviar el formulario
-                    }, delay); // Tiempo sincronizado
-                }
-            };
-
-            // Verificar si hay un mensaje de error o éxito (esto dependerá de cómo manejes la respuesta en el backend)
-            @if (session('success'))
-                Swal.fire({
-                    title: '¡Éxito!',
-                    text: '{{ session('success') }}',
-                    icon: 'success',
-                    confirmButtonText: 'Aceptar'
-                });
-            @elseif (session('error'))
+            if (action === 'none' || selectedFiles.length === 0) {
+                e.preventDefault();
                 Swal.fire({
                     title: 'Error',
-                    text: '{{ session('error') }}',
+                    text: 'No se ha seleccionado ningún archivo.',
                     icon: 'error',
                     confirmButtonText: 'Aceptar'
                 });
-            @endif
-
-            // Agregar funcionalidad para seleccionar todos los checkboxes
-            document.getElementById('select_all').addEventListener('click', function() {
-                // Obtener el estado del checkbox principal
-                var isChecked = this.checked;
-
-                // Seleccionar todos los checkboxes que están en el grupo 'file_ids[]'
-                var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
-
-                // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
-                checkboxes.forEach(function(checkbox) {
-                    checkbox.checked = isChecked;
+                return;
+            }
+             
+            if (action === 'delete') {
+                e.preventDefault();
+                Swal.fire({
+                    title: '¿Está seguro?',
+                    text: `Está a punto de eliminar ${selectedFiles.length} archivos. Esta acción no se puede deshacer.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        downloadForm.submit();
+                    }
                 });
+            } else if (action === 'zip') {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Por favor, espera',
+                    html: `
+                        <p>Estamos procesando tu descarga comprimida...</p>
+                        <div style="margin-top: 10px;">
+                            <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando..." width="50">
+                        </div>
+                    `,
+                    allowOutsideClick: false,
+                    showConfirmButton: false
+                });
+
+                setTimeout(() => {
+                    Swal.close();
+                    e.target.submit();
+                }, delay);
+            }
+        };
+
+        // Verificar si hay un mensaje de éxito o error desde el backend
+        @if (session('success'))
+            Swal.fire({
+                title: '¡Éxito!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                title: 'Error',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        @endif
+
+        // Funcionalidad para seleccionar todos los checkboxes
+        document.getElementById('select_all').addEventListener('click', function() {
+            var isChecked = this.checked;
+            var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = isChecked;
             });
         });
-    </script>
+    });
+</script>
 
-
-
-    <!-- Modal de Confirmación -->
-    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
-        aria-labelledby="confirmationModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmationModalLabel">Confirmación de Acción</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="confirmationMessage">¿Está seguro de realizar esta acción?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" id="confirmAction" class="btn btn-primary">Aceptar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal para mostrar la URL pública -->
     <div class="modal fade" id="urlModal" tabindex="-1" role="dialog" aria-labelledby="urlModalLabel"
@@ -479,8 +443,6 @@
             </div>
         </div>
     </div>
-
-
 </body>
 
 </html>

@@ -157,16 +157,15 @@ class UserSystemController extends Controller
                 'notify' => $request->has('notify') ? 1 : 0, // Convertir a 1 (true) o 0 (false)
                 'active' => $request->has('active') ? 1 : 0, // Convertir a 1 (true) o 0 (false)
             ]);
-
-            // Si todo va bien, mostramos el mensaje de éxito
-            session()->flash('success', 'Usuario registrado correctamente');
+            return response()->json([
+                'message' => 'Usuario registrado correctamente.',
+            ]);
         } catch (\Exception $e) {
-            // Si algo falla, mostramos un mensaje de error
-            session()->flash('error', 'Hubo un problema al registrar el usuario. Inténtalo nuevamente.');
+            // Si algo falla, devolvemos un mensaje de error en formato JSON
+            return response()->json([
+                'message' => 'Hubo un problema al registrar el usuario. Inténtalo nuevamente.',
+            ], 500); // Código de estado HTTP 500 para errores del servidor
         }
-
-        // Volver a la misma vista con los errores (si los hay)
-        return back();
     }
 
 
