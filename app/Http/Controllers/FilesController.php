@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\TblFile;
@@ -19,220 +20,206 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+
 class FilesController extends Controller
 {
     public function index(Request $request)
     {
-        // Obtener el ID del cliente desde la query string
+        // Obtener parámetros desde la query string
         $clientId = $request->query('client_id');
-
-        // Obtener el ID del grupo desde la query string
         $groupId = $request->query('group_id');
-
-        // Obtener el ID de la categoría desde la query string
         $categoryId = $request->query('category_id');
+        $search = $request->get('search');
+        $uploaderFilter = $request->get('uploader');
+        $sort = $request->get('sort', 'timestamp');
+        $direction = $request->get('direction', 'asc');
 
         // Definir la variable $uploaders
         $uploaders = TblFile::select('uploader')->distinct()->pluck('uploader');
-
-        // Contar el total de archivos
         $totalFiles = TblFile::count();
 
-      // Filtrar por cliente, grupo o categoría
-if ($clientId || $groupId || $categoryId) {
-    if ($clientId) {
-        $entity = User::find($clientId);
-        $entityType = 'cliente';
-        $pageTitle = __('Archivos asignados a') . ' ' . $entity->name;
-        $query = TblFile::whereHas('fileRelations', function ($query) use ($clientId) {
-            $query->where('client_id', $clientId);
-        });
-    } elseif ($groupId) {
-        $entity = Groups::find($groupId);
-        $entityType = 'grupo';
-        $pageTitle = __('Archivos asignados al grupo') . ' ' . $entity->name;
-        $query = TblFile::whereHas('fileRelations', function ($query) use ($groupId) {
-            $query->where('group_id', $groupId);
-        });
-    } elseif ($categoryId) {
-        $entity = TblCategory::find($categoryId);
-        $entityType = 'categoría';
-        $pageTitle = __('Archivos de la categoría') . ' ' . $entity->name;
-        $query = TblFile::whereHas('categoryRelations', function ($query) use ($categoryId) {
-            $query->where('cat_id', $categoryId);
-        });
+        // Inicializar la consulta de archivos
+        $query = TblFile::query();
 
-    }
+        // Filtrar por cliente, grupo o categoría
+        if ($clientId || $groupId || $categoryId) {
+            if ($clientId) {
+                $entity = User::find($clientId);
+                $entityType = 'cliente';
+                $pageTitle = __('Archivos asignados a') . ' ' . $entity->name;
+                $query = TblFile::whereHas('fileRelations', function ($query) use ($clientId) {
+                    $query->where('client_id', $clientId);
+                });
+            } elseif ($groupId) {
+                $entity = Groups::find($groupId);
+                $entityType = 'grupo';
+                $pageTitle = __('Archivos asignados al grupo') . ' ' . $entity->name;
+                $query = TblFile::whereHas('fileRelations', function ($query) use ($groupId) {
+                    $query->where('group_id', $groupId);
+                });
+            } elseif ($categoryId) {
+                $entity = TblCategory::find($categoryId);
+                $entityType = 'categoría';
+                $pageTitle = __('Archivos de la categoría') . ' ' . $entity->name;
+                $query = TblFile::whereHas('categoryRelations', function ($query) use ($categoryId) {
+                    $query->where('cat_id', $categoryId);
+                });
+            }
 
-    if ($entity) {
-        $files = $query->paginate(10);
-        $filteredTotal = $files->total();
+            if ($entity) {
+                // Obtener los archivos filtrados
+                $files = $query->paginate(10);
+                $filteredTotal = $files->total();
 
-        foreach ($files as $file) {
-            // Asignar el nombre del archivo almacenado a partir de la columna 'url'
-            $file->stored_filename = $file->url;
+                // Asignar el tamaño y nombre de archivo almacenado
+                foreach ($files as $file) {
+                    $file->stored_filename = $file->url;
 
-            // Ruta del archivo en la carpeta de almacenamiento privado
-            $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
-            $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename);
+                    $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
+                    $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename);
 
-            // Convertir las rutas a formatos absolutos
-            $realPrivatePath = realpath($privateFilePath);
-            $realPublicPath = realpath($publicFilePath);
+                    $realPrivatePath = realpath($privateFilePath);
+                    $realPublicPath = realpath($publicFilePath);
 
-            // Verificar primero en privado, luego en público
-            if ($realPrivatePath && file_exists($realPrivatePath)) {
+                    // Verificar la existencia del archivo en privado o público
+                    if ($realPrivatePath && file_exists($realPrivatePath)) {
+                        $file->size = $this->getFormattedFileSize($realPrivatePath);
+                    } elseif ($realPublicPath && file_exists($realPublicPath)) {
+                        $file->size = $this->getFormattedFileSize($realPublicPath);
+                    } else {
+                        $file->size = '--';
+                    }
+                }
 
-                // Obtener y formatear tamaño
-                $file->size = $this->getFormattedFileSize($realPrivatePath);
-            } elseif ($realPublicPath && file_exists($realPublicPath)) {
+                // Asegurarse de que los parámetros de la URL se mantengan en la paginación
+                $files->appends($request->except('page'));
 
-                // Obtener y formatear tamaño
-                $file->size = $this->getFormattedFileSize($realPublicPath);
+                return view('files.file_manager', compact('pageTitle', 'entity', 'entityType', 'files', 'uploaders', 'totalFiles', 'filteredTotal'));
             } else {
-                $file->size = '--';
+                $error = __('El ' . $entityType . ' no existe');
+                return view('files.file_manager', compact('error', 'uploaders', 'totalFiles'));
             }
         }
 
-        return view('files.file_manager', compact('pageTitle', 'entity', 'entityType', 'files', 'uploaders', 'totalFiles', 'filteredTotal'));
-    } else {
-        $error = __('El ' . $entityType . ' no existe');
-        return view('files.file_manager', compact('error', 'uploaders', 'totalFiles'));
-    }
-}
+        // Si no se aplica filtro por cliente, grupo ni categoría, mostrar todos los archivos
+        else {
+            $query = TblFile::with(['fileRelations', 'downloads']);
 
-// Sin filtros de cliente, grupo ni categoría, mostrar todos los archivos
-else {
-    // Si no hay client_id, group_id ni category_id, simplemente mostramos todos los archivos
-    $files = TblFile::paginate(10);
+            // Filtrar por búsqueda
+            if ($search) {
+                $query->where('filename', 'LIKE', "%$search%");
+            }
 
-    $search = $request->get('search');
-    $uploaderFilter = $request->get('uploader');
-    $sort = $request->get('sort', 'timestamp');
-    $direction = $request->get('direction', 'asc');
+            // Filtrar por uploader
+            if ($uploaderFilter) {
+                $query->where('uploader', $uploaderFilter);
+            }
 
-    $allowedSorts = ['timestamp', 'filename', 'uploader', 'public_allow', 'download_count'];
-    if (!in_array($sort, $allowedSorts)) {
-        $sort = 'timestamp';
-    }
+            // Ordenar por el campo y dirección proporcionados
+            if ($sort === 'download_count') {
+                $query->withCount('fileRelations as download_count')->orderBy('download_count', $direction);
+            } else {
+                $query->orderBy($sort, $direction);
+            }
 
-    $totalFiles = TblFile::count();
+            // Obtener el total filtrado de archivos
+            $filteredTotal = $query->count();
 
-    $query = TblFile::with(['fileRelations', 'downloads']);
+            // Paginación de los archivos
+            $files = $query->paginate(10)->appends($request->except('page'));
 
-    if ($search) {
-        $query->where('filename', 'LIKE', "%$search%");
-    }
+            // Asignar el tamaño y nombre de archivo almacenado
+            foreach ($files as $file) {
+                $file->stored_filename = $file->url;
 
-    if ($uploaderFilter) {
-        $query->where('uploader', $uploaderFilter);
-    }
+                $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
+                $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename);
 
-    if ($sort === 'download_count') {
-        $query->withCount('fileRelations as download_count')->orderBy('download_count', $direction);
-    } else {
-        $query->orderBy($sort, $direction);
-    }
+                $realPrivatePath = realpath($privateFilePath);
+                $realPublicPath = realpath($publicFilePath);
 
-    $filteredTotal = $query->count();
-    $files = $query->paginate(10)->appends($request->except('page'));
+                // Verificar la existencia del archivo en privado o público
+                if ($realPrivatePath && file_exists($realPrivatePath)) {
+                    $file->size = $this->getFormattedFileSize($realPrivatePath);
+                } elseif ($realPublicPath && file_exists($realPublicPath)) {
+                    $file->size = $this->getFormattedFileSize($realPublicPath);
+                } else {
+                    $file->size = '--';
+                }
+            }
 
-    foreach ($files as $file) {
-        // Asignar el nombre del archivo almacenado a partir de la columna 'url'
-        $file->stored_filename = $file->url;
-
-        // Ruta del archivo en la carpeta de almacenamiento privado
-        $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
-        $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename);
-
-        // Convertir las rutas a formatos absolutos
-        $realPrivatePath = realpath($privateFilePath);
-        $realPublicPath = realpath($publicFilePath);
-
-        // Verificar primero en privado, luego en público
-        if ($realPrivatePath && file_exists($realPrivatePath)) {
-
-            // Obtener y formatear tamaño
-            $file->size = $this->getFormattedFileSize($realPrivatePath);
-        } elseif ($realPublicPath && file_exists($realPublicPath)) {
-
-            // Obtener y formatear tamaño
-            $file->size = $this->getFormattedFileSize($realPublicPath);
-        } else {
-            $file->size = '--';
+            return view('files.file_manager', compact('files', 'uploaders', 'totalFiles', 'filteredTotal', 'sort', 'direction'));
         }
     }
 
-    return view('files.file_manager', compact('files', 'uploaders', 'totalFiles', 'filteredTotal', 'sort', 'direction'));
-}
-    }
+
 
     public function downloadCompressed(Request $request)
-{
-    $fileIds = $request->input('batch');
-    if (!$fileIds || count($fileIds) === 0) {
-        return redirect()->back()->with('error', 'Debe seleccionar al menos un archivo para descargar.');
-    }
+    {
+        $fileIds = $request->input('batch');
+        if (!$fileIds || count($fileIds) === 0) {
+            return redirect()->back()->with('error', 'Debe seleccionar al menos un archivo para descargar.');
+        }
 
-    $files = TblFile::whereIn('id', $fileIds)->get();
+        $files = TblFile::whereIn('id', $fileIds)->get();
 
-    if ($files->isEmpty()) {
-        return redirect()->back()->with('error', 'No se encontraron archivos para descargar.');
-    }
+        if ($files->isEmpty()) {
+            return redirect()->back()->with('error', 'No se encontraron archivos para descargar.');
+        }
 
-    // Descargar cada archivo seleccionado individualmente
-    foreach ($files as $file) {
-        $filePath = storage_path('app/' . $file->url);
-        if (file_exists($filePath)) {
-            return response()->download($filePath, $file->filename);
-        } else {
-            return redirect()->back()->with('error', 'No se pudo encontrar el archivo ' . $file->filename . '.');
+        // Descargar cada archivo seleccionado individualmente
+        foreach ($files as $file) {
+            $filePath = storage_path('app/' . $file->url);
+            if (file_exists($filePath)) {
+                return response()->download($filePath, $file->filename);
+            } else {
+                return redirect()->back()->with('error', 'No se pudo encontrar el archivo ' . $file->filename . '.');
+            }
         }
     }
-}
 
 
 
     public function bulkAction(Request $request)
-{
-    $action = $request->input('action');
-    $fileIds = $request->input('batch');
+    {
+        $action = $request->input('action');
+        $fileIds = $request->input('batch');
 
-    if (!$fileIds || $action === 'none') {
-        return redirect()->back()->with('error', 'Seleccione una acción válida y al menos un archivo.');
-    }
+        if (!$fileIds || $action === 'none') {
+            return redirect()->back()->with('error', 'Seleccione una acción válida y al menos un archivo.');
+        }
 
 
-    // Lógica para procesar las acciones
-    switch ($action) {
-        case 'hide':
-            TblFileRelation::whereIn('file_id', $fileIds)->update(['hidden' => 1]);
-            return redirect()->back()->with('success', 'Archivos ocultados exitosamente.');
-        case 'show':
-            TblFileRelation::whereIn('file_id', $fileIds)->update(['hidden' => 0]);
-            return redirect()->back()->with('success', 'Archivos visibles nuevamente.');
-        case 'delete':
-            $files = TblFile::whereIn('id', $fileIds)->get();
+        // Lógica para procesar las acciones
+        switch ($action) {
+            case 'hide':
+                TblFileRelation::whereIn('file_id', $fileIds)->update(['hidden' => 1]);
+                return redirect()->back()->with('success', 'Archivos ocultados exitosamente.');
+            case 'show':
+                TblFileRelation::whereIn('file_id', $fileIds)->update(['hidden' => 0]);
+                return redirect()->back()->with('success', 'Archivos visibles nuevamente.');
+            case 'delete':
+                $files = TblFile::whereIn('id', $fileIds)->get();
 
-            foreach ($files as $file) {
-                $filePath = storage_path('app/private/uploads/' . $file->url);
+                foreach ($files as $file) {
+                    $filePath = storage_path('app/private/uploads/' . $file->url);
 
-                if (File::exists($filePath)) {
-                    File::delete($filePath);
+                    if (File::exists($filePath)) {
+                        File::delete($filePath);
+                    }
                 }
-            }
-            TblFileRelation::whereIn('file_id', $fileIds)->delete();
-            TblCategoryRelation::whereIn('file_id', $fileIds)->delete();
-            TblFile::whereIn('id', $fileIds)->delete();
-            return redirect()->back()->with('success', 'Archivos eliminados correctamente.');
-        case 'zip':
-            // Llamada al método de descarga comprimida, asegurándose de que el parámetro sea el correcto
-            $request->merge(['file_ids' => $fileIds]); // Añadir file_ids al request
-            return $this->downloadCompresed($request);
-        default:
-            return redirect()->back()->with('error', 'Seleccione una acción válida.');
+                TblFileRelation::whereIn('file_id', $fileIds)->delete();
+                TblCategoryRelation::whereIn('file_id', $fileIds)->delete();
+                TblFile::whereIn('id', $fileIds)->delete();
+                return redirect()->back()->with('success', 'Archivos eliminados correctamente.');
+            case 'zip':
+                // Llamada al método de descarga comprimida, asegurándose de que el parámetro sea el correcto
+                $request->merge(['file_ids' => $fileIds]); // Añadir file_ids al request
+                return $this->downloadCompresed($request);
+            default:
+                return redirect()->back()->with('error', 'Seleccione una acción válida.');
+        }
     }
-}
 
 
     public function download(Request $request)
@@ -255,44 +242,44 @@ else {
     }
 
     public function edit($fileId)
-{
-    $file = TblFile::findOrFail($fileId);
+    {
+        $file = TblFile::findOrFail($fileId);
 
-    //  token público si no existe
-    if (!$file->public_token) {
-        $file->public_token = Str::random(32);
-        $file->save();
+        //  token público si no existe
+        if (!$file->public_token) {
+            $file->public_token = Str::random(32);
+            $file->save();
+        }
+
+        $clients = User::all();
+        $groups = Groups::all();
+        $categories = TblCategory::all();
+
+        $selectedAssignments = TblFileRelation::where('file_id', $fileId)
+            ->whereNotNull('client_id')
+            ->pluck('client_id')
+            ->toArray();
+
+        $selectedGroups = TblFileRelation::where('file_id', $fileId)
+            ->whereNotNull('group_id')
+            ->pluck('group_id')
+            ->toArray();
+
+        $selectedCategories = TblCategoryRelation::where('file_id', $fileId)
+            ->pluck('cat_id')
+            ->toArray();
+
+        return view('files.file_edit', compact(
+            'file',
+            'clients',
+            'groups',
+            'categories',
+            'selectedAssignments',
+            'selectedGroups',
+            'selectedCategories',
+            'fileId'
+        ));
     }
-
-    $clients = User::all();
-    $groups = Groups::all();
-    $categories = TblCategory::all();
-
-    $selectedAssignments = TblFileRelation::where('file_id', $fileId)
-        ->whereNotNull('client_id')
-        ->pluck('client_id')
-        ->toArray();
-
-    $selectedGroups = TblFileRelation::where('file_id', $fileId)
-        ->whereNotNull('group_id')
-        ->pluck('group_id')
-        ->toArray();
-
-    $selectedCategories = TblCategoryRelation::where('file_id', $fileId)
-        ->pluck('cat_id')
-        ->toArray();
-
-    return view('files.file_edit', compact(
-        'file',
-        'clients',
-        'groups',
-        'categories',
-        'selectedAssignments',
-        'selectedGroups',
-        'selectedCategories',
-        'fileId'
-    ));
-}
 
     public function editBasic($fileId)
     {
@@ -300,7 +287,8 @@ else {
 
         $file = TblFile::findOrFail($fileId);
 
-        if ($user->level == 0 && $file->uploader !== $user->name) {
+
+        if ($file->uploader !== $user->user) {
             return redirect()->route('manage-files')->with('error', 'No tienes permiso para editar este archivo.');
         }
 
@@ -340,32 +328,38 @@ else {
                 ->withInput($request->all(['filename', 'description', 'expires', 'public_allow', 'expiry_date']));
         }
 
-        if ($request->has('expires') && $request->boolean('expires')) {
-            $expiryDate = $request->input('expiry_date');
+        // **MODIFICACIÓN CRUCIAL:  Solo procesar 'expires' y 'expiry_date' SI se envían en la solicitud**
+        if ($request->has('expires')) {
+            if ($request->boolean('expires')) {
+                $expiryDate = $request->input('expiry_date');
 
-            if (empty($expiryDate)) {
-                return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración es requerida.'])->withInput($request->all());
+                if (empty($expiryDate)) {
+                    return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración es requerida.'])->withInput($request->all());
+                }
+
+                $expiryDate = Carbon::parse($expiryDate);
+                $maxExpiryDate = $file->timestamp->copy()->addYear(); // Un año desde la creación
+
+                if ($expiryDate->greaterThan($maxExpiryDate)) {
+                    return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración no puede ser mayor a un año desde la fecha de creación.'])->withInput($request->all());
+                }
+
+                if ($expiryDate->lessThan($file->timestamp)) {
+                    return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración no puede ser anterior a la fecha de creación del archivo.'])->withInput($request->all());
+                }
+
+                $file->expiry_date = $expiryDate;
+                $file->expires = true; // Si expiry date se establece, expires debe ser true
+            } else {
+                $file->expiry_date = null;
+                $file->expires = false; // Si expires se desactiva, debe ser false
             }
+        } // **FIN de la MODIFICACIÓN CRUCIAL:  Ya no hay bloque 'else' incondicional para 'expires'**
 
-            $expiryDate = Carbon::parse($expiryDate);
-            $maxExpiryDate = $file->timestamp->copy()->addYear(); // Un año desde la creación
-
-            if ($expiryDate->greaterThan($maxExpiryDate)) {
-                return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración no puede ser mayor a un año desde la fecha de creación.'])->withInput($request->all());
-            }
-
-            if ($expiryDate->lessThan($file->timestamp)) {
-                return redirect()->back()->withErrors(['expiry_date' => 'La fecha de expiración no puede ser anterior a la fecha de creación del archivo.'])->withInput($request->all());
-            }
-
-            $file->expiry_date = $expiryDate;
-        } else {
-            $file->expiry_date = null;
-        }
 
         $file->filename = $request->input('filename');
         $file->description = $request->input('description') ?? '';
-        $file->expires = $request->boolean('expires');
+        // **Ya NO establecemos $file->expires ni $file->expiry_date aquí de forma incondicional**
         $file->public_allow = $request->boolean('public_allow');
         $file->save();
 
@@ -427,7 +421,6 @@ else {
 
         return redirect()->route('files.edit', $file->id)->with('success', 'El archivo se ha actualizado correctamente.');
     }
-
 
     public function resetUploadSession()
     {
@@ -628,61 +621,61 @@ else {
         }
     }
 
-   public function uploadProcessView(Request $request)
-{
-    try {
-        $uploadSessionId = session('upload_session_id');
-        $uploadedFiles = session("uploaded_files_$uploadSessionId", []);
-        $files = collect();
-        $tempDir = storage_path('app/private/uploads/tmp');
+    public function uploadProcessView(Request $request)
+    {
+        try {
+            $uploadSessionId = session('upload_session_id');
+            $uploadedFiles = session("uploaded_files_$uploadSessionId", []);
+            $files = collect();
+            $tempDir = storage_path('app/private/uploads/tmp');
 
-        foreach ($uploadedFiles as $filename) {
-            $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
-            if (file_exists($filePath)) {
-                $files->push((object) [
-                    'id' => uniqid(),
-                    'file' => $filename,
-                    'name' => preg_replace('/^\d+_/', '', $filename),
-                    'path' => $filePath,
-                    'size' => filesize($filePath),
-                    'title' => preg_replace('/^\d+_/', '', pathinfo($filePath, PATHINFO_FILENAME)),
-                    'description' => 'Sin descripción',
-                    'expiry_date' => now()->addYear()->format('Y-m-d'),
-                    'public' => false,
-                    'assignments' => collect([]),
-                    'categories' => collect([]),
-                    'hidden' => false,
-                ]);
+            foreach ($uploadedFiles as $filename) {
+                $filePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+                if (file_exists($filePath)) {
+                    $files->push((object) [
+                        'id' => uniqid(),
+                        'file' => $filename,
+                        'name' => preg_replace('/^\d+_/', '', $filename),
+                        'path' => $filePath,
+                        'size' => filesize($filePath),
+                        'title' => preg_replace('/^\d+_/', '', pathinfo($filePath, PATHINFO_FILENAME)),
+                        'description' => 'Sin descripción',
+                        'expiry_date' => now()->addYear()->format('Y-m-d'),
+                        'public' => false,
+                        'assignments' => collect([]),
+                        'categories' => collect([]),
+                        'hidden' => false,
+                    ]);
+                }
             }
+
+            $savedFiles = collect(session('savedFiles', []));
+            $archivedFiles = collect(session("archivedFiles_$uploadSessionId", []));
+
+            if ($savedFiles->isNotEmpty()) {
+                $recentlyArchived = $savedFiles->map(function ($file) {
+                    return [
+                        'filename' => $file['filename'],
+                        'description' => $file['description'] ?? 'Sin descripción',
+                    ];
+                });
+
+                $archivedFiles = $recentlyArchived;
+
+                session(["archivedFiles_$uploadSessionId" => $archivedFiles]);
+
+                session()->forget('savedFiles');
+            }
+
+            $users = User::all();
+            $groups = Groups::all(); // Obtener todos los grupos-compañías
+            $categories = TblCategory::all();
+
+            return view('files.upload_process', compact('files', 'savedFiles', 'archivedFiles', 'users', 'groups', 'categories'));
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Error al cargar los archivos para procesar.']);
         }
-
-        $savedFiles = collect(session('savedFiles', []));
-        $archivedFiles = collect(session("archivedFiles_$uploadSessionId", []));
-
-        if ($savedFiles->isNotEmpty()) {
-            $recentlyArchived = $savedFiles->map(function ($file) {
-                return [
-                    'filename' => $file['filename'],
-                    'description' => $file['description'] ?? 'Sin descripción',
-                ];
-            });
-
-            $archivedFiles = $recentlyArchived;
-
-            session(["archivedFiles_$uploadSessionId" => $archivedFiles]);
-
-            session()->forget('savedFiles');
-        }
-
-        $users = User::all();
-        $groups = Groups::all(); // Obtener todos los grupos-compañías
-        $categories = TblCategory::all();
-
-        return view('files.upload_process', compact('files', 'savedFiles', 'archivedFiles', 'users', 'groups', 'categories'));
-    } catch (\Exception $e) {
-        return redirect()->back()->withErrors(['error' => 'Error al cargar los archivos para procesar.']);
     }
-}
 
     public function clearTemporaryFiles(Request $request)
     {
@@ -702,6 +695,22 @@ else {
                 if (file_exists($filePath)) {
                     unlink($filePath); // Eliminar archivo
                 }
+
+                // Eliminar archivos .part asociados
+                $partFiles = glob($tempDir . DIRECTORY_SEPARATOR . $filename . '.*.part');
+                foreach ($partFiles as $partFile) {
+                    if (file_exists($partFile)) {
+                        unlink($partFile); // Eliminar archivo .part
+                    }
+                }
+            }
+
+            // Eliminar archivos .part huérfanos (sin un archivo principal)
+            $orphanPartFiles = glob($tempDir . DIRECTORY_SEPARATOR . '*.part');
+            foreach ($orphanPartFiles as $orphanPartFile) {
+                if (file_exists($orphanPartFile)) {
+                    unlink($orphanPartFile); // Eliminar archivo .part huérfano
+                }
             }
 
             // Limpiar la sesión
@@ -714,7 +723,7 @@ else {
         }
     }
 
-   public function myFiles(Request $request)
+    public function myFiles(Request $request)
     {
         // Obtener parámetros opcionales de la query string
         $search = $request->query('search');
@@ -858,70 +867,72 @@ else {
 
 
     // codigto de la vista manage-files
-   public function manageFiles(Request $request)
-{
-    // Obtener parámetros opcionales de la query string
-    $search = $request->query('search');
-    $category = $request->query('category', 0);
-    $sorts = $request->query('sort', 'timestamp');
-    $direction = $request->query('direction', 'asc');
-    $orderby = $request->input('orderby', 'filename');
-    $order = $request->input('order', 'asc');
+    public function manageFiles(Request $request)
+    {
+        // Obtener parámetros opcionales de la query string
+        $search = $request->query('search');
+        $category = $request->query('category', 0);
+        $sorts = $request->query('sort', 'timestamp');
+        $direction = $request->query('direction', 'asc');
+        $orderby = $request->input('orderby', 'filename');
+        $order = $request->input('order', 'asc');
 
-    // Definir título de la página
-    $pageTitle = __('Administración del Sistema');
+        // Definir título de la página
+        $pageTitle = __('Administración del Sistema');
 
-    // Obtener el ID del cliente autenticado
-    $clientId = Auth::id(); // Cambia esto según tu implementación de autenticación
+        // Obtener el usuario autenticado
+        $user = Auth::user();
 
-    // Construir la consulta para los archivos propios del cliente
-    $filesQuery = TblFile::whereHas('fileRelations', function ($subQuery) use ($clientId) {
-        $subQuery->where('client_id', $clientId); // Archivos propios del cliente
-    });
+        // Construir la consulta para los archivos **subidos por el usuario autenticado**
+        $filesQuery = TblFile::where('uploader', $user->user); // Filtrar por 'uploader' = nombre del usuario
 
-    // Filtrar por búsqueda (título o descripción)
-    if ($search) {
-        $filesQuery->where(function ($query) use ($search) {
-            $query->where('filename', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%')
-                ->orWhere('timestamp', 'like', '%' . $search . '%');
-        });
-    }
-
-    $filesQuery->orderBy($sorts, $direction);
-
-    // Obtener el total de archivos antes de la paginación
-    $filteredTotal = $filesQuery->count();
-
-    // Obtener los archivos paginados
-    $files = $filesQuery->paginate(10);
-
-    foreach ($files as $file) {
-        // Asignar el nombre del archivo almacenado a partir de la columna 'url'
-        $file->stored_filename = $file->url;
-
-        // Ruta del archivo en la carpeta de almacenamiento privado
-        $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
-        $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename); // Ruta de archivos públicos
-
-        // Convertir las rutas a formatos absolutos
-        $realPrivatePath = realpath($privateFilePath);
-        $realPublicPath = realpath($publicFilePath);
-
-        // Verificar primero en privado, luego en público
-        if ($realPrivatePath && file_exists($realPrivatePath)) {
-            // Obtener y formatear tamaño
-            $file->size = $this->getFormattedFileSize($realPrivatePath);
-        } elseif ($realPublicPath && file_exists($realPublicPath)) {
-            // Obtener y formatear tamaño
-            $file->size = $this->getFormattedFileSize($realPublicPath);
-        } else {
-            $file->size = '--';
+        // Filtrar por búsqueda (título o descripción)
+        if ($search) {
+            $filesQuery->where(function ($query) use ($search) {
+                $query->where('filename', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere(
+                        'timestamp',
+                        'like',
+                        '%' . $search . '%'
+                    );
+            });
         }
-    }
 
-    return view('files.manage-files', compact('pageTitle', 'files', 'filteredTotal'));
-}
+        $filesQuery->orderBy($sorts, $direction);
+
+        // Obtener el total de archivos antes de la paginación
+        $filteredTotal = $filesQuery->count();
+
+        // Obtener los archivos paginados
+        $files = $filesQuery->paginate(10);
+
+        foreach ($files as $file) {
+            // Asignar el nombre del archivo almacenado a partir de la columna 'url'
+            $file->stored_filename = $file->url;
+
+            // Ruta del archivo en la carpeta de almacenamiento privado
+            $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
+            $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename); // Ruta de archivos públicos
+
+            // Convertir las rutas a formatos absolutos
+            $realPrivatePath = realpath($privateFilePath);
+            $realPublicPath = realpath($publicFilePath);
+
+            // Verificar primero en privado, luego en público
+            if ($realPrivatePath && file_exists($realPrivatePath)) {
+                // Obtener y formatear tamaño
+                $file->size = $this->getFormattedFileSize($realPrivatePath);
+            } elseif ($realPublicPath && file_exists($realPublicPath)) {
+                // Obtener y formatear tamaño
+                $file->size = $this->getFormattedFileSize($realPublicPath);
+            } else {
+                $file->size = '--';
+            }
+        }
+
+        return view('files.manage-files', compact('pageTitle', 'files', 'filteredTotal'));
+    }
 
     private function getFormattedFileSize($filePath)
     {
@@ -964,11 +975,6 @@ else {
             return back()->with(['error' => 'El archivo ha expirado y ya no está disponible para descarga.']);
         }
 
-        // Verifica si la descarga pública está permitida (campo public_allow)
-        if (!$file->public_allow) {
-            return back()->with(['error' => 'La descarga pública de este archivo no está permitida.']);
-        }
-
 
         $download = new TblDownload();
         $download->file_id = $id;
@@ -1001,7 +1007,7 @@ else {
         ]);
     }
 
-     public function downloadCompresed(Request $request)
+    public function downloadCompresed(Request $request)
     {
         $fileIds = $request->input('file_ids'); // Array de IDs de archivos seleccionados
 
@@ -1068,19 +1074,22 @@ else {
         // Buscar el archivo por ID
         $file = TblFile::find($id);
 
+        // Verificar si el archivo existe y el token es válido
         if (!$file || $file->public_token !== $token) {
-            return back()->with(['error' => 'El enlace de descarga es inválido o ha expirado.']);
+            return view('files.download', ['error' => 'El enlace de descarga es inválido o ha expirado.']);
         }
 
         // Verificar si el archivo es público
         if ($file->public_allow == 0) {
-            return view('files.download', [
-                'file' => $file,
-                'error' => 'No tienes permisos para acceder a este archivo.'
-            ]);
+            return view('files.download', ['error' => 'No tienes permisos para acceder a este archivo.']);
         }
 
-        // Si el archivo es público, muestra la vista de descarga normal
+        // Verificar si el archivo ha expirado
+        if ($file->expiry_date !== null && $file->expiry_date < now()) {
+            return view('files.download', ['error' => 'El archivo ha expirado y ya no está disponible para descarga.']);
+        }
+
+        // Si el archivo es público, no ha expirado y el usuario tiene permisos, mostrar la vista de descarga
         return view('files.download', compact('file'));
     }
 }

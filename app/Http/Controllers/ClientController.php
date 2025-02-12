@@ -24,7 +24,6 @@ class ClientController extends Controller
 
     public function index(Request $request)
     {
-
         // Obtener parámetros de la solicitud con valores por defecto
         $search = $request->input('search');
         $role = $request->input('role');
@@ -41,14 +40,18 @@ class ClientController extends Controller
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('user', 'like', "%{$search}%");
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('user', 'like', "%{$search}%");
             });
         }
 
         if ($active !== '2') {
             $query->where('active', $active);
         }
+
+        // Obtener el total de clientes después de aplicar los filtros
+        $filteredClientesCount = $query->count();
+
         // Aplicar orden y paginación
         $clientes = $query->orderBy($orderby, $order)->paginate(10);
 
@@ -59,8 +62,8 @@ class ClientController extends Controller
             'orderby' => $orderby,
             'order' => $order,
         ]);
-        $totalCliente = User::where('level', 0)->count();
 
+        $totalCliente = User::where('level', 0)->count();
 
         foreach ($clientes as $cliente) {
             // Codigo para contar archivos cargas.
@@ -79,11 +82,10 @@ class ClientController extends Controller
                 ->toArray();
             $cliente->group_count = count($found_groups);
 
-
             // Inicializar el conteo de archivos de grupos.
             $groups_files = 0;
             if (count($found_groups) > 0) {
-                $groups_files = TblFileRelation::whereIn('group_id', values: $found_groups)
+                $groups_files = TblFileRelation::whereIn('group_id', $found_groups)
                     ->whereNotNull('group_id')
                     ->count();
             }
@@ -94,7 +96,8 @@ class ClientController extends Controller
             $cliente->notification_status = $cliente->notify ? 'Sí' : 'No';
         }
 
-        return view('customers.customer_manager', compact('clientes', 'totalCliente'));
+        // Pasar la variable 'filteredClientesCount' a la vista
+        return view('customers.customer_manager', compact('clientes', 'totalCliente', 'filteredClientesCount'));
     }
 
 
@@ -142,21 +145,20 @@ class ClientController extends Controller
                     $member = Members::create([
                         'client_id' => $user->id,
                         'group_id' => $groupId,
-                        'added_by' => auth()->user()->user,
+                        'added_by' => auth()->user()->id,
                     ]);
                 }
             }
 
-            session()->flash('success', 'Cliente registrado correctamente');
+            return response()->json(['success' => 'Cliente registrado correctamente.']);
         } catch (\Exception $e) {
             // Puedes registrar el error en los logs para más información.
-            Log::error('Error al registrar el cliente: ' . $e->getMessage());
 
             // Mensaje genérico para el usuario.
             session()->flash('error', 'Hubo un problema al registrar el cliente. Verifica los datos ingresados o inténtalo nuevamente.');
         }
 
-        return back();
+        return response()->json(['errors' => ['campo' => ['Mensaje de error']]], 422);
     }
 
     public function bulkAction(Request $request)

@@ -7,17 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Editar archivo &raquo; Repositorio</title>
-    <link rel="shortcut icon" type="image/x-icon" href="https://repo.triara.co/repositorio/favicon.ico" />
-    <link rel="icon" type="image/png" href="https://repo.triara.co/repositorio/img/favicon/favicon-32.png"
-        sizes="32x32">
-    <link rel="apple-touch-icon" href="https://repo.triara.co/repositorio/img/favicon/favicon-152.png" sizes="152x152">
-    <script type="text/javascript" src="https://repo.triara.co/repositorio/includes/js/jquery.1.12.4.min.js"></script>
-
-    <!--[if lt IE 9]>
-        <script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
-        <script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
-    <![endif]-->
-
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}"sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
+    <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css"
@@ -47,26 +40,12 @@
                         </div>
                     </div>
                 </div>
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
+                
                 <div class="row">
                     <div class="col-xs-12">
+                        <div class="alert alert-info">Los archivos subidos tienen una vigencia máxima de un año. Después de este periodo, el archivo se eliminará automáticamente. Es posible reducir la vigencia a menos de un año, pero no extenderla más allá de un año.</div>
                         <div class="container-fluid">
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
+
 
                             <form action="{{ route('files.update', ['id' => $fileId]) }}" method="POST"
                                 name="edit_file" id="edit_file">
@@ -108,22 +87,28 @@
                                                     </div>
                                                     @if (Auth::user()->level == 8 || Auth::user()->level == 10)
                                                         <!-- Fecha de expiración -->
-                                                       <div class="col-sm-6 col-md-3 column_even column">
+                                                        <div class="col-sm-6 col-md-3 column_even column">
                                                             <div class="file_data">
+
                                                                 <h3>Fecha de expiración</h3>
                                                                 <div class="form-group">
-                                                                    <label for="file_expiry_date">Seleccione una fecha</label>
+                                                                    <label for="file_expiry_date">Seleccione una
+                                                                        fecha</label>
                                                                     <div class="input-group date-container">
-                                                                        <input type="date" id="file_expiry_date" name="expiry_date"
-                                                                            value="{{ old('expiry_date', $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '') }}"
+                                                                        <input type="text" id="file_expiry_date"
+                                                                            name="expiry_date"
+                                                                            value="{{ old('expiry_date', $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('d-m-Y') : '') }}"
                                                                             class="form-control"
-                                                                            data-original-value="{{ $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '' }}" />
+                                                                            data-original-value="{{ $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('d-m-Y') : '' }}" />
                                                                         <div class="input-group-addon">
                                                                             <i class="glyphicon glyphicon-time"></i>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                  <input type="hidden" name="expires" value="1"> <input type="hidden" name="expiry_date_original" value="{{ $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('Y-m-d') : '' }}" />
+                                                                <input type="hidden" name="expires" value="1">
+                                                                <input type="hidden" name="expiry_date_original"
+                                                                    value="{{ $file->expiry_date ? \Carbon\Carbon::parse($file->expiry_date)->format('d-m-Y') : '' }}" />
+
 
                                                                 <div class="divider"></div>
                                                                 <h3>Descarga pública</h3>
@@ -179,22 +164,25 @@
                                                                         class="btn btn-xs btn-primary remove-all"
                                                                         data-type="assigns">Borrar todo</a>
                                                                 </div>
-                                                                 <div class="divider"></div>
-                                                            <div class="checkbox">
-                                                                <label for="hid_checkbox">
-                                                                    <input type="checkbox" id="hid_checkbox"
-                                                                        name="file[1][hidden]" value="1" />
-                                                                    Marcar como oculto (no se enviaran notificaciones)
-                                                                    para clientes y grupos nuevos.
-                                                                </label>
-                                                            </div>
-                                                            <div class="checkbox">
-                                                                <label for="hid_existing_checkbox">
-                                                                    <input type="checkbox" id="hid_existing_checkbox"
-                                                                        name="file[1][hideall]" value="1" />
-                                                                    Ocultar a todos los clientes y grupos ya asignados.
-                                                                </label>
-                                                            </div>
+                                                                <div class="divider"></div>
+                                                                <div class="checkbox">
+                                                                    <label for="hid_checkbox">
+                                                                        <input type="checkbox" id="hid_checkbox"
+                                                                            name="file[1][hidden]" value="1" />
+                                                                        Marcar como oculto (no se enviaran
+                                                                        notificaciones)
+                                                                        para clientes y grupos nuevos.
+                                                                    </label>
+                                                                </div>
+                                                                <div class="checkbox">
+                                                                    <label for="hid_existing_checkbox">
+                                                                        <input type="checkbox"
+                                                                            id="hid_existing_checkbox"
+                                                                            name="file[1][hideall]" value="1" />
+                                                                        Ocultar a todos los clientes y grupos ya
+                                                                        asignados.
+                                                                    </label>
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -326,7 +314,8 @@
 
             publicAllowCheckbox.addEventListener('change', function() {
                 if (this.checked) {
-                    const publicUrl = `{{ route('file.showDownload', ['id' => $file->id, 'token' => $file->public_token]) }}`;
+                    const publicUrl =
+                        `{{ route('file.showDownload', ['id' => $file->id, 'token' => $file->public_token]) }}`;
                     publicUrlTextarea.value = publicUrl;
                 } else {
                     publicUrlTextarea.value = 'La descarga pública está deshabilitada para este archivo.';
@@ -345,80 +334,60 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const expCheckbox = document.getElementById('exp_checkbox');
-            const expiryDateField = document.getElementById('file_expiry_date');
+        $(document).ready(function() {
+            // Obtener la fecha de subida del archivo
+            const uploadDate = new Date('{{ \Carbon\Carbon::parse($file->created_at)->format('Y-m-d') }}');
+            // Calcular la fecha máxima permitida (un año después de la fecha de subida)
+            const maxDate = new Date(uploadDate);
+            maxDate.setFullYear(maxDate.getFullYear() + 1);
 
-            // Estado inicial
-            if (!expCheckbox.checked) {
-                expiryDateField.setAttribute('readonly', 'readonly');
-            }
+            // Inicializar el datepicker y deshabilitar los días fuera del rango permitido
+            $('#file_expiry_date').datepicker({
+                format: 'dd-mm-yyyy',
+                startDate: uploadDate,
+                endDate: maxDate,
+                autoclose: true,
+                todayHighlight: true
 
-              expCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    expiryDateField.removeAttribute('disabled');
-                } else {
-                    expiryDateField.setAttribute('disabled', 'disabled');
-                    expiryDateField.value = expiryDateField.dataset.originalValue; // Restaura el valor original
-                }
             });
+
+            // Restaurar el valor original si hay un error de validación
+            const expiryDateField = document.getElementById('file_expiry_date');
+            const originalValue = expiryDateField.dataset.originalValue;
+
+            if (expiryDateField.value !== originalValue) {
+                expiryDateField.value = originalValue;
+            }
         });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-      <script>
-    $(document).ready(function() {
-        var userLevel = {{ Auth::user()->level }};
+    <script>
+        $(document).ready(function () {
+            // Si se tiene un mensaje de éxito o error
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false, // Elimina el botón "OK"
+                    timer: 3000, // El mensaje se cerrará después de 3 segundos
+                });
+            @endif
 
-        // Función para mostrar el mensaje de éxito
-        function showSuccessMessage(message) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: message,
-                confirmButtonText: 'OK'
-            });
-        }
-
-        // Función para mostrar el mensaje de error
-        function showErrorMessage(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: message,
-                confirmButtonText: 'OK'
-            });
-        }
-
-        // Mostrar mensajes de éxito o error al enviar el formulario
-        $("form").submit(function(event) {
-            clean_form(this);
-
-            $(this).find('input[name$="[name]"]').each(function() {
-                is_complete($(this)[0], 'Título está incompleto');
-            });
-
-            // Mostrar los errores o continuar si todo está bien
-            if (show_form_errors() == false) {
-                showErrorMessage('Hay errores en el formulario. Por favor, corrígelos.');
-                return false;
-            }
-
-            // Mostrar mensaje de éxito
-            showSuccessMessage('Archivo actualizado exitosamente.');
-
-            // Redirigir según el nivel del usuario
-            if (userLevel == 0) {
-                event.preventDefault();
-                window.location.href = '{{ route('manage-files') }}';
-            } else {
-                // Permitir que el formulario se envíe
-                return true;
-            }
+            @if($errors->any())
+                @foreach ($errors->all() as $error)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: '{{ $error }}',
+                        showConfirmButton: false, // Elimina el botón "OK"
+                        timer: 2000, // El mensaje se cerrará después de 3 segundos
+                    });
+                @endforeach
+            @endif
         });
-
-
-    });
-</script>
+    </script>
 
     </div>
 </body>

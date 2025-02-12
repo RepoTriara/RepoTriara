@@ -43,14 +43,16 @@
                         <p>
                         <div class="alert alert-info">Haz clic en Añadir archivos para seleccionar todos los archivos
                             que quieras subir, y luego haga clic en continuar. En el siguiente paso, podrá establecer un
-                            nombre y descripción de cada archivo cargado. Recuerde que el tamaño maximo permitido por
-                            archivo (en mb.) es <strong>2048</strong></div>
+                            nombre y descripción de cada archivo cargado. Recuerde que el tamaño máximo permitido por
+                            archivo (en mb.) es <strong>2048</strong>. Además, los archivos expirarán un año posterior a
+                            la fecha de subida.</div>
                         </p>
-<script type="text/javascript">
+                     <script type="text/javascript">
     $(document).ready(function() {
         var totalFiles = 0; // Contador para archivos que se están subiendo
-        var uploadedFiles = 0; // Contador para archivos subidos correctamente
+        var uploadedFiles = []; // Array para almacenar los nombres de los archivos subidos correctamente
         var isUploading = false; // Variable para rastrear si se está subiendo algún archivo
+        var uploadSessionId = '{{ session('upload_session_id') }}';
 
         // Obtener el tamaño máximo permitido para el usuario (en MB)
         var maxFileSizeMB = {{ Auth::user()->max_file_size > 0 ? Auth::user()->max_file_size : 2048 }};
@@ -85,10 +87,16 @@
                     if (validFiles.length > 0) {
                         totalFiles += validFiles.length;
                         $('#btn-submit').prop('disabled', false);
+
+                        if (!uploadSessionId) {
+                            uploadSessionId = generateUploadSessionId();
+                            saveUploadSessionId(uploadSessionId);
+                        }
                     }
                 },
                 BeforeUpload: function(up, file) {
                     isUploading = true;
+                    up.settings.multipart_params.upload_session_id = uploadSessionId; // Add session ID to params
                     console.log("Subiendo archivo:", file.name);
                 },
                 FileUploaded: function(up, file, info) {
@@ -97,8 +105,8 @@
                     var response = JSON.parse(info.response);
 
                     if (response.success) {
-                        uploadedFiles++;
-                        if (uploadedFiles === totalFiles) {
+                        uploadedFiles.push(file.name); // Store the name of the successfully uploaded file
+                        if (uploadedFiles.length === totalFiles) {
                             isUploading = false;
                             window.location.href = response.redirect;
                         }
@@ -113,6 +121,8 @@
                 Error: function(up, err) {
                     console.error("Error en la carga:", err.message);
                     alert("Error en la carga: " + err.message);
+                    isUploading = false;
+                    clearTempFiles(uploadSessionId, uploadedFiles); // Clean even on error
                 }
             }
         });
@@ -131,24 +141,69 @@
 
         $('#btn-submit').prop('disabled', true);
 
+        function generateUploadSessionId() {
+            return 'upload_' + Date.now();
+        }
+
+        function saveUploadSessionId(id) {
+            $.ajax({
+                url: '/save-upload-session-id', // Your route to save the session ID
+                type: 'POST',
+                data: {
+                    upload_session_id: id,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+            });
+        }
+
+        function clearTempFiles(sessionId, uploadedFiles = []) {
+            if (!sessionId) return;
+
+            fetch("{{ route('files.clearTemporaryFiles') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    upload_session_id: sessionId,
+                    uploaded_files: uploadedFiles // Send the array of uploaded file names
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log("Archivos temporales eliminados:", data.message))
+            .catch(error => console.error("Error al eliminar archivos:", error));
+        }
+
+        $('#btn-cancel').on('click', function(e) {
+            e.preventDefault();
+            if (isUploading) {
+                uploaderInstance.stop();
+                isUploading = false;
+            }
+            clearTempFiles(uploadSessionId, uploadedFiles); // Clean on cancel
+            $('#btn-submit').prop('disabled', true);
+            setTimeout(function() {
+                location.reload(); // Recargar la página después de un pequeño retraso
+            }, 1000); // 1 segundo de retraso
+        });
+
         window.addEventListener('beforeunload', function(event) {
             if (isUploading) {
                 event.preventDefault();
                 event.returnValue = '¿Estás seguro de que quieres salir? Perderás el progreso de la subida de archivos.';
+                clearTempFiles(uploadSessionId, uploadedFiles); // Clean on unload
             }
         });
     });
 </script>
 
 
-
                         <form action="{{ route('files.upload_process') }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             <!-- Input de archivos oculto -->
-                            <input type="file" name="uploaded_files[]" id="uploaded_files" multiple
-                                style="display: none;">
-
+    <input type="file" name="uploaded_files[]" id="uploaded_files" multiple style="display: none;">
                             <!-- Plupload -->
                             <div id="uploader">
                                 <div class="message message_error">
@@ -158,9 +213,9 @@
                             </div>
 
                             <div class="after_form_buttons">
-                                <button type="button" name="Submit" class="btn btn-wide btn-primary"
-                                    id="btn-submit">Subir archivos</button>
-                            </div>
+        <button type="button" name="Submit" class="btn btn-wide btn-primary" id="btn-submit">Subir archivos</button>
+        <button type="button" name="Cancel" class="btn btn-wide btn-secondary" id="btn-cancel">Cancelar</button>
+    </div>
                         </form>
                     </div>
                 </div> <!-- row -->

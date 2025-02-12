@@ -15,246 +15,144 @@
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/styles.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="home logged-in logged-as-admin dashboard hide_title menu_hidden backend">
+
     <div class="container-custom">
 
 
         <div class="main_content">
             @include('layouts.app')
             <div class="container-fluid">
-
-                <div class="row">
-                    <div id="section_title">
-                        <div class="col-xs-12">
-                            <h2>Tablero</h2>
+                <div class="widget">
+                    <h4>Estadísticas</h4>
+                    <div class="widget_int widget_statistics">
+                        <div class="stats_change_days">
+                            <button class="stats_days btn btn-sm btn-default " onclick="loadData(15)">15 Días</button>
+                            <button class="stats_days btn btn-sm btn-default " onclick="loadData(30)">30 Días</button>
+                            <button class="stats_days btn btn-sm btn-default " onclick="loadData(60)">60 Días</button>
                         </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-8">
-                        <div class="row">
-                            <div class="col-sm-12 container_widget_statistics">
-                                <div class="widget">
-                                    <h4>Estadisticas</h4>
-                                    <div class="widget_int widget_statistics">
-                                        <div class="stats_change_days">
-                                            <a href="#" class="stats_days btn btn-sm btn-default btn-inverse"
-                                                data-days="15">15 Dias</a>
-                                            <a href="#" class="stats_days btn btn-sm btn-default "
-                                                data-days="30">30 Dias</a>
-                                            <a href="#" class="stats_days btn btn-sm btn-default "
-                                                data-days="60">60 Dias</a>
-                                        </div>
-                                        <ul class="graph_legend">
-                                            <li class="legend_color legend_color1"
-                                                style="border-top:5px solid #0094bb;">
-                                                <div class="ref_color"></div>
-                                                Subidos por usuarios
-                                            </li>
-                                            <li class="legend_color legend_color2"
-                                                style="border-top:5px solid #86ae00;">
-                                                <div class="ref_color"></div>
-                                                Subidos por Administradores
-                                            </li>
-                                            <li class="legend_color legend_color3"
-                                                style="border-top:5px solid #f2b705;">
-                                                <div class="ref_color"></div>
-                                                Descargas
-                                            </li>
-                                            <li class="legend_color legend_color4"
-                                                style="border-top:5px solid #1ec4a7;">
-                                                <div class="ref_color"></div>
-                                                Descargas públicas
-                                            </li>
-                                        </ul>
-
-                                        <div class="statistics_graph"></div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div style="width: 100%; height: 400px;">
+                            <canvas id="statisticsChart"></canvas>
                         </div>
+
                     </div>
 
-                    <script type="text/javascript">
-                        $(document).ready(function(e) {
-                            var d5 = [
-                                [1732597200000, 2],
-                                [1732683600000, 1],
-                                [1732770000000, 5],
-                                [1732856400000, 6],
-                                [1732942800000, 0],
-                                [1733029200000, 0],
-                                [1733115600000, 18],
-                                [1733202000000, 2],
-                                [1733288400000, 12],
-                                [1733374800000, 53],
-                                [1733461200000, 60],
-                                [1733547600000, 2],
-                                [1733634000000, 12],
-                                [1733720400000, 10],
-                                [1733806800000, 2]
-                            ];
-                            var d6 = [
-                                [1732597200000, 0],
-                                [1732683600000, 1],
-                                [1732770000000, 0],
-                                [1732856400000, 0],
-                                [1732942800000, 0],
-                                [1733029200000, 0],
-                                [1733115600000, 2],
-                                [1733202000000, 0],
-                                [1733288400000, 0],
-                                [1733374800000, 0],
-                                [1733461200000, 0],
-                                [1733547600000, 0],
-                                [1733634000000, 0],
-                                [1733720400000, 2],
-                                [1733806800000, 0]
-                            ];
-                            var d8 = [
-                                [1732597200000, 6],
-                                [1732683600000, 4],
-                                [1732770000000, 19],
-                                [1732856400000, 1],
-                                [1732942800000, 0],
-                                [1733029200000, 0],
-                                [1733115600000, 17],
-                                [1733202000000, 10],
-                                [1733288400000, 6],
-                                [1733374800000, 5],
-                                [1733461200000, 9],
-                                [1733547600000, 0],
-                                [1733634000000, 0],
-                                [1733720400000, 8],
-                                [1733806800000, 5]
-                            ];
-                            var d37 = [
-                                [1732597200000, 1],
-                                [1732683600000, 0],
-                                [1732770000000, 0],
-                                [1732856400000, 0],
-                                [1732942800000, 0],
-                                [1733029200000, 0],
-                                [1733115600000, 0],
-                                [1733202000000, 0],
-                                [1733288400000, 0],
-                                [1733374800000, 0],
-                                [1733461200000, 0],
-                                [1733547600000, 0],
-                                [1733634000000, 0],
-                                [1733720400000, 0],
-                                [1733806800000, 1]
-                            ];
+                    <script>
+                        let chart;
 
-                            function showTooltip(x, y, contents) {
-                                $('<div id="stats_tooltip">' + contents + '</div>').css({
-                                    top: y + 5,
-                                    left: x + 5,
-                                }).appendTo("body").fadeIn(200);
-                            }
+                        function loadData(days) {
+                            // Remover la clase 'active' de todos los botones
+                            $('.stats_days').removeClass('active');
 
-                            var previousPoint = null;
-                            $(".statistics_graph").bind("plothover", function(event, pos, item) {
-                                $("#x").text(pos.x.toFixed(2));
-                                $("#y").text(pos.y.toFixed(2));
+                            // Agregar la clase 'active' al botón pulsado
+                            $(`.stats_days:contains(${days} Días)`).addClass('active');
 
-                                if (item) {
-                                    if (previousPoint != item.dataIndex) {
-                                        previousPoint = item.dataIndex;
-                                        $("#stats_tooltip").remove();
-                                        var x = item.datapoint[0].toFixed(2),
-                                            y = item.datapoint[1].toFixed(2);
-
-                                        showTooltip(item.pageX, item.pageY,
-                                            item.series.label + ": " + y);
-                                    }
-                                } else {
-                                    $("#stats_tooltip").remove();
-                                    previousPoint = null;
+                            $.get('/statistics/data', {
+                                days: days
+                            }, function(data) {
+                                if (!data || !data.uploadedCounts || !data.downloads || !data.publicDownloads) {
+                                    console.error("Datos inválidos recibidos:", data);
+                                    return;
                                 }
-                            });
 
-                            var options = {
-                                grid: {
-                                    hoverable: true,
-                                    borderWidth: 0,
-                                    color: "#666",
-                                    labelMargin: 10,
-                                    axisMargin: 0,
-                                    mouseActiveRadius: 10
-                                },
-                                series: {
-                                    lines: {
-                                        show: true,
-                                        lineWidth: 2
+                                const labels = [...new Set(data.uploadedCounts.map(d => d.date))].sort();
+
+                                const datasets = [{
+                                        label: 'Subidos por Clientes',
+                                        data: labels.map(date => data.uploadedCounts.find(d => d.date === date)
+                                            ?.uploaded_by_clients || 0),
+                                        borderColor: '#0094BB',
+                                        fill: false
                                     },
-                                    points: {
-                                        show: true,
-                                        radius: 3,
-                                        symbol: "circle",
-                                        fill: true
+                                    {
+                                        label: 'Subidos por Admins de Sistema',
+                                        data: labels.map(date => data.uploadedCounts.find(d => d.date === date)
+                                            ?.uploaded_by_admins_system || 0),
+                                        borderColor: 'red',
+                                        fill: false
+                                    },
+                                    {
+                                        label: 'Subidos por Admins de Accesos',
+                                        data: labels.map(date => data.uploadedCounts.find(d => d.date === date)
+                                            ?.uploaded_by_admins_access || 0),
+                                        borderColor: '#86AE00',
+                                        fill: false
+                                    },
+                                    {
+                                        label: 'Descargas',
+                                        data: labels.map(date => data.downloads.find(d => d.date === date)?.count || 0),
+                                        borderColor: '#F2B705',
+                                        fill: false
+                                    },
+                                    {
+                                        label: 'Descargas públicas',
+                                        data: labels.map(date => data.publicDownloads.find(d => d.date === date)?.count || 0),
+                                        borderColor: '#1EC4A7',
+                                        fill: false
                                     }
-                                },
-                                xaxis: {
-                                    mode: "time",
-                                    minTickSize: [1, "day"],
-                                    timeformat: "%d/%m",
-                                    labelWidth: "30"
-                                },
-                                yaxis: {
-                                    min: 0,
-                                    tickDecimals: 0
-                                },
-                                legend: {
-                                    margin: 10,
-                                    sorted: true,
-                                    show: false
-                                },
-                                colors: ["#0094bb", "#86ae00", "#f2b705", "#1ec4a7"]
-                            };
+                                ];
 
-                            $.plot(
-                                $(".statistics_graph"), [{
-                                    data: d5,
-                                    label: 'Subidos por usuarios'
-                                }, {
-                                    data: d6,
-                                    label: 'Subidos por Administradores'
-                                }, {
-                                    data: d8,
-                                    label: 'Descargas'
-                                }, {
-                                    data: d37,
-                                    label: 'Descargas públicas'
-                                }], options
-                            );
+                                if (chart) {
+                                    chart.destroy();
+                                }
+
+                                const ctx = document.getElementById('statisticsChart').getContext('2d');
+                                chart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels,
+                                        datasets
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            }).fail(function(jqXHR, textStatus, errorThrown) {
+                                console.error("Error al obtener los datos:", textStatus, errorThrown);
+                            });
+                        }
+
+                        // Ejecutar cuando la página cargue
+                        $(document).ready(function() {
+                            loadData(15);
+                            $('.stats_days:contains(15 Días)').addClass('active'); // Marcar el botón inicial
                         });
                     </script>
-                </div> <!-- row -->
-            </div> <!-- container-fluid -->
 
-            <footer>
-                <div id="footer">
-                    Claro Colombia
-                </div>
-            </footer>
+                  
 
-            <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-            <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
-            <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
-            <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
-            <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
-            <script src="{{ asset('includes/js/main.js') }}"></script>
-            <script src="{{ asset('includes/js/js.functions.php') }}"></script>
-            <script src="{{ asset('includes/js/flot/jquery.flot.min.js') }}"></script>
-            <script src="{{ asset('includes/js/flot/jquery.flot.resize.min.js') }}"></script>
-            <script src="{{ asset('includes/js/flot/jquery.flot.time.min.js') }}"></script>
-        </div> <!-- main_content -->
-    </div> <!-- container-custom -->
+
+                </div> <!-- container-fluid -->
+
+                <footer>
+                    <div id="footer">
+                        Claro Colombia
+                    </div>
+                </footer>
+
+                <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+                <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
+                <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
+                <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
+                <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
+                <script src="{{ asset('includes/js/main.js') }}"></script>
+                <script src="{{ asset('includes/js/js.functions.php') }}"></script>
+                <script src="{{ asset('includes/js/flot/jquery.flot.min.js') }}"></script>
+                <script src="{{ asset('includes/js/flot/jquery.flot.resize.min.js') }}"></script>
+                <script src="{{ asset('includes/js/flot/jquery.flot.time.min.js') }}"></script>
+            </div> <!-- main_content -->
+        </div> <!-- container-custom -->
 
 </body>
 
