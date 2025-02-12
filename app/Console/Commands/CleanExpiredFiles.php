@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\File;
 class CleanExpiredFiles extends Command
 {
     protected $signature = 'clean:expired-files';
-    protected $description = 'Elimina archivos expirados del sistema de archivos (conserva registros en la BD).';
+    protected $description = 'Elimina archivos expirados del sistema de archivos y sus registros en la base de datos.';
 
     public function handle()
     {
@@ -34,8 +34,16 @@ class CleanExpiredFiles extends Command
             } else {
                 Log::warning("Archivo expirado no encontrado en el sistema de archivos: " . $file->filename);
             }
+
+            // Eliminar el registro de la base de datos
+            try {
+                $file->delete();
+                Log::info("Registro de archivo expirado eliminado de la base de datos: " . $file->filename);
+            } catch (\Exception $e) {
+                Log::error("Error al eliminar registro de archivo expirado " . $file->filename . " de la base de datos: " . $e->getMessage());
+            }
         }
 
-        $this->info('Archivos expirados eliminados del sistema de archivos.');
+        $this->info('Archivos expirados y sus registros eliminados del sistema de archivos y la base de datos.');
     }
 }
