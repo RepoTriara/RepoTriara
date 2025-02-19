@@ -594,7 +594,7 @@
     // Ejemplo de uso al enviar el formulario
     $('form').submit(function (event) {
         // Aquí puedes añadir lógica de validación o procesamiento
-        showSuccessMessage('¡Formulario enviado con éxito!', 'Los datos han sido guardados correctamente.');
+        showSuccessMessage('¡Exito!', 'Los datos han sido guardados correctamente.');
     });
 
     // Ejemplo para manejar errores al intentar eliminar un archivo
