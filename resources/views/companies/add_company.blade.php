@@ -69,20 +69,18 @@
                                             </div>
                                         </div>
 
-
                                         <div class="form-group">
                                             <label for="add_group_form_description"
                                                 class="col-sm-4 control-label">Descripción</label>
                                             <div class="col-sm-8">
                                                 <textarea name="add_group_form_description" id="add_group_form_description" class="ckeditor form-control">
-            {{ old('add_group_form_description') }}
-        </textarea>
+                                                    {{ old('add_group_form_description') }}
+                                                </textarea>
                                                 @error('add_group_form_description')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                         </div>
-
 
                                         <div class="form-group assigns">
                                             <label for="add_group_form_members"
@@ -98,8 +96,6 @@
                                                 </select>
                                             </div>
                                         </div>
-
-
 
                                         <div class="inside_form_buttons">
                                             <button type="submit" name="submit" class="btn btn-wide btn-primary">Crear
@@ -120,18 +116,28 @@
                 </div>
             </footer>
 
-            <script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
-            <script src="{{asset('includes/js/jquery.validations.js')}}"></script>
-            <script src="{{asset('includes/js/jquery.psendmodal.js')}}"></script>
-            <script src="{{asset('includes/js/jen/jen.js')}}"></script>
-            <script src="{{asset('includes/js/js.cookie.js')}}"></script>
-            <script src="{{asset('includes/js/main.js')}}"></script>
-            <script src="{{asset('includes/js/js.functions.php')}}"></script>
-            <script src="{{asset('includes/js/chosen/chosen.jquery.min.js')}}"></script>
-            <script src="{{asset('includes/js/ckeditor/ckeditor.js')}}"></script>
+            <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
+            <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
+            <script src="{{ asset('includes/js/jen/jen.js') }}"></script>
+            <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
+            <script src="{{ asset('includes/js/main.js') }}"></script>
+            <script src="{{ asset('includes/js/js.functions.php') }}"></script>
+            <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
+            <script src="{{ asset('includes/js/ckeditor/ckeditor.js') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
                 $(document).ready(function () {
+                  // Inicializar el select con Chosen
+                    $("#members-select").chosen({
+                        width: "100%",
+                        no_results_text: "No se encontró esta opción",
+                        placeholder_text_multiple: "Seleccione una o más opciones. Escriba para buscar"
+                    });
+ 
+                    // Inicializar CKEditor en el textarea
+                    CKEDITOR.replace('add_group_form_description');
+
                     // Función para mostrar mensajes de éxito con SweetAlert2
                     function showSuccessMessage(message) {
                         Swal.fire({
@@ -159,6 +165,11 @@
                     $('form[name="addgroup"]').on('submit', function (e) {
                         e.preventDefault(); // Evitar el envío tradicional del formulario
 
+                        // Obtener el contenido de CKEditor y asignarlo al textarea
+                        for (instance in CKEDITOR.instances) {
+                            CKEDITOR.instances[instance].updateElement();
+                        }
+
                         // Enviar la solicitud AJAX
                         $.ajax({
                             type: 'POST',
@@ -184,7 +195,6 @@
                     });
                 });
             </script>
-            
         </div> 
     </div> 
 </body>
