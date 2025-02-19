@@ -12,7 +12,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FilesController;
 use Carbon\Carbon;
 use App\Http\Controllers\StatisticsController;
-
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/test-timezone', function () {
     return response()->json([
@@ -138,6 +138,17 @@ Route::middleware('auth' ,'level:10')->group(function () {
         Route::get('/categories/{category}/files', [CategoryController::class, 'showFiles'])->name('categories.showFiles');
         Route::get('/files', [FilesController::class, 'index'])->name('files.index');
     });
+});
+
+
+Route::fallback(function () {
+    // Si el usuario está autenticado, lo redirige a la página anterior
+    if (Auth::check()) {
+        return redirect()->back()->with('error', 'Página no encontrada. Redirigiendo a la anterior.');
+    }
+
+    // Si no está autenticado, lo envía al login
+    return redirect()->route('login')->with('error', 'Página no encontrada. Inicia sesión.');
 });
 
 // Incluir las rutas de autenticación

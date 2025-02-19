@@ -43,16 +43,33 @@
                                 <img src="{{ asset('img/custom/logo/logo-claro.png') }}" alt="Repositorio" />
                             </div>
                         </div>
+                          @if (session('status'))
+                                <div class="alert alert-success">
+                                    {{ session('status') }}
+                                </div>
+                            @endif
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         <div class="white-box">
                             <div class="white-box-interior">
-                                <form action="reset-password.php" name="resetpassword" method="post" role="form">
+                                <form method="POST" action="{{ route('password.email') }}">
+                                    @csrf
+
                                     <fieldset>
                                         <input type="hidden" name="form_type" id="form_type" value="new_request" />
 
                                         <div class="form-group">
-                                            <label for="reset_password_email">E-Mail</label>
-                                            <input type="text" name="reset_password_email" id="reset_password_email"
-                                                class="form-control" />
+                                            <label for="email">E-Mail</label>
+                                            <input type="text" name="email" id="email" :value="old('email')"
+                                                required autofocus class="form-control" />
                                         </div>
 
                                         <p>Por favor ingrese su cuenta de E-mail. Usted recibira un link para continuar

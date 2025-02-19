@@ -20,137 +20,119 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Mail\NewFiles;
+use Illuminate\Support\Facades\Mail;
+
 
 class FilesController extends Controller
 {
     public function index(Request $request)
-    {
-        // Obtener parámetros desde la query string
-        $clientId = $request->query('client_id');
-        $groupId = $request->query('group_id');
-        $categoryId = $request->query('category_id');
-        $search = $request->get('search');
-        $uploaderFilter = $request->get('uploader');
-        $sort = $request->get('sort', 'timestamp');
-        $direction = $request->get('direction', 'asc');
+{
+    // Obtener parámetros desde la query string
+    $clientId = $request->query('client_id');
+    $groupId = $request->query('group_id');
+    $categoryId = $request->query('category_id');
+    $search = $request->get('search');
+    $uploaderFilter = $request->get('uploader');
+    $sort = $request->get('sort', 'timestamp'); // Orden por defecto: timestamp
+    $direction = $request->get('direction', 'desc'); // Dirección por defecto: descendente
 
-        // Definir la variable $uploaders
-        $uploaders = TblFile::select('uploader')->distinct()->pluck('uploader');
-        $totalFiles = TblFile::count();
+    // Obtener lista de uploaders distintos
+    $uploaders = TblFile::select('uploader')->distinct()->pluck('uploader');
+    $totalFiles = TblFile::count();
 
-        // Inicializar la consulta de archivos
-        $query = TblFile::query();
+    // Inicializar consulta
+    $query = TblFile::query();
 
-        // Filtrar por cliente, grupo o categoría
-        if ($clientId || $groupId || $categoryId) {
-            if ($clientId) {
-                $entity = User::find($clientId);
-                $entityType = 'cliente';
-                $pageTitle = __('Archivos asignados a') . ' ' . $entity->name;
-                $query = TblFile::whereHas('fileRelations', function ($query) use ($clientId) {
-                    $query->where('client_id', $clientId);
-                });
-            } elseif ($groupId) {
-                $entity = Groups::find($groupId);
-                $entityType = 'grupo';
-                $pageTitle = __('Archivos asignados al grupo') . ' ' . $entity->name;
-                $query = TblFile::whereHas('fileRelations', function ($query) use ($groupId) {
-                    $query->where('group_id', $groupId);
-                });
-            } elseif ($categoryId) {
-                $entity = TblCategory::find($categoryId);
-                $entityType = 'categoría';
-                $pageTitle = __('Archivos de la categoría') . ' ' . $entity->name;
-                $query = TblFile::whereHas('categoryRelations', function ($query) use ($categoryId) {
-                    $query->where('cat_id', $categoryId);
-                });
-            }
+    // Filtrar por cliente, grupo o categoría
+    if ($clientId || $groupId || $categoryId) {
+        $entity = null; // Inicializar variable
 
-            if ($entity) {
-                // Obtener los archivos filtrados
-                $files = $query->paginate(10);
-                $filteredTotal = $files->total();
-
-                // Asignar el tamaño y nombre de archivo almacenado
-                foreach ($files as $file) {
-                    $file->stored_filename = $file->url;
-
-                    $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
-                    $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename);
-
-                    $realPrivatePath = realpath($privateFilePath);
-                    $realPublicPath = realpath($publicFilePath);
-
-                    // Verificar la existencia del archivo en privado o público
-                    if ($realPrivatePath && file_exists($realPrivatePath)) {
-                        $file->size = $this->getFormattedFileSize($realPrivatePath);
-                    } elseif ($realPublicPath && file_exists($realPublicPath)) {
-                        $file->size = $this->getFormattedFileSize($realPublicPath);
-                    } else {
-                        $file->size = '--';
-                    }
-                }
-
-                // Asegurarse de que los parámetros de la URL se mantengan en la paginación
-                $files->appends($request->except('page'));
-
-                return view('files.file_manager', compact('pageTitle', 'entity', 'entityType', 'files', 'uploaders', 'totalFiles', 'filteredTotal'));
-            } else {
-                $error = __('El ' . $entityType . ' no existe');
-                return view('files.file_manager', compact('error', 'uploaders', 'totalFiles'));
-            }
+        if ($clientId) {
+            $entity = User::find($clientId);
+            $entityType = 'cliente';
+            $pageTitle = __('Archivos asignados a') . ' ' . $entity?->name;
+            $query->whereHas('fileRelations', fn($q) => $q->where('client_id', $clientId));
+        } elseif ($groupId) {
+            $entity = Groups::find($groupId);
+            $entityType = 'grupo';
+            $pageTitle = __('Archivos asignados al grupo') . ' ' . $entity?->name;
+            $query->whereHas('fileRelations', fn($q) => $q->where('group_id', $groupId));
+        } elseif ($categoryId) {
+            $entity = TblCategory::find($categoryId);
+            $entityType = 'categoría';
+            $pageTitle = __('Archivos de la categoría') . ' ' . $entity?->name;
+            $query->whereHas('categoryRelations', fn($q) => $q->where('cat_id', $categoryId));
         }
 
-        // Si no se aplica filtro por cliente, grupo ni categoría, mostrar todos los archivos
-        else {
-            $query = TblFile::with(['fileRelations', 'downloads']);
+        if (!$entity) {
+            return view('files.file_manager', ['error' => __('El ' . $entityType . ' no existe'), 'uploaders' => $uploaders, 'totalFiles' => $totalFiles]);
+        }
 
-            // Filtrar por búsqueda
-            if ($search) {
-                $query->where('filename', 'LIKE', "%$search%");
-            }
+        // Obtener archivos paginados
+        $files = $query->paginate(10)->appends($request->except('page'));
 
-            // Filtrar por uploader
-            if ($uploaderFilter) {
-                $query->where('uploader', $uploaderFilter);
-            }
+        // Asignar tamaño de archivo
+        $this->assignFileSizes($files);
 
-            // Ordenar por el campo y dirección proporcionados
-            if ($sort === 'download_count') {
-                $query->withCount('fileRelations as download_count')->orderBy('download_count', $direction);
-            } else {
-                $query->orderBy($sort, $direction);
-            }
+        return view('files.file_manager', compact('pageTitle', 'entity', 'entityType', 'files', 'uploaders', 'totalFiles'));
+    }
 
-            // Obtener el total filtrado de archivos
-            $filteredTotal = $query->count();
+    // Si no hay filtros de cliente, grupo o categoría, obtener todos los archivos
+    $query->with(['fileRelations', 'downloads']);
 
-            // Paginación de los archivos
-            $files = $query->paginate(10)->appends($request->except('page'));
+    // Aplicar filtros adicionales
+    if ($search) {
+        $query->where('filename', 'LIKE', "%$search%");
+    }
 
-            // Asignar el tamaño y nombre de archivo almacenado
-            foreach ($files as $file) {
-                $file->stored_filename = $file->url;
+    if ($uploaderFilter) {
+        $query->where('uploader', $uploaderFilter);
+    }
 
-                $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
-                $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename);
+    // Aplicar ordenación
+    if ($sort === 'download_count') {
+        $query->withCount('downloads as download_count')->orderBy('download_count', $direction);
+    } else {
+        $query->orderBy($sort, $direction);
+    }
 
-                $realPrivatePath = realpath($privateFilePath);
-                $realPublicPath = realpath($publicFilePath);
+    // Obtener el total de archivos filtrados
+    $filteredTotal = $query->count();
 
-                // Verificar la existencia del archivo en privado o público
-                if ($realPrivatePath && file_exists($realPrivatePath)) {
-                    $file->size = $this->getFormattedFileSize($realPrivatePath);
-                } elseif ($realPublicPath && file_exists($realPublicPath)) {
-                    $file->size = $this->getFormattedFileSize($realPublicPath);
-                } else {
-                    $file->size = '--';
-                }
-            }
+    // Paginación de archivos
+    $files = $query->paginate(10)->appends($request->except('page'));
 
-            return view('files.file_manager', compact('files', 'uploaders', 'totalFiles', 'filteredTotal', 'sort', 'direction'));
+    // Asignar tamaño de archivos
+    $this->assignFileSizes($files);
+
+    return view('files.file_manager', compact('files', 'uploaders', 'totalFiles', 'filteredTotal', 'sort', 'direction'));
+}
+
+/**
+ * Asigna el tamaño y nombre de los archivos en la colección dada.
+ */
+private function assignFileSizes($files)
+{
+    foreach ($files as $file) {
+        $file->stored_filename = $file->url;
+
+        $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
+        $publicFilePath = storage_path('app/public/uploads/' . $file->stored_filename);
+
+        $realPrivatePath = realpath($privateFilePath);
+        $realPublicPath = realpath($publicFilePath);
+
+        if ($realPrivatePath && file_exists($realPrivatePath)) {
+            $file->size = $this->getFormattedFileSize($realPrivatePath);
+        } elseif ($realPublicPath && file_exists($realPublicPath)) {
+            $file->size = $this->getFormattedFileSize($realPublicPath);
+        } else {
+            $file->size = '--';
         }
     }
+}
+
 
 
 
@@ -501,125 +483,153 @@ class FilesController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $rules = [
-                'file' => 'required|array',
-                'file.*.file' => 'required|string',
-                'file.*.name' => 'required|string',
-                'file.*.description' => 'nullable|string',
-            ];
+public function store(Request $request)
+{
+    try {
+        $rules = [
+            'file' => 'required|array',
+            'file.*.file' => 'required|string',
+            'file.*.name' => 'required|string',
+            'file.*.description' => 'nullable|string',
+        ];
+
+        if (Auth::user()->level != 0) {
+            $rules = array_merge($rules, [
+                'file.*.categories' => 'required|array',
+                'file.*.assignments' => 'required|array',
+                'file.*.expiry_date' => 'nullable|date',
+                'file.*.public' => 'nullable|boolean',
+                'file.*.hidden' => 'nullable|boolean',
+            ]);
+        }
+
+        $data = $request->validate($rules);
+
+        $tempDir = storage_path('app/private/uploads/tmp');
+        $finalDir = storage_path('app/private/uploads');
+        $savedFiles = [];
+        $clientsToNotify = [];
+
+        if (!file_exists($finalDir)) {
+            mkdir($finalDir, 0777, true);
+        }
+
+        foreach ($data['file'] as $fileData) {
+            $fileData['public'] = isset($fileData['public']) ? (int) $fileData['public'] : 0;
+            $fileData['hidden'] = isset($fileData['hidden']) ? (int) $fileData['hidden'] : 0;
+
+            if (Auth::user()->level == 0) {
+                $fileData['expiry_date'] = Carbon::now()->addYear();
+            }
+
+            $tempFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileData['file'];
+
+            if (!file_exists($tempFilePath)) {
+                continue;
+            }
+
+            $fileExtension = pathinfo($fileData['file'], PATHINFO_EXTENSION);
+            $uniqueFileName = uniqid() . '-' . sha1(uniqid() . microtime()) . ($fileExtension ? '.' . $fileExtension : '');
+            $finalFilePath = $finalDir . DIRECTORY_SEPARATOR . $uniqueFileName;
+
+            if (!rename($tempFilePath, $finalFilePath)) {
+                throw new \Exception('Error al mover el archivo a su ubicación final: ' . $finalFilePath);
+            }
+
+            $file = TblFile::create([
+                'filename' => $fileData['name'],
+                'url' => $uniqueFileName,
+                'original_url' => preg_replace('/^\d+_/', '', $fileData['file']),
+                'description' => $fileData['description'] ?? 'Sin descripción',
+                'uploader' => Auth::user()->user ?? 'anónimo',
+                'expires' => isset($fileData['expiry_date']) ? 1 : 0,
+                'expiry_date' => $fileData['expiry_date'] ?? null,
+                'public_allow' => $fileData['public'],
+                'hidden' => $fileData['hidden'],
+                'public_token' => $fileData['public'] ? bin2hex(random_bytes(16)) : null,
+            ]);
+
+            $assignedClients = [];
+
+            if (Auth::user()->level == 0) {
+                TblFileRelation::create([
+                    'file_id' => $file->id,
+                    'client_id' => Auth::user()->id,
+                    'timestamp' => now(),
+                    'hidden' => $fileData['hidden'] ?? 0,
+                ]);
+
+                $assignedClients[] = Auth::user();
+            }
 
             if (Auth::user()->level != 0) {
-                $rules = array_merge($rules, [
-                    'file.*.categories' => 'required|array',
-                    'file.*.assignments' => 'required|array',
-                    'file.*.expiry_date' => 'nullable|date',
-                    'file.*.public' => 'nullable|boolean',
-                    'file.*.hidden' => 'nullable|boolean',
-                ]);
-            }
+                foreach ($fileData['assignments'] as $assignment) {
+                    if (Str::startsWith($assignment, 'user_')) {
+                        $userId = Str::after($assignment, 'user_');
+                        $user = User::find($userId);
 
-            $data = $request->validate($rules);
-
-            $tempDir = storage_path('app/private/uploads/tmp');
-            $finalDir = storage_path('app/private/uploads');
-            $savedFiles = [];
-
-            if (!file_exists($finalDir)) {
-                mkdir($finalDir, 0777, true);
-            }
-
-            foreach ($data['file'] as $fileData) {
-                $fileData['public'] = isset($fileData['public']) ? (int) $fileData['public'] : 0;
-                $fileData['hidden'] = isset($fileData['hidden']) ? (int) $fileData['hidden'] : 0;
-
-                // Verificar si el cliente tiene el rol 0 y ajustar la fecha de expiración
-                if (Auth::user()->level == 0) {
-                    $fileData['expiry_date'] = Carbon::now()->addYear();
-                }
-
-                $tempFilePath = $tempDir . DIRECTORY_SEPARATOR . $fileData['file'];
-
-                if (!file_exists($tempFilePath)) {
-                    continue;
-                }
-
-                $fileExtension = pathinfo($fileData['file'], PATHINFO_EXTENSION);
-                $uniqueFileName = uniqid() . '-' . sha1(uniqid() . microtime()) . ($fileExtension ? '.' . $fileExtension : '');
-                $finalFilePath = $finalDir . DIRECTORY_SEPARATOR . $uniqueFileName;
-
-
-                if (!rename($tempFilePath, $finalFilePath)) {
-                    throw new \Exception('Error al mover el archivo a su ubicación final: ' . $finalFilePath);
-                }
-
-
-                $file = TblFile::create([
-                    'filename' => $fileData['name'],
-                    'url' => $uniqueFileName,
-                    'original_url' => preg_replace('/^\d+_/', '', $fileData['file']),
-                    'description' => $fileData['description'] ?? 'Sin descripción',
-                    'uploader' => Auth::user()->user ?? 'anónimo',
-                    'expires' => isset($fileData['expiry_date']) ? 1 : 0,
-                    'expiry_date' => $fileData['expiry_date'] ?? null,
-                    'public_allow' => $fileData['public'],
-                    'hidden' => $fileData['hidden'],
-                    'public_token' => $fileData['public'] ? bin2hex(random_bytes(16)) : null,
-                ]);
-
-                // Asignar el archivo al usuario autenticado si su nivel es 0
-                if (Auth::user()->level == 0) {
-                    TblFileRelation::create([
-                        'file_id' => $file->id,
-                        'client_id' => Auth::user()->id,
-                        'timestamp' => now(),
-                        'hidden' => $fileData['hidden'] ?? 0,
-                    ]);
-                }
-
-                if (Auth::user()->level != 0) {
-                    foreach ($fileData['assignments'] as $assignment) {
-                        if (Str::startsWith($assignment, 'user_')) {
-                            $userId = Str::after($assignment, 'user_');
-                            TblFileRelation::create([
-                                'file_id' => $file->id,
-                                'client_id' => $userId,
-                                'timestamp' => now(),
-                                'hidden' => $fileData['hidden'] ?? 0,
-                            ]);
-                        } elseif (Str::startsWith($assignment, 'group_')) {
-                            $groupId = Str::after($assignment, 'group_');
-                            TblFileRelation::create([
-                                'file_id' => $file->id,
-                                'group_id' => $groupId,
-                                'timestamp' => now(),
-                                'hidden' => $fileData['hidden'] ?? 0,
-                            ]);
+                        if ($user && $user->level == 0) {
+                            $assignedClients[] = $user;
                         }
-                    }
 
-                    foreach ($fileData['categories'] as $categoryId) {
-                        TblCategoryRelation::create([
+                        TblFileRelation::create([
                             'file_id' => $file->id,
-                            'cat_id' => $categoryId,
+                            'client_id' => $userId,
                             'timestamp' => now(),
+                            'hidden' => $fileData['hidden'] ?? 0,
+                        ]);
+                    } elseif (Str::startsWith($assignment, 'group_')) {
+                        $groupId = Str::after($assignment, 'group_');
+                        TblFileRelation::create([
+                            'file_id' => $file->id,
+                            'group_id' => $groupId,
+                            'timestamp' => now(),
+                            'hidden' => $fileData['hidden'] ?? 0,
                         ]);
                     }
                 }
 
-                // Añadir a la lista de archivos guardados
-                $savedFiles[] = $file->loadCount(['fileRelations', 'categoryRelations']);
+                foreach ($fileData['categories'] as $categoryId) {
+                    TblCategoryRelation::create([
+                        'file_id' => $file->id,
+                        'cat_id' => $categoryId,
+                        'timestamp' => now(),
+                    ]);
+                }
             }
 
-            session(['savedFiles' => $savedFiles]);
+            foreach ($assignedClients as $client) {
+                Log::info('Verificando notificación', [
+                    'usuario' => $client->email,
+                    'notificaciones' => $client->notify,
+                    'archivo' => $file->filename,
+                    'oculto' => $fileData['hidden']
+                ]);
 
-            return redirect()->route('files.upload_process.view');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Error al guardar los archivos: ' . $e->getMessage()]);
+                if ($client->notify == 1 && $fileData['hidden'] == 0) {
+                    $clientsToNotify[$client->id]['user'] = $client;
+                    $clientsToNotify[$client->id]['files'][] = $file->filename;
+                }
+            }
+
+            $savedFiles[] = $file->loadCount(['fileRelations', 'categoryRelations']);
         }
+
+        foreach ($clientsToNotify as $clientData) {
+            Mail::to($clientData['user']->email)->send(new NewFiles($clientData['user'], $clientData['files']));
+        }
+
+        session(['savedFiles' => $savedFiles]);
+        sleep(1); // Esperar un segundo para asegurar que los archivos se guarden correctamente
+        return redirect()->route('files.upload_process.view');
+    } catch (\Exception $e) {
+        Log::error('Error al guardar los archivos', ['error' => $e->getMessage()]);
+        return redirect()->back()->withErrors(['error' => 'Error al guardar los archivos: ' . $e->getMessage()]);
     }
+}
+
+
+
 
     public function uploadProcessView(Request $request)
     {

@@ -160,9 +160,8 @@
                                     <div class="form-group">
                                         <div class="col-sm-8 col-sm-offset-4">
                                             <label for="notify">
-                                                <input type="checkbox" name="notify" id="notify" value="1"
-                                                    {{ old('notify', 0) ? 'checked' : '' }} /> Envíe correo de
-                                                bienvenida
+                                                <input type="checkbox" name="welcome_notify" id="welcome_notify" value="1" checked/>
+                                                Envie correo de bienvenida
                                             </label>
                                         </div>
                                     </div>
@@ -335,7 +334,7 @@
 </script>
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
-    
+
 
 </body>
 

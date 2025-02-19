@@ -42,24 +42,28 @@
                                 <img src="{{ asset('img/custom/logo/logo-claro.png') }}" alt="Repositorio" />
                             </div>
                         </div>
+                        <!-- Manejo de errores de validación -->
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        @if (session('status'))
+                            <div class="alert alert-success">
+                                {{ session('status') }}
+                            </div>
+                        @endif
                         <div class="white-box">
                             <div class="white-box-interior">
                                 <!-- Mensajes de éxito o error generales -->
                                 <div class="ajax_response alert"></div>
 
-                                <!-- Manejo de errores de validación -->
-                                @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
-
                                 <!-- Formulario de inicio de sesión -->
-                                <form method="POST" action="{{ route('login') }}">
+                                <form method="POST" action="{{ route('login') }}" id="loginForm">
                                     @csrf
                                     <input type="hidden" name="do" value="login">
                                     <fieldset>
@@ -70,9 +74,6 @@
                                                 value="{{ old('login') }}"
                                                 class="form-control @error('login') is-invalid @enderror" required
                                                 autofocus aria-describedby="loginHelp" />
-                                            @error('login')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
                                             <small id="loginHelp" class="form-text text-muted">
                                                 Ingrese su correo electrónico o nombre de usuario.
                                             </small>
@@ -84,9 +85,6 @@
                                             <input type="password" name="password" id="password"
                                                 class="form-control @error('password') is-invalid @enderror" required
                                                 aria-describedby="passwordHelp" />
-                                            @error('password')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
                                             <small id="passwordHelp" class="form-text text-muted">
                                                 Ingrese su contraseña.
                                             </small>
@@ -94,7 +92,7 @@
 
                                         <!-- Botón de envío -->
                                         <div class="inside_form_buttons">
-                                            <button type="submit" id="submit"
+                                            <button type="submit" id="submitBtn"
                                                 class="btn btn-wide btn-primary">Ingresar</button>
                                         </div>
                                     </fieldset>
@@ -133,6 +131,25 @@
         <script src="{{ asset('includes/js/main.js') }}"></script>
         <script src="{{ asset('includes/js/js.functions.php') }}"></script>
         <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
+        <script>
+            // Script para manejar la animación y el retraso
+            document.getElementById('loginForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Evitar el envío inmediato del formulario
+
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.classList.add('btn-disabled'); // Deshabilitar el botón
+                submitBtn.textContent = ''; // Limpiar el texto del botón
+                submitBtn.classList.add('loading'); // Agregar la animación
+
+                // Simular un retraso de 3 segundos antes de enviar el formulario
+                setTimeout(function () {
+                    submitBtn.classList.remove('loading'); // Detener la animación
+                    submitBtn.textContent = 'Ingresar'; // Restaurar el texto del botón
+                    submitBtn.classList.remove('btn-disabled'); // Habilitar el botón
+                    document.getElementById('loginForm').submit(); // Enviar el formulario
+                }, 3000); // Retraso de 3 segundos
+            });
+        </script>
     </div>
 </body>
 

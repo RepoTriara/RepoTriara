@@ -1544,4 +1544,42 @@ li .required.password_toggle {
     padding-left: 2em
 }
 
+  .btn-primary.loading {
+      background-color: #28a745 !important;
+      /* Green color */
+      border-color: #28a745 !important;
+      /* Green color */
+      cursor: not-allowed;
+      /* Indicate loading state */
+  }
+/* Animación de carga */
+@keyframes loading {
+    0% {
+        content: 'Ingresando.';
+    }
+
+    33% {
+        content: 'Ingresando..';
+    }
+
+    66% {
+        content: 'Ingresando...';
+    }
+
+    100% {
+        content: 'Ingresando.';
+    }
+}
+
+.loading::after {
+    content: 'Ingresando.';
+    animation: loading 1.5s infinite;
+}
+
+/* Deshabilitar el botón durante la animación */
+.btn-disabled {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
 /*# sourceMappingURL=main.min.css.map */

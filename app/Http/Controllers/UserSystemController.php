@@ -6,10 +6,12 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewUsersEmail;
+use Illuminate\Support\Facades\Log;
 
 class UserSystemController extends Controller
 {
-
 
     /**
      * Muestra el formulario de registro para usuarios del sistema.
@@ -19,18 +21,14 @@ class UserSystemController extends Controller
         return view('system_users.add_user'); // Asegúrate de tener esta vista
     }
 
-
-
-
     public function index(Request $request)
     {
         // Obtener parámetros de búsqueda, filtros y orden
         $search = $request->get('search'); // Búsqueda por nombre, usuario o email
         $role = $request->get('role', 'all'); // Filtro de rol
         $active = $request->get('active', '2'); // Filtro de estado (2 = todos, 1 = activo, 0 = inactivo)
-        $orderby = $request->get('orderby', 'name'); // Campo para ordenar
-        $order = $request->get('order', 'asc'); // Dirección del orden
-
+        $orderby = $request->get('orderby', 'timestamp'); // Campo para ordenar, ahora por timestamp
+        $order = $request->get('order', 'desc'); // Dirección del orden (de más reciente a más antiguo)
         // Construir la consulta base
         $query = User::query();
 
@@ -77,8 +75,6 @@ class UserSystemController extends Controller
         return view('system_users.manage_users', compact('users', 'totalUsers', 'filteredUsersCount'));
     }
 
-
-
     public function edit($id)
     {
         // Buscar el usuario por ID
@@ -87,7 +83,6 @@ class UserSystemController extends Controller
         // Retornar la vista de edición con los datos del usuario
         return view('system_users.edit_user', compact('user'));
     }
-
 
     public function bulkAction(Request $request)
     {
@@ -127,8 +122,6 @@ class UserSystemController extends Controller
         // Redirigir de vuelta con el mensaje
         return redirect()->route('system_users.index');
     }
-
-
     /**
      * Maneja el registro de usuarios del sistema.
      */
@@ -157,6 +150,10 @@ class UserSystemController extends Controller
                 'notify' => $request->has('notify') ? 1 : 0, // Convertir a 1 (true) o 0 (false)
                 'active' => $request->has('active') ? 1 : 0, // Convertir a 1 (true) o 0 (false)
             ]);
+
+             if ($request->has('welcome_notify')) {
+            Mail::to($user->email)->send(new NewUsersEmail($user, $request->password));
+         }
             return response()->json([
                 'message' => 'Usuario registrado correctamente.',
             ]);
@@ -168,17 +165,17 @@ class UserSystemController extends Controller
         }
     }
 
-
     public function update(Request $request, $id)
 {
     // Validar los datos del formulario
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'user' => 'required|string|max:60',
-        'email' => 'required|email|max:255|unique:tbl_users,email,' . $id, // Ignora el correo del usuario actual
-        'level' => 'required|in:10,8',  // Asegúrate de que 'level' sea uno de los valores válidos
-        'password' => 'nullable|string|min:8', // Si no se cambia la contraseña, no es obligatorio
+        'email' => 'required|email|max:255|unique:tbl_users,email,' . $id,
+        'level' => 'required|in:10,8',
+        'password' => 'nullable|string|min:8',
         'active' => 'boolean',
+        'notify' => 'boolean', // ✅ Agregado
     ]);
 
     // Buscar el usuario por su ID
@@ -187,8 +184,9 @@ class UserSystemController extends Controller
     // Actualizar los datos del usuario
     $user->name = $request->name;
     $user->email = $request->email;
-    $user->level = $request->level;  // Cambiar 'role' por 'level'
-    $user->active = $request->input('active', 0); // Si no se envía, establecer en 0
+    $user->level = $request->level;
+    $user->active = $request->input('active', 0);
+    $user->notify = $request->input('notify', 0); // ✅ Si no se envía, se establece en 0
 
     // Si la contraseña ha sido cambiada, actualizarla
     if ($request->filled('password')) {
@@ -198,8 +196,8 @@ class UserSystemController extends Controller
     // Guardar los cambios
     $user->save();
 
-    // Devolver una respuesta JSON
     return response()->json(['success' => 'Usuario actualizado correctamente.']);
 }
+
 
 }

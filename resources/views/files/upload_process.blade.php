@@ -154,7 +154,7 @@
                                                             class="form-control chosen-select" data-type="assignments"
                                                             required>
                                                             <optgroup label="Clientes">
-                                                                @foreach ($users as $user)
+                                                                @foreach ($users->where('level', 0) as $user)
                                                                     <option value="user_{{ $user->id }}"
                                                                         {{ in_array($user->id, $file->assignments->pluck('id')->toArray()) ? 'selected' : '' }}>
                                                                         {{ $user->name }}

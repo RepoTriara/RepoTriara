@@ -62,7 +62,7 @@
                 <div class="col-xs-12 col-sm-12 col-lg-6">
                     <div class="white-box">
                         <div class="white-box-interior">
-                            
+
                             <form method="POST" action="{{ route('customer_manager.update', $client->id) }}"
                                 class="form-horizontal">
                                 @csrf
@@ -203,7 +203,7 @@
                                     <div class="col-sm-8 col-sm-offset-4">
                                         <label for="add_client_form_notify_upload">
                                             <input type="checkbox" name="notify" id="notify" value="1"
-                                                {{ old('notify', $client->notify) == 0 ? 'checked' : '' }}> Notificar
+                                                {{ old('notify', $client->notify) == 1 ? 'checked' : '' }}> Notificar
                                             nuevos
                                             archivos por correo </label>
                                         @error('notify_upload')
@@ -228,7 +228,7 @@
             <div id="footer">
                 Claro Colombia </div>
         </footer>
-        
+
         <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
@@ -296,7 +296,7 @@
                 }
 
                 if (errors.length > 0) {
-                    let errorHtml = errors.map((error, index) => 
+                    let errorHtml = errors.map((error, index) =>
                         `<div style="margin-bottom: 10px;"><b>${index + 1}. ${error.field}:</b> ${error.message}</div>`
                     ).join('');
 
@@ -326,7 +326,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.errors) {
-                    let errorMessages = Object.entries(data.errors).map(([field, messages], index) => 
+                    let errorMessages = Object.entries(data.errors).map(([field, messages], index) =>
                         `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
                     ).join('');
 

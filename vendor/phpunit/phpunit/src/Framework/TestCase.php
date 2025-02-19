@@ -551,7 +551,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                 Event\Code\ComparisonFailureBuilder::from($e),
             );
         } catch (TimeoutException $e) {
-            $this->status = TestStatus::risky($e->getMessage());
         } catch (Throwable $_e) {
             if ($this->isRegisteredFailure($_e)) {
                 $this->status = TestStatus::failure($_e->getMessage());
@@ -565,6 +564,12 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                 $e = $this->transformException($_e);
 
                 $this->status = TestStatus::error($e->getMessage());
+
+                if (!$this->wasPrepared) {
+                    $emitter->testPreparationFailed(
+                        $this->valueObjectForEvents(),
+                    );
+                }
 
                 $emitter->testErrored(
                     $this->valueObjectForEvents(),
@@ -583,27 +588,14 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
             $this->performAssertionsOnOutput();
         }
 
-        if ($this->status->isSuccess()) {
-            $emitter->testPassed(
-                $this->valueObjectForEvents(),
-            );
-
-            if (!$this->usesDataProvider()) {
-                PassedTests::instance()->testMethodPassed(
-                    $this->valueObjectForEvents(),
-                    $this->testResult,
-                );
-            }
-        }
-
         try {
             $this->mockObjects = [];
 
             /** @phpstan-ignore catch.neverThrown */
-        } catch (Throwable $t) {
+        } catch (Throwable $e) {
             Event\Facade::emitter()->testErrored(
                 $this->valueObjectForEvents(),
-                Event\Code\ThrowableBuilder::from($t),
+                Event\Code\ThrowableBuilder::from($e),
             );
         }
 
@@ -635,6 +627,19 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                 $emitter->testErrored(
                     $this->valueObjectForEvents(),
                     Event\Code\ThrowableBuilder::from($exceptionRaisedDuringTearDown),
+                );
+            }
+        }
+
+        if (!isset($e) && !isset($_e)) {
+            $emitter->testPassed(
+                $this->valueObjectForEvents(),
+            );
+
+            if (!$this->usesDataProvider()) {
+                PassedTests::instance()->testMethodPassed(
+                    $this->valueObjectForEvents(),
+                    $this->testResult,
                 );
             }
         }
@@ -1884,8 +1889,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                 $message,
             );
 
-            $this->status = TestStatus::risky($message);
-
             return false;
         }
 
@@ -1933,8 +1936,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                 $this->valueObjectForEvents(),
                 $message,
             );
-
-            $this->status = TestStatus::risky($message);
         }
 
         $message = null;
@@ -1965,8 +1966,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                 $this->valueObjectForEvents(),
                 $message,
             );
-
-            $this->status = TestStatus::risky($message);
         }
     }
 
@@ -2011,8 +2010,6 @@ abstract class TestCase extends Assert implements Reorderable, SelfDescribing, T
                 $this->valueObjectForEvents(),
                 $message,
             );
-
-            $this->status = TestStatus::risky($message);
         }
 
         return $activeErrorHandlers;

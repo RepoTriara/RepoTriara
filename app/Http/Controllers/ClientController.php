@@ -10,6 +10,9 @@ use App\Models\TblFileRelation;
 use App\Models\Members;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewUsersEmail;
 
 
 class ClientController extends Controller
@@ -25,11 +28,11 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         // Obtener parámetros de la solicitud con valores por defecto
-        $search = $request->input('search');
+         $search = $request->input('search');
         $role = $request->input('role');
         $active = $request->input('active', '2');
-        $orderby = $request->input('orderby', 'name');
-        $order = $request->input('order', 'asc');
+        $orderby = $request->input('orderby', 'timestamp');
+        $order = $request->input('order', 'desc');
 
         // Iniciar la consulta
         $query = User::query();
@@ -136,8 +139,11 @@ class ClientController extends Controller
                 'level' => 0,
                 'active' => $request->has('active') ? $request->active : false,
                 'notify' => $request->has('notify') ? $request->notify : false,
-
             ]);
+
+             if ($request->has('welcome_notify')) {
+            Mail::to($user->email)->send(new NewUsersEmail($user, $request->password));
+            }
 
             // codigo para asociar al cliente a uno o varios grupos
             if ($request->has('group_request') && count($request->group_request) > 0) {
@@ -145,7 +151,7 @@ class ClientController extends Controller
                     $member = Members::create([
                         'client_id' => $user->id,
                         'group_id' => $groupId,
-                        'added_by' => auth()->user()->id,
+                        'added_by' => Auth::user()->id,
                     ]);
                 }
             }
@@ -248,7 +254,7 @@ public function update(Request $request, $id)
         $client->phone = $request->phone;
         $client->contact = $request->contact;
         $client->max_file_size = $request->max_file_size;
-        $client->notify = $request->has('notify') ? $request->notify : $client->notify;
+        $client->notify = $request->input('notify', 0);
         $client->active = $request->has('active') ? $request->active : $client->active;
 
         if ($request->filled('password')) {
@@ -277,7 +283,7 @@ public function update(Request $request, $id)
             Members::create([
                 'client_id' => $id,
                 'group_id' => $groupId,
-                'added_by' => auth()->user()->user,
+                'added_by' => Auth::user()->id,
             ]);
         }
 

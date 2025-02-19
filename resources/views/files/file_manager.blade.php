@@ -144,51 +144,46 @@
                             <div class="clear"></div>
 
                             <table id="files_tbl" class="footable table">
-                                <thead>
+                                                               <thead>
                                     <tr>
                                         <th class="td_checkbox"><input type="checkbox" id="select_all"></th>
-                                        <th>
-                                            <a
-                                                href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                                        <th class="{{ request('sort') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
+                                               class="{{ request('sort') === 'timestamp' ? 'active-sort' : '' }}">
                                                 Adicionado
-                                                <i
-                                                    class="fa fa-sort{{ request('sort') === 'timestamp' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i class="fa fa-sort{{ request('sort') === 'timestamp' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Tipo</th>
-                                        <th>
-                                            <a
-                                                href="{{ request()->fullUrlWithQuery(['sort' => 'filename', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                                        <th class="{{ request('sort') === 'filename' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'filename', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
+                                               class="{{ request('sort') === 'filename' ? 'active-sort' : '' }}">
                                                 Título
-                                                <i
-                                                    class="fa fa-sort{{ request('sort') === 'filename' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i class="fa fa-sort{{ request('sort') === 'filename' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Tamaño</th>
-                                        <th>
-                                            <a
-                                                href="{{ request()->fullUrlWithQuery(['sort' => 'uploader', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                                        <th class="{{ request('sort') === 'uploader' ?  'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'uploader', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
+                                               class="{{ request('sort') === 'uploader' ? 'active-sort' : '' }}">
                                                 Cargador
-                                                <i
-                                                    class="fa fa-sort{{ request('sort') === 'uploader' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i class="fa fa-sort{{ request('sort') === 'uploader' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Asignado</th>
-                                        <th>
-                                            <a
-                                                href="{{ request()->fullUrlWithQuery(['sort' => 'public_allow', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                                        <th class="{{ request('sort') === 'public_allow' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'public_allow', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
+                                               class="{{ request('sort') === 'public_allow' ? 'active-sort' : '' }}">
                                                 Permisos públicos
-                                                <i
-                                                    class="fa fa-sort{{ request('sort') === 'public_allow' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i class="fa fa-sort{{ request('sort') === 'public_allow' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Expira</th>
-                                        <th>
-                                            <a
-                                                href="{{ request()->fullUrlWithQuery(['sort' => 'download_count', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                                        <th class="{{ request('sort') === 'download_count' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'download_count', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
+                                               class="{{ request('sort') === 'download_count' ? 'active-sort' : '' }}">
                                                 Total descargas
-                                                <i
-                                                    class="fa fa-sort{{ request('sort') === 'download_count' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i class="fa fa-sort{{ request('sort') === 'download_count' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Comportamiento</th>
@@ -312,7 +307,7 @@
             });
         });
 
-       
+
 
         $(document).ready(function() {
             $('#urlModal').on('show.bs.modal', function(event) {
@@ -352,7 +347,7 @@
                 });
                 return;
             }
-             
+
             if (action === 'delete') {
                 e.preventDefault();
                 Swal.fire({

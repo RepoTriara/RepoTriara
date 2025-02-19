@@ -116,6 +116,17 @@
                                                     class="form-control" value="{{ $user->phone }}" />
                                             </div>
                                         </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="notify" class="col-sm-4 control-label">Notificaciones</label>
+                                            <div class="col-sm-8">
+                                                <!-- Campo oculto para asegurar que se envíe "0" si el checkbox no está marcado -->
+                                                <input type="hidden" name="notify" value="0">
+                                                <input type="checkbox" name="notify" id="notify" value="1"
+                                                    {{ old('notify', $user->notify) == 1 ? 'checked' : '' }}>
+                                                <label for="notify">Recibir notificaciones</label>
+                                            </div>
+                                        </div>
                                     @endif
 
                                     <div class="inside_form_buttons">
@@ -142,85 +153,84 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-        <script>
-           document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form[name="adduser"]');
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const form = document.querySelector('form[name="adduser"]');
 
-    form.addEventListener('submit', function (e) {
-        // Obtén los valores de los campos
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
+                    form.addEventListener('submit', function(e) {
+                        // Obtén los valores de los campos
+                        const name = document.getElementById('name').value.trim();
+                        const email = document.getElementById('email').value.trim();
+                        const password = document.getElementById('password').value.trim();
 
-        // Validaciones
-        if (name === '') {
-            e.preventDefault(); 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'El campo "Nombre" es obligatorio.',
-                timer: 3000,
-                showConfirmButton: false
-            });
-            return;
-        }
+                        // Validaciones
+                        if (name === '') {
+                            e.preventDefault();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'El campo "Nombre" es obligatorio.',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
 
-        if (email === '') {
-            e.preventDefault(); 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'El campo "E-Mail" es obligatorio.',
-                timer: 3000,
-                showConfirmButton: false
-            });
-            return;
-        }
+                        if (email === '') {
+                            e.preventDefault();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'El campo "E-Mail" es obligatorio.',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
 
-        if (!validateEmail(email)) {
-            e.preventDefault(); 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Por favor, ingresa un correo electrónico válido.',
-                timer: 3000,
-                showConfirmButton: false
-            });
-            return;
-        }
+                        if (!validateEmail(email)) {
+                            e.preventDefault();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Por favor, ingresa un correo electrónico válido.',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
 
-        if (password !== '' && password.length < 8) {
-            e.preventDefault(); 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'La contraseña debe tener al menos 8 caracteres.',
-                timer: 3000,
-                showConfirmButton: false
-            });
-            return;
-        }
+                        if (password !== '' && password.length < 8) {
+                            e.preventDefault();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'La contraseña debe tener al menos 8 caracteres.',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                            return;
+                        }
 
-         Swal.fire({
-            icon: 'success',
-            title: '¡Éxito!',
-            text: 'El formulario se ha validado correctamente.',
-            showConfirmButton: false, // Sin botón "OK"
-            timer: 4000, // Desaparece después de 3 segundos
-        }).then(() => {
-            // Envía el formulario después de que el mensaje desaparezca
-            form.submit();
-        });
-    });
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: 'El formulario se ha validado correctamente.',
+                            showConfirmButton: false, // Sin botón "OK"
+                            timer: 4000, // Desaparece después de 3 segundos
+                        }).then(() => {
+                            // Envía el formulario después de que el mensaje desaparezca
+                            form.submit();
+                        });
+                    });
 
-    // Función para validar el formato del correo electrónico
-    function validateEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    }
-});
-
-        </script>
+                    // Función para validar el formato del correo electrónico
+                    function validateEmail(email) {
+                        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        return regex.test(email);
+                    }
+                });
+            </script>
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 

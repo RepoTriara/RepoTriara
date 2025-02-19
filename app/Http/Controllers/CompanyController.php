@@ -32,180 +32,189 @@ class CompanyController extends Controller
 
 
     public function store(Request $request)
-    {
-        Log::info('Solicitud recibida', $request->all());
+{
+    Log::info('Solicitud recibida', $request->all());
 
-        // Convertir el checkbox a un valor booleano
-        $request->merge([
-            'add_group_form_public' => $request->has('add_group_form_public')
-        ]);
+    // Verificar si el nombre ya existe en la base de datos
+    $nombreExistente = DB::table('tbl_groups')->where('name', $request->input('add_group_form_name'))->exists();
 
-        // Verificar si el nombre ya existe en la base de datos
-        $nombreExistente = DB::table('tbl_groups')->where('name', $request->input('add_group_form_name'))->exists();
+    if ($nombreExistente) {
+        Log::info('El nombre ya existe en la base de datos: ' . $request->input('add_group_form_name'));
+        return response()->json([
+            'error' => '¡El nombre ya existe en la base de datos!',
+        ], 400); // Código de estado HTTP 400 para errores de validación
+    }
 
-        if ($nombreExistente) {
-            Log::info('El nombre ya existe en la base de datos: ' . $request->input('add_group_form_name'));
-            return response()->json([
-                'error' => '¡El nombre ya existe en la base de datos!',
-            ], 400); // Código de estado HTTP 400 para errores de validación
-        }
+    // Validar los datos del formulario
+    $request->validate([
+        'add_group_form_name' => 'required|string|max:255',
+        'add_group_form_description' => 'nullable|string',
+        'add_group_form_members' => 'nullable|array',
+    ], [
+        'add_group_form_name.required' => 'El nombre de la compañía es obligatorio.',
+        'add_group_form_name.max' => 'El nombre no puede superar los 255 caracteres.',
+    ]);
 
-        // Validar los datos del formulario
-        $request->validate([
-            'add_group_form_name' => 'required|string|max:255',
-            'add_group_form_description' => 'nullable|string',
+    // Obtener el ID del usuario autenticado
+    $userId = Auth::id();
 
-            'add_group_form_members' => 'nullable|array',
-        ]);
+    // Limpiar el contenido de CKEditor (eliminar etiquetas HTML)
+    $description = strip_tags($request->input('add_group_form_description', ''));
 
-        $userId = Auth::id();
+    // Crear el grupo
+    $group = new \App\Models\Groups();
+    $group->created_by = $userId;
+    $group->name = $request->input('add_group_form_name');
+    $group->description = $description; // Asignar la descripción sin etiquetas HTML
+    $group->public = $request->has('add_group_form_public'); // Convertir el checkbox a booleano
 
-        // Asignar un valor por defecto a la descripción si está vacía
-        $description = $request->input('add_group_form_description');
-        if (empty($description)) {
-            $description = ''; // Valor predeterminado como cadena vacía
-        }
+    // Generar token público solo si el grupo es público
+    if ($group->public) {
+        $group->public_token = substr(Str::uuid()->toString(), 0, 32); // Truncar a 32 caracteres
+    }
 
-        // Crear el grupo
-        $group = new \App\Models\Groups();
-        $group->created_by = $userId;
-        $group->name = $request->input('add_group_form_name');
-        $group->description = $description; // Asignar la descripción
-        $group->public = $request->input('add_group_form_public', false);
-        $group->public_token = substr(Str::uuid()->toString(), 0, 32);
+    Log::info('Datos del grupo antes de guardar', $group->toArray());
 
-        // Si el grupo es público, generar un token
-        if ($group->public) {
-            $group->public_token = substr(Str::uuid()->toString(), 0, 32); // Truncar a 32 caracteres
-        }
+    // Guardar el grupo en la base de datos
+    $group->save();
 
-        Log::info('Datos del grupo antes de guardar', $group->toArray());
+    Log::info('Grupo guardado exitosamente con ID: ' . $group->id);
 
-        // Guardar el grupo en la base de datos
-        $group->save();
+    // Procesar los miembros seleccionados
+    if ($request->has('add_group_form_members')) {
+        Log::info('Miembros seleccionados antes de procesar:', $request->input('add_group_form_members'));
 
-        Log::info('Grupo guardado exitosamente con ID: ' . $group->id);
+        // Asegurarse de que los miembros seleccionados sean del tipo correcto (usuarios con level 0)
+        $memberIds = array_unique($request->input('add_group_form_members'));
 
-        // **Aquí agregamos el Log para verificar los miembros seleccionados**
-        if ($request->has('add_group_form_members')) {
-            Log::info('Miembros seleccionados antes de procesar:', $request->input('add_group_form_members'));
-
-            // Asegurarse de que los miembros seleccionados sean del tipo correcto (usuarios con level 0)
-            $memberIds = array_unique($request->input('add_group_form_members'));
-
-            // Verificar que los miembros seleccionados sean solo de nivel 0
-            foreach ($memberIds as $memberId) {
-                $member = User::find($memberId);
-                if ($member && $member->level != 0) {
-                    return response()->json([
-                        'error' => 'Solo puedes seleccionar usuarios de nivel 0.',
-                    ], 400); // Código de estado HTTP 400 para errores de validación
-                }
+        foreach ($memberIds as $memberId) {
+            $member = User::find($memberId);
+            if ($member && $member->level != 0) {
+                return response()->json([
+                    'error' => 'Solo puedes seleccionar usuarios de nivel 0.',
+                ], 400); // Código de estado HTTP 400 para errores de validación
             }
-
-            // Eliminar todos los miembros asociados a este grupo antes de agregar los nuevos
-            Members::where('group_id', $group->id)->delete();
-
-            // Agregar los miembros seleccionados
-            foreach ($memberIds as $memberId) {
-                Members::create([
-                    'group_id' => $group->id,
-                    'client_id' => $memberId,
-                    'added_by' => Auth::user()->name,
-                ]);
-            }
-
-            Log::info('Miembros asociados al grupo exitosamente');
         }
 
+        // Eliminar todos los miembros asociados a este grupo antes de agregar los nuevos
+        Members::where('group_id', $group->id)->delete();
+
+        // Agregar los miembros seleccionados
+        foreach ($memberIds as $memberId) {
+            Members::create([
+                'group_id' => $group->id,
+                'client_id' => $memberId,
+                'added_by' => Auth::user()->name,
+            ]);
+        }
+
+        Log::info('Miembros asociados al grupo exitosamente');
+    }
         return response()->json([
             'success' => 'Grupo creado exitosamente.',
         ]);
     }
 
-    public function manageCompany(Request $request)
-    {
-        $memberId = $request->query('member');
-        $groupId = $request->query('group_id'); // Filtrar por group_id
+public function manageCompany(Request $request)
+{
+    $memberId = $request->query('member');
+    $groupId = $request->query('group_id'); // Filtrar por group_id
 
-        if ($memberId) {
-            // Obtener la información del cliente (usuario) por su ID
-            $user = User::find($memberId);
+    if ($memberId) {
+        // Obtener la información del cliente (usuario) por su ID
+        $user = User::find($memberId);
 
-            if ($user) {
-                // Cambiar el título de la página basado en el nombre del cliente
-                $pageTitle = __('Grupos donde') . ' ' . $user->name . ' ' . __('es miembro');
+        if ($user) {
+            // Cambiar el título de la página basado en el nombre del cliente
+            $pageTitle = __('Grupos donde') . ' ' . $user->name . ' ' . __('es miembro');
 
-                // Obtener los grupos a los que el cliente pertenece con relaciones y conteo
-                $groups = $user->groups()
+            // Obtener los grupos a los que el cliente pertenece con relaciones y conteo
+            $groups = $user->groups()
                 ->with(['members', 'fileRelations'])
-                    ->withCount(['members', 'fileRelations'])
-                    ->paginate(10);
+                ->withCount(['members', 'fileRelations'])
+                ->paginate(10);
 
-                return view('companies.manage_company', compact('pageTitle', 'user', 'groups'));
-            } else {
-                // Si el cliente no existe, devolver error
-                $error = 'client_not_exists';
-                return view('companies.manage_company', compact('error'));
+            // Formatear el timestamp para que se muestre solo la fecha
+            foreach ($groups as $group) {
+                $group->timestamp = \Carbon\Carbon::parse($group->timestamp)->format('Y/m/d');
             }
+
+            return view('companies.manage_company', compact('pageTitle', 'user', 'groups'));
+        } else {
+            // Si el cliente no existe, devolver error
+            $error = 'client_not_exists';
+            return view('companies.manage_company', compact('error'));
         }
-
-        // Filtrar por group_id
-        if ($groupId) {
-            $group = Groups::find($groupId);
-
-            if ($group) {
-                // Cambiar el título de la página basado en el nombre del grupo
-                $pageTitle = __('Grupo') . ' ' . $group->name . ' ' . __('y sus miembros');
-
-                // Obtener los miembros de este grupo con relaciones y conteo
-                $groups = $group->members()
-                ->with(['groups', 'fileRelations'])
-                    ->withCount(['members', 'fileRelations'])
-                    ->paginate(10);
-
-                $filteredTotal = $groups->total(); // Total de miembros en el grupo
-
-                return view('companies.manage_company', compact('pageTitle', 'group', 'groups', 'filteredTotal'));
-            } else {
-                // Si el grupo no existe, devolver error
-                $error = 'group_not_exists';
-                return view('companies.manage_company', compact('error'));
-            }
-        }
-
-        // Incluir las columnas necesarias en la consulta para mostrar todos los grupos
-        $query = Groups::select('id', 'name', 'description', 'public', 'created_by', 'timestamp', 'public_token')
-        ->withCount(['members', 'fileRelations']); // Contar las relaciones necesarias
-
-        // Filtro de búsqueda
-        if ($request->has('search') && !empty($request->search)) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        // Aplicar clasificación
-        if ($request->has('sort') && $request->has('direction')
-        ) {
-            $allowedSorts = ['name', 'description', 'members_count', 'file_relations_count', 'created_by', 'timestamp'];
-            if (in_array($request->sort, $allowedSorts)) {
-                $query->orderBy($request->sort, $request->direction);
-            }
-        }
-
-        $filteredTotal = $query->count();
-
-        // Paginación de resultados
-        $groups = $query->paginate(perPage: 10);
-        $groups->withPath(url()->current());
-
-        // Total de grupos
-        $totalGroups = Groups::count();
-
-        return view('companies.manage_company', compact('groups', 'totalGroups', 'filteredTotal'));
     }
 
+    // Filtrar por group_id
+    if ($groupId) {
+        $group = Groups::find($groupId);
 
+        if ($group) {
+            // Cambiar el título de la página basado en el nombre del grupo
+            $pageTitle = __('Grupo') . ' ' . $group->name . ' ' . __('y sus miembros');
 
+            // Obtener los miembros de este grupo con relaciones y conteo
+            $groups = $group->members()
+                ->with(['groups', 'fileRelations'])
+                ->withCount(['members', 'fileRelations'])
+                ->paginate(10);
+
+            // Formatear el timestamp para que se muestre solo la fecha
+            foreach ($groups as $member) {
+                // Asegurarse de que el campo timestamp exista y formatearlo
+                if ($member->timestamp) {
+                    $member->timestamp = \Carbon\Carbon::parse($member->timestamp)->format('Y/m/d');
+                }
+            }
+
+            $filteredTotal = $groups->total(); // Total de miembros en el grupo
+
+            return view('companies.manage_company', compact('pageTitle', 'group', 'groups', 'filteredTotal'));
+        } else {
+            // Si el grupo no existe, devolver error
+            $error = 'group_not_exists';
+            return view('companies.manage_company', compact('error'));
+        }
+    }
+
+    // Incluir las columnas necesarias en la consulta para mostrar todos los grupos
+    $query = Groups::select('id', 'name', 'description', 'public', 'created_by', 'timestamp', 'public_token')
+        ->withCount(['members', 'fileRelations']); // Contar las relaciones necesarias
+
+    // Filtro de búsqueda
+    if ($request->has('search') && !empty($request->search)) {
+        $query->where('name', 'like', '%' . $request->search . '%');
+    }
+
+    // Aplicar clasificación
+    if ($request->has('sort') && $request->has('direction')) {
+        $allowedSorts = ['name', 'description', 'members_count', 'file_relations_count', 'created_by', 'timestamp'];
+        if (in_array($request->sort, $allowedSorts)) {
+            $query->orderBy($request->sort, $request->direction);
+        }
+    } else {
+        // Orden por defecto: timestamp de más reciente a más antiguo
+        $query->orderBy('timestamp', 'desc');
+    }
+
+    $filteredTotal = $query->count();
+
+    // Paginación de resultados
+    $groups = $query->paginate(perPage: 10);
+    $groups->withPath(url()->current());
+
+    // Formatear el timestamp para que se muestre solo la fecha sin la hora
+    foreach ($groups as $group) {
+        $group->timestamp = \Carbon\Carbon::parse($group->timestamp)->format('Y/m/d');
+    }
+
+    // Total de grupos
+    $totalGroups = Groups::count();
+
+    return view('companies.manage_company', compact('groups', 'totalGroups', 'filteredTotal'));
+}
 
 
 

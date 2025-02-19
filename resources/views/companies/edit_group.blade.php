@@ -96,7 +96,7 @@
 
 
 
-                                    
+
 
                                     <!-- Botón de guardar cambios -->
                                     <div class="inside_form_buttons">

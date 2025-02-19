@@ -48,8 +48,8 @@ class RegisteredUserController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'notify' => $request->notify ?? false,
-            'level' => 0,
-            'user' => $request->user, 
+            'level' => 10,
+            'user' => $request->user,
 
         ]);
 

@@ -242,21 +242,16 @@
                                     <div class="col-sm-8 col-sm-offset-4">
                                         <label for="add_client_form_notify_upload">
                                             <input type="checkbox" name="notify" id="notify" value="1"
-                                                {{ old('notify', 0) ? 'checked' : '' }}> Notificar nuevos archivos por
+                                                {{ old('notify', 1) ? 'checked' : '' }}> Notificar nuevos archivos por
                                             correo </label>
-                                        @error('notify')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                        @enderror
+
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-8 col-sm-offset-4">
                                         <label for="add_client_form_notify_account">
-                                            <input type="checkbox" name="notify" id="notify" value="1"
-                                                {{ old('notify', 0) ? 'checked' : '' }} /> Envíe correo de bienvenida
-                                            @error('notify')
-                                                <div class="notify_account">{{ $message }}</div>
-                                            @enderror
+                                            <input type="checkbox" name="welcome_notify" id="welcome_notify" value="1" checked/>
+                                            Envíe correo de bienvenida
                                     </div>-
                                 </div>
                                 <div class="inside_form_buttons">
@@ -355,7 +350,7 @@
                 }
 
                 if (errors.length > 0) {
-                    let errorHtml = errors.map((error, index) => 
+                    let errorHtml = errors.map((error, index) =>
                         `<div style="margin-bottom: 10px;"><b>${index + 1}. ${error.field}:</b> ${error.message}</div>`
                     ).join('<br>');
 
@@ -385,7 +380,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.errors) {
-                    let errorMessages = Object.entries(data.errors).map(([field, messages], index) => 
+                    let errorMessages = Object.entries(data.errors).map(([field, messages], index) =>
                         `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
                     ).join('<br>');
 

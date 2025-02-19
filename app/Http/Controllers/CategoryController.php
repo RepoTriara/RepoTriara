@@ -45,7 +45,7 @@ class CategoryController extends Controller
   public function store(Request $request)
 {
     $request->validate([
-        'name' => 'required',
+        'name' => 'required|unique:tbl_categories',
         'parent' => 'nullable|exists:tbl_categories,id',
         'description' => 'nullable',
     ]);
@@ -88,7 +88,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:tbl_categories',
             'parent' => 'nullable|exists:tbl_categories,id',
             'description' => 'nullable',
         ]);
@@ -105,7 +105,7 @@ class CategoryController extends Controller
         $category = TblCategory::findOrFail($id);
         $category->delete();
 
-    return response()->json(['success' => 'Categoría eliminada correctamente.']);    
+    return response()->json(['success' => 'Categoría eliminada correctamente.']);
 }
 
     // Eliminar categorías seleccionadas (eliminación masiva)

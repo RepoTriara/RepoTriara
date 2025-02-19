@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
-use Illuminate\View\View;
+use App\Mail\ResetPasswordMail;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Mail;
+use App\Models\User;
 
 class PasswordResetLinkController extends Controller
 {
@@ -25,20 +27,26 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Validar la entrada del usuario
         $request->validate([
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        // Buscar el usuario que solicitó el restablecimiento
+        $user = User::where('email', $request->email)->first();
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        if (!$user) {
+            // Si no se encuentra el usuario, mostrar un error
+            return back()->withErrors(['email' => __('No se encontró un usuario con esa dirección de correo electrónico.')]);
+        }
+
+        // Generar un token para el restablecimiento de contraseña
+        $token = app('auth.password.broker')->createToken($user);
+
+        // Enviar el correo utilizando el Mailable
+        Mail::to($user->email)->send(new ResetPasswordMail($token, $user->email));
+
+        // Retornar una respuesta indicando que el enlace fue enviado
+        return back()->with('status', __('Si este correo electrónico está registrado, se le ha enviado un enlace de restablecimiento.'));
     }
 }

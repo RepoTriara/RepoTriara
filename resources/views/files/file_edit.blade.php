@@ -40,7 +40,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="alert alert-info">Los archivos subidos tienen una vigencia máxima de un año. Después de este periodo, el archivo se eliminará automáticamente. Es posible reducir la vigencia a menos de un año, pero no extenderla más allá de un año.</div>
@@ -165,15 +165,7 @@
                                                                         data-type="assigns">Borrar todo</a>
                                                                 </div>
                                                                 <div class="divider"></div>
-                                                                <div class="checkbox">
-                                                                    <label for="hid_checkbox">
-                                                                        <input type="checkbox" id="hid_checkbox"
-                                                                            name="file[1][hidden]" value="1" />
-                                                                        Marcar como oculto (no se enviaran
-                                                                        notificaciones)
-                                                                        para clientes y grupos nuevos.
-                                                                    </label>
-                                                                </div>
+                                                                
                                                                 <div class="checkbox">
                                                                     <label for="hid_existing_checkbox">
                                                                         <input type="checkbox"
