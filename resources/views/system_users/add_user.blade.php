@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Agregue nuevos usuarios &raquo; Repositorio</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png" sizes="32x32') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png" sizes="152x152') }}">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
