@@ -12,12 +12,6 @@
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-    <!--[if lt IE 9]>
-  <script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
-  <script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
- <![endif]-->
-
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
 

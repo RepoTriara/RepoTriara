@@ -165,16 +165,18 @@
                                                                         data-type="assigns">Borrar todo</a>
                                                                 </div>
                                                                 <div class="divider"></div>
-                                                                
+
                                                                 <div class="checkbox">
                                                                     <label for="hid_existing_checkbox">
                                                                         <input type="checkbox"
                                                                             id="hid_existing_checkbox"
-                                                                            name="file[1][hideall]" value="1" />
-                                                                        Ocultar a todos los clientes y grupos ya
-                                                                        asignados.
+                                                                            name="file[1][hideall]"
+                                                                            value="1"
+                                                                            {{ $hideAll == 1 ? 'checked' : '' }} />
+                                                                        Ocultar a todos los clientes y grupos ya asignados.
                                                                     </label>
                                                                 </div>
+
                                                             </div>
                                                         </div>
 

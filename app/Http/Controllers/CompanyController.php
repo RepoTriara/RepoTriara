@@ -31,7 +31,7 @@ class CompanyController extends Controller
     }
 
 
-    public function store(Request $request)
+   public function store(Request $request)
 {
     Log::info('Solicitud recibida', $request->all());
 
@@ -42,7 +42,7 @@ class CompanyController extends Controller
         Log::info('El nombre ya existe en la base de datos: ' . $request->input('add_group_form_name'));
         return response()->json([
             'error' => '¡El nombre ya existe en la base de datos!',
-        ], 400); // Código de estado HTTP 400 para errores de validación
+        ], 400);
     }
 
     // Validar los datos del formulario
@@ -56,21 +56,24 @@ class CompanyController extends Controller
     ]);
 
     // Obtener el ID del usuario autenticado
-    $userId = Auth::id();
+    $userName = Auth::user()->user;
 
-    // Limpiar el contenido de CKEditor (eliminar etiquetas HTML)
-    $description = strip_tags($request->input('add_group_form_description', ''));
+    // **Modificar aquí: quitar strip_tags para conservar el formato HTML**
+    $description = $request->input('add_group_form_description', '');
+
+    // Si prefieres permitir solo ciertas etiquetas, puedes hacer:
+    // $description = strip_tags($request->input('add_group_form_description', ''), '<b><i><strong><em><u>');
 
     // Crear el grupo
     $group = new \App\Models\Groups();
-    $group->created_by = $userId;
+    $group->created_by = $userName;
     $group->name = $request->input('add_group_form_name');
-    $group->description = $description; // Asignar la descripción sin etiquetas HTML
+    $group->description = $description; // Asignar la descripción conservando el HTML
     $group->public = $request->has('add_group_form_public'); // Convertir el checkbox a booleano
 
     // Generar token público solo si el grupo es público
     if ($group->public) {
-        $group->public_token = substr(Str::uuid()->toString(), 0, 32); // Truncar a 32 caracteres
+        $group->public_token = substr(Str::uuid()->toString(), 0, 32);
     }
 
     Log::info('Datos del grupo antes de guardar', $group->toArray());
@@ -84,7 +87,6 @@ class CompanyController extends Controller
     if ($request->has('add_group_form_members')) {
         Log::info('Miembros seleccionados antes de procesar:', $request->input('add_group_form_members'));
 
-        // Asegurarse de que los miembros seleccionados sean del tipo correcto (usuarios con level 0)
         $memberIds = array_unique($request->input('add_group_form_members'));
 
         foreach ($memberIds as $memberId) {
@@ -92,7 +94,7 @@ class CompanyController extends Controller
             if ($member && $member->level != 0) {
                 return response()->json([
                     'error' => 'Solo puedes seleccionar usuarios de nivel 0.',
-                ], 400); // Código de estado HTTP 400 para errores de validación
+                ], 400);
             }
         }
 
@@ -110,10 +112,12 @@ class CompanyController extends Controller
 
         Log::info('Miembros asociados al grupo exitosamente');
     }
-        return response()->json([
-            'success' => 'Grupo creado exitosamente.',
-        ]);
-    }
+
+    return response()->json([
+        'success' => 'Grupo creado exitosamente.',
+    ]);
+}
+
 
 public function manageCompany(Request $request)
 {

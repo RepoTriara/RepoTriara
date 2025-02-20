@@ -136,10 +136,12 @@
                                         <span>{{ $filteredTotal }}</span>
                                     </p>
                                 @else
-                                    <p class="form_count_total">Total de archivos: <span>{{ $totalFiles }}</span>
+                                    <p class="form_count_total">Total de archivos:
+                                        <span>{{ $totalFiles }}</span>
                                     </p>
                                 @endif
                             </div>
+
 
                             <div class="clear"></div>
 

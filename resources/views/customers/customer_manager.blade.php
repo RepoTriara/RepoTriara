@@ -195,24 +195,36 @@
                                             </td>
 
                                             <td>
-                                                @if ($client->own_files_count > 0 || $client->group_files_count > 0)
-                                                    <a href="{{ route('file_manager', ['client_id' => $client->id]) }}"
-                                                        class="btn btn-primary">{{ __('Archivos') }}</a>
+                                               @if ($client->own_files_count > 0 || $client->group_files_count > 0)
+                                                    <a href="{{ route('file_manager', ['client_id' => $client->id]) }}" class="btn btn-primary">
+                                                        {{ __('Archivos') }}
+                                                    </a>
                                                 @else
-                                                    <a href="javascript:void(0);" class="btn disabled-btn"
-                                                        tabindex="-1">{{ __('Archivos') }}</a>
+                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
+                                                        {{ __('Archivos') }}
+                                                    </a>
                                                 @endif
 
                                                 @if ($client->group_count > 0)
-                                                    <a href="{{ route('manage_company', ['member' => $client->id]) }}"
-                                                        class="btn btn-primary">{{ __('Grupos') }}</a>
+                                                    <a href="{{ route('manage_company', ['member' => $client->id]) }}" class="btn btn-primary">
+                                                        {{ __('Grupos') }}
+                                                    </a>
                                                 @else
-                                                    <a href="javascript:void(0);" class="btn disabled-btn"
-                                                        tabindex="-1">{{ __('Grupos') }}</a>
+                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
+                                                        {{ __('Grupos') }}
+                                                    </a>
                                                 @endif
 
-                                                <a href="{{ route('my_files', ['cliente_id' => $client->id]) }}"
-                                                    class="btn btn-primary">Como cliente</a>
+                                                @if ($client->own_files_count)
+                                                    <a href="{{ route('my_files', ['cliente_id' => $client->id]) }}" class="btn btn-primary">
+                                                        {{ __('Como cliente') }}
+                                                    </a>
+                                                @else
+                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
+                                                        {{ __('Como cliente') }}
+                                                    </a>
+                                                @endif
+
                                             </td>
 
                                             <td><a href="{{ route('customer_manager.edit', ['id' => $client->id]) }}"
@@ -361,7 +373,7 @@
                 title: 'Error',
                 text: '{{ session('error') }}',
                 icon: 'error',
-                confirmButtonText: 'Aceptar' 
+                confirmButtonText: 'Aceptar'
             });
         @endif
     });
