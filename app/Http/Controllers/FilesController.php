@@ -246,6 +246,52 @@ private function assignFileSizes($files)
         return redirect()->back()->withErrors(['error' => 'El archivo no existe.']);
     }
 
+        public function edit($fileId)
+    {
+        $file = TblFile::findOrFail($fileId);
+
+        // Generar el token público si no existe
+        if (!$file->public_token) {
+            $file->public_token = Str::random(32);
+            $file->save();
+        }
+
+        // Filtrar para que solo se obtengan los clientes con level 0
+        $clients = User::where('level', 0)->get();
+        $groups = Groups::all();
+        $categories = TblCategory::all();
+
+        $selectedAssignments = TblFileRelation::where('file_id', $fileId)
+            ->whereNotNull('client_id')
+            ->pluck('client_id')
+            ->toArray();
+
+        $selectedGroups = TblFileRelation::where('file_id', $fileId)
+            ->whereNotNull('group_id')
+            ->pluck('group_id')
+            ->toArray();
+
+        $selectedCategories = TblCategoryRelation::where('file_id', $fileId)
+            ->pluck('cat_id')
+            ->toArray();
+
+        // Obtener el valor actual del campo 'hidden' de alguna de las relaciones.
+        // Asumimos que todas las relaciones tienen el mismo valor para 'hidden'
+        $relation = TblFileRelation::where('file_id', $file->id)->first();
+        $hideAll = $relation ? $relation->hidden : 0;
+
+        return view('files.file_edit', compact(
+            'file',
+            'clients',
+            'groups',
+            'categories',
+            'selectedAssignments',
+            'selectedGroups',
+            'selectedCategories',
+            'fileId',
+            'hideAll'
+        ));
+    }
 
 
     public function editBasic($fileId)
