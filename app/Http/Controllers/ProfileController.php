@@ -25,24 +25,30 @@ class ProfileController extends Controller
      * Actualizar la información del perfil del usuario.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $user = $request->user();
-        $user->fill($request->validated());
+{
+    $user = $request->user();
+    $validatedData = $request->validated();
 
-        // Guardar los campos adicionales
-        $user->address = $request->input('address');
-        $user->phone = $request->input('phone');
-
-        // Si se proporciona una nueva contraseña, actualizarla
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->input('password'));
-        }
-
-        $user->save();
-
-        // Mensaje de éxito
-        session()->flash('success', 'Perfil actualizado correctamente.');
-
-        return Redirect::route('profile.edit');
+    if (array_key_exists('password', $validatedData) && $validatedData['password'] === null) {
+        unset($validatedData['password']);
     }
+
+    $user->fill($validatedData);
+
+    // Guardar los campos adicionales
+    $user->address = $request->input('address');
+    $user->phone = $request->input('phone');
+
+    // Si se proporciona una nueva contraseña, actualizarla
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->input('password'));
+    }
+
+    $user->save();
+
+    // Mensaje de éxito
+    session()->flash('success', 'Perfil actualizado correctamente.');
+
+    return Redirect::route('profile.edit');
+}
 }
