@@ -121,7 +121,7 @@
                                         <th class="{{ request('orderby') === 'user' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
                                             data-hide="phone,tablet">
                                             <a
-                                                href="{{ route('customer_manager', ['orderby' => 'user', 'order' => request('orderby') === 'user' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Ingresaraquo
+                                                href="{{ route('customer_manager', ['orderby' => 'user', 'order' => request('orderby') === 'user' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Ingresar
                                                 nombre de usuario</a>
                                             <span class="footable-sort-indicator"></span>
                                         </th>

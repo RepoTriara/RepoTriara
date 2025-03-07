@@ -86,7 +86,8 @@
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" id="select_all" /></th>
-                                        <th>
+                                        <th class="{{ request('orderby') === 'name' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
+                                            data-hide="phone,tablet">
                                             <a
                                                 href="{{ route('categories.index', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
                                                 Nombre
@@ -200,7 +201,7 @@
                 icon: 'success',
                 title: 'Éxito',
                 text: message,
-                timer: 3000, // Tiempo en milisegundos (3000ms = 3 segundos)
+                timer: 4000, // Tiempo en milisegundos (3000ms = 3 segundos)
                 showConfirmButton: false
             }).then(() => {
                 location.reload(); // Recargar la página después de mostrar el mensaje de éxito
@@ -213,7 +214,9 @@
                 icon: 'error',
                 title: 'Error',
                 text: message,
-                confirmButtonText: 'OK'
+                confirmButtonText: 'Aceptar',            
+                confirmButtonColor: '#2778c4'
+
             });
         }
 
@@ -227,8 +230,14 @@
             // Verificar si se han seleccionado categorías
             var selectedCategories = $('input[name="categories[]"]:checked');
             if (selectedCategories.length === 0) {
-                showErrorMessage('Por favor, seleccione al menos una categoría para eliminar.');
-                return;
+ Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, seleccione al menos una categoría para eliminar.',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2778c4'
+        });                
+        return;
             }
 
             // Confirmación antes de enviar el formulario

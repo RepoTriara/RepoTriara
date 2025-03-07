@@ -232,7 +232,7 @@
                     errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe tener entre 5 y 60 caracteres.' });
                 }
                 if (!/^[a-zA-Z0-9.]+$/.test($("#user").val())) {
-                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe ser alfanumérico y puede contener (a-z, A-Z, 0-9, .).' });
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe ser alfanumérico, no puede tener espacios y puede contener (a-z, A-Z, 0-9, .).' });
                 }
                 if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
                     errors.push({ field: 'E-Mail', message: 'Formato no válido.' });
@@ -266,7 +266,9 @@
                         title: 'Errores de validación',
                         html: `<div style="text-align: left;">${errorHtml}</div>`,
                         icon: 'error',
-                        confirmButtonText: 'Aceptar',
+                        confirmButtonText: 'Aceptar',                        
+                        confirmButtonColor: '#2778c4',
+
                     });
                     return false;
                 }
@@ -297,7 +299,9 @@
                             title: 'Errores de validación',
                             html: `<div style="text-align: left;">${errorMessages}</div>`,
                             icon: 'error',
-                            confirmButtonText: 'Aceptar',
+                            confirmButtonText: 'Aceptar',                        
+                            confirmButtonColor: '#2778c4',
+
                         });
                     } else if (data.message) {
                         // Si hay un mensaje de éxito
@@ -316,7 +320,9 @@
                             title: 'Error',
                             text: 'Hubo un problema al registrar el cliente.',
                             icon: 'error',
-                            confirmButtonText: 'Aceptar',
+                            confirmButtonText: 'Aceptar', 
+                            confirmButtonColor: '#2778c4',
+
                         });
                     }
                 })
@@ -326,7 +332,9 @@
                         title: 'Error',
                         text: 'Hubo un problema al procesar la solicitud.',
                         icon: 'error',
-                        confirmButtonText: 'Aceptar',
+                        confirmButtonText: 'Aceptar',                         
+                        confirmButtonColor: '#2778c4',
+
                     });
                 });
         });

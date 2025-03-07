@@ -311,7 +311,9 @@
                                 title: 'Error',
                                 text: 'Debes seleccionar una acción para proceder.',
                                 icon: 'error',
-                                confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
+                                confirmButtonText: 'Aceptar', 
+                                confirmButtonColor: '#2778c4'
+
                             });
                             return;
                         }

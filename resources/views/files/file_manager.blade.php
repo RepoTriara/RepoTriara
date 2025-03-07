@@ -165,7 +165,7 @@
                                             </a>
                                         </th>
                                         <th>Tamaño</th>
-                                        <th class="{{ request('sort') === 'uploader' ?  'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                        <th class="{{ request('sort') === 'uploader' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
                                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'uploader', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
                                                class="{{ request('sort') === 'uploader' ? 'active-sort' : '' }}">
                                                 Cargador
@@ -330,15 +330,45 @@
             window.location.href = url.toString();
         }
     </script>
+   <script>
+        document.getElementById('select_all').addEventListener('click', function() {
+            let isChecked = this.checked;
+            let checkboxes = document.querySelectorAll('input[name="batch[]"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = isChecked;
+            });
+        });
+ 
+ 
+ 
+        $(document).ready(function() {
+            $('#urlModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                var modal = $(this);
+                modal.find('#publicUrl').val(url);
+                modal.find('#publicUrl').click(function() {
+                    $(this).select();
+                });
+            });
+        });
+ 
+        function goToPageFiles() {
+            const page = document.getElementById('go_to_page_files').value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            window.location.href = url.toString();
+        }
+    </script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const downloadForm = document.getElementById('bulkActionForm');
         const delay = 3000; // Tiempo de espera (en milisegundos)
-
+ 
         downloadForm.onsubmit = function(e) {
             const action = document.getElementById('action').value;
             const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
-
+ 
             if (action === 'none' || selectedFiles.length === 0) {
                 e.preventDefault();
                 Swal.fire({
@@ -349,7 +379,7 @@
                 });
                 return;
             }
-
+ 
             if (action === 'delete') {
                 e.preventDefault();
                 Swal.fire({
@@ -368,7 +398,7 @@
                 });
             } else if (action === 'zip') {
                 e.preventDefault();
-
+ 
                 Swal.fire({
                     title: 'Por favor, espera',
                     html: `
@@ -380,14 +410,14 @@
                     allowOutsideClick: false,
                     showConfirmButton: false
                 });
-
+ 
                 setTimeout(() => {
                     Swal.close();
                     e.target.submit();
                 }, delay);
             }
         };
-
+ 
         // Verificar si hay un mensaje de éxito o error desde el backend
         @if (session('success'))
             Swal.fire({
@@ -404,7 +434,7 @@
                 confirmButtonText: 'Aceptar'
             });
         @endif
-
+ 
         // Funcionalidad para seleccionar todos los checkboxes
         document.getElementById('select_all').addEventListener('click', function() {
             var isChecked = this.checked;

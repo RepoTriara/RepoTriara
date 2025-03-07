@@ -143,7 +143,9 @@
                         icon: 'error',
                         title: 'Error',
                         text: message,
-                        confirmButtonText: 'Aceptar'
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4'
+
                     });
                 }
 

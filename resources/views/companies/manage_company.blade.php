@@ -213,16 +213,32 @@
                     }
                 });
             } else {
-                Swal.fire('Error', 'Seleccione al menos un grupo para eliminar.', 'error');
-            }
+            Swal.fire({
+                title: 'Error',
+                text: 'Seleccione al menos un grupo para eliminar.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
         });
 
-        @if(session('success'))
-            Swal.fire('Éxito', '{{ session('success') }}', 'success');
+         @if(session('success'))
+            Swal.fire({
+                title: 'Éxito',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500 // Opcional: cierra automáticamente el mensaje después de 1.5 segundos
+            });
         @endif
 
-        @if(session('error'))
-            Swal.fire('Error', '{{ session('error') }}', 'error');
+         @if(session('error'))
+            Swal.fire({
+                title: 'Error',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         @endif
     </script>
 

@@ -324,7 +324,7 @@
                     errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe tener entre 5 y 60 caracteres.' });
                 }
                 if (!/^[a-zA-Z0-9.]+$/.test($("#user").val())) {
-                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe ser alfanumérico y puede contener (a-z, A-Z, 0-9, .).' });
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe ser alfanumérico, no puede tener espacios y puede contener (a-z, A-Z, 0-9, .).' });
                 }
                 if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
                     errors.push({ field: 'E-Mail', message: 'Formato no válido.' });
@@ -348,6 +348,15 @@
                 } else if (isNaN(maxFileSize) || maxFileSize < 0 || maxFileSize > 2048) {
                     errors.push({ field: 'Máximo tamaño de subida', message: 'El valor debe ser un número entre 0 y 2048 mb.' });
                 }
+                  // Validación del campo "Teléfono"
+                let phone = $("#phone").val().trim();
+                if (phone === '') {
+                    // No es obligatorio, no se hace nada si está vacío
+                } else if (!/^\d+$/.test(phone)) {
+                    errors.push({ field: 'Teléfono', message: 'El teléfono solo debe contener números.' });
+                } else if (phone.length < 7 || phone.length > 10) {
+                    errors.push({ field: 'Teléfono', message: 'El teléfono debe tener entre 7 y 10 caracteres.' });
+                }
 
                 if (errors.length > 0) {
                     let errorHtml = errors.map((error, index) =>
@@ -359,6 +368,8 @@
                         html: `<div style="text-align: left;">${errorHtml}</div>`,
                         icon: 'error',
                         confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4',
+
                     });
                     return false;
                 }
@@ -389,6 +400,8 @@
                         html: `<div style="text-align: left;">${errorMessages}</div>`,
                         icon: 'error',
                         confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4',
+
                     });
                 } else if (data.success) {
                     Swal.fire({
@@ -406,6 +419,8 @@
                         text: 'Hubo un problema al registrar el cliente.',
                         icon: 'error',
                         confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4',
+
                     });
                 }
             })
@@ -414,7 +429,9 @@
                     title: 'Error',
                     text: 'Hubo un problema al procesar la solicitud.',
                     icon: 'error',
-                    confirmButtonText: 'Aceptar',
+                    confirmButtonText: 'Aceptar',                        
+                    confirmButtonColor: '#2778c4',
+
                 });
             });
         });

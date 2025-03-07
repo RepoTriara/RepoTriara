@@ -126,7 +126,9 @@
                         icon: 'success',
                         title: 'Éxito',
                         text: message,
-                        confirmButtonText: 'Aceptar'
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4'
+
                     }).then(() => {
                         // Recargar la página después de mostrar el mensaje de éxito
                         window.location.reload();
@@ -139,13 +141,16 @@
                         icon: 'error',
                         title: 'Error',
                         text: message,
-                        confirmButtonText: 'Aceptar'
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4'
+
                     });
                 }
 
                 // Manejar el envío del formulario vía AJAX
                 $('form[name="addgroup"]').on('submit', function (e) {
                     e.preventDefault(); // Evitar el envío tradicional del formulario
+                    
 
                     // Actualizar el contenido de CKEditor al textarea
                     for (var instance in CKEDITOR.instances) {
@@ -174,7 +179,7 @@
                             if (xhr.status === 400 && xhr.responseJSON.error) {
                                 showErrorMessage(xhr.responseJSON.error);
                             } else {
-                                showErrorMessage('Hubo un problema al procesar la solicitud.');
+                                showErrorMessage("El campo nombre es obligatorio y no puede quedar vacío.");
                             }
                         }
                     });

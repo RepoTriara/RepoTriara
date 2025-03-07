@@ -140,6 +140,8 @@
                 text: errorMessage,
                 showConfirmButton: true, // Con botón de confirmación
                 confirmButtonText: 'Aceptar'
+                confirmButtonColor: '#2778c4'
+
             });
         @endif
     });

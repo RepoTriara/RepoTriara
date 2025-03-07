@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Crear Nueva Categoría &raquo; Repositorio</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png" sizes="32x32') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png" sizes="152x152') }}">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
@@ -33,7 +33,7 @@
                     </div>
                 </div>
 
-                
+
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-lg-6">
                         <div class="white-box">
@@ -112,8 +112,8 @@
     <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
     <script src="{{ asset('includes/js/main.js') }}"></script>
     <script src="{{ asset('includes/js/js.functions.php') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
-        
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
     $(document).ready(function () {
         $("form").submit(function (event) {
@@ -151,7 +151,8 @@
                         icon: 'error',
                         title: 'Error',
                         html: '<ul>' + errorMessages + '</ul>',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4'
                     });
                 }
             });

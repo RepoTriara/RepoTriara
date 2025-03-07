@@ -211,10 +211,19 @@
                 if ($("#name").val().trim() === '') {
                     errors.push({ field: 'Nombre', message: 'Complete el nombre.' });
                 }
-               
+                 const password = $("#password").val();
+                if (password.trim() !== '') { 
+                    if (password.length < 8) {
+                        errors.push({ field: 'Contraseña', message: 'Debe tener al menos 8 caracteres.' });
+    }
+      if (/\s/.test(password)) {
+                        errors.push({ field: 'Contraseña', message: 'No puede contener espacios.' });
+                    }
+                }
                 if ($("#email").val().trim() === '') {
                     errors.push({ field: 'Correo Electrónico', message: 'Complete el correo electrónico.' });
                 }
+                
               
                 if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
                     errors.push({ field: 'E-Mail', message: 'Formato no válido.' });
@@ -229,8 +238,10 @@
                         title: 'Errores de validación',
                         html: `<div style="text-align: left;">${errorHtml}</div>`,
                         icon: 'error',
-                        confirmButtonText: 'Aceptar',
+                        confirmButtonText: 'Aceptar', 
+                        confirmButtonColor: '#2778c4',
                     });
+                    
                     return false;
                 }
                 return true;
@@ -259,7 +270,7 @@
             .then(data => {
                 console.log('Datos recibidos:', data);
 
-                if (data.errors) {
+                 if (data.errors) {
                     let errorMessages = Object.entries(data.errors).map(([field, messages], index) => 
                         `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
                     ).join('');
@@ -268,7 +279,16 @@
                         title: 'Errores de validación',
                         html: `<div style="text-align: left;">${errorMessages}</div>`,
                         icon: 'error',
+                        confirmButtonText: 'Aceptar', 
+                        confirmButtonColor: '#2778c4',
+                    });
+                } else if (data.emailExists) { 
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'El correo electrónico ya está registrado con otro usuario.',
+                        icon: 'error',
                         confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4',
                     });
                 } else if (data.success) {
                     Swal.fire({
@@ -285,7 +305,8 @@
                         title: 'Error',
                         text: 'Hubo un problema al actualizar el usuario.',
                         icon: 'error',
-                        confirmButtonText: 'Aceptar',
+                        confirmButtonText: 'Aceptar', 
+                        confirmButtonColor: '#2778c4',
                     });
                 }
             })
@@ -293,9 +314,10 @@
                 console.error('Error durante el procesamiento:', error);
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un problema al procesar la solicitud.',
+                    text: '1.email:El Correo electronico ya hasido registrado.',
                     icon: 'error',
                     confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#2778c4',
                 });
             });
         });

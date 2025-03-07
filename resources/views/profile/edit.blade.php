@@ -17,7 +17,6 @@
         href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
-
 </head>
 
 <body class="users-edit logged-in logged-as-admin menu_hidden backend">
@@ -38,7 +37,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
 
                     <div class="col-xs-12 col-sm-12 col-lg-6">
@@ -116,9 +114,10 @@
                                                     class="form-control" value="{{ $user->phone }}" />
                                             </div>
                                         </div>
-                                        
+
                                         <div class="form-group">
-                                            <label for="notify" class="col-sm-4 control-label">Notificaciones</label>
+                                            <label for="notify"
+                                                class="col-sm-4 control-label">Notificaciones</label>
                                             <div class="col-sm-8">
                                                 <!-- Campo oculto para asegurar que se envíe "0" si el checkbox no está marcado -->
                                                 <input type="hidden" name="notify" value="0">
@@ -153,84 +152,49 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const form = document.querySelector('form[name="adduser"]');
+                // Mensaje de éxito al actualizar el perfil
+                @if (session()->has('success'))
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: '{{ session('success') }}',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4'
 
-                    form.addEventListener('submit', function(e) {
-                        // Obtén los valores de los campos
-                        const name = document.getElementById('name').value.trim();
-                        const email = document.getElementById('email').value.trim();
-                        const password = document.getElementById('password').value.trim();
-
-                        // Validaciones
-                        if (name === '') {
-                            e.preventDefault();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'El campo "Nombre" es obligatorio.',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-                            return;
-                        }
-
-                        if (email === '') {
-                            e.preventDefault();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'El campo "E-Mail" es obligatorio.',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-                            return;
-                        }
-
-                        if (!validateEmail(email)) {
-                            e.preventDefault();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Por favor, ingresa un correo electrónico válido.',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-                            return;
-                        }
-
-                        if (password !== '' && password.length < 8) {
-                            e.preventDefault();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'La contraseña debe tener al menos 8 caracteres.',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-                            return;
-                        }
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: 'El formulario se ha validado correctamente.',
-                            showConfirmButton: false, // Sin botón "OK"
-                            timer: 4000, // Desaparece después de 3 segundos
-                        }).then(() => {
-                            // Envía el formulario después de que el mensaje desaparezca
-                            form.submit();
-                        });
                     });
+                @endif
 
-                    // Función para validar el formato del correo electrónico
-                    function validateEmail(email) {
-                        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        return regex.test(email);
-                    }
-                });
+                // Mensaje de error general
+                @if (session()->has('error'))
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: '{{ session('error') }}',
+                        confirmButtonText: 'Reintentar'
+                        confirmButtonColor: '#2778c4'
+
+                    });
+                @endif
+
+                // Validación de errores en el formulario
+                @if ($errors->any())
+                    let errorMessages = '<ul>';
+                    @foreach ($errors->all() as $error)
+                        errorMessages += '<li>{{ $error }}</li>';
+                    @endforeach
+                    errorMessages += '</ul>';
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Errores en el formulario',
+                        html: errorMessages,
+                        confirmButtonText: 'Corregir'
+                    });
+                @endif
             </script>
+
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 
