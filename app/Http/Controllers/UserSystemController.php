@@ -130,7 +130,14 @@ class UserSystemController extends Controller
         // Validar los datos enviados desde el formulario
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:tbl_users'],
+            'email' => [
+            'required',
+            'string',
+            'email:rfc,dns', // Verifica formato RFC y existencia del dominio
+            'max:255',
+            'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',
+            'unique:' . User::class
+            ],
             'password' => ['required', 'string', 'min:8'],
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users'],
             'level' => ['required', 'in:10,8'], // Validar que level sea 10 o 8
@@ -171,7 +178,14 @@ class UserSystemController extends Controller
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'user' => 'required|string|max:60',
-        'email' => 'required|email|max:255|unique:tbl_users,email,' . $id,
+        'email' => [
+                'required',
+                'string',
+                'email:rfc,dns', // Verifica formato RFC y existencia del dominio
+                'max:255',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/', // Dominios de 2 a 63 caracteres
+                'unique:tbl_users,email,' . ($id ?? 'NULL') . ',id'
+            ],
         'level' => 'required|in:10,8',
         'password' => 'nullable|string|min:8',
         'active' => 'boolean',

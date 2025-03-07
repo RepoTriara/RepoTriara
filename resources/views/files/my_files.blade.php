@@ -85,7 +85,7 @@
                                                 <select name="categories[]" class="txtfield form-control">
                                                     <option value="all"
                                                         {{ in_array('all', request()->input('categories', [])) ? 'selected' : '' }}>
-                                                        All categories
+                                                        Todas las categorias
                                                     </option>
                                                     @foreach ($categories as $category)
                                                         <option value="{{ $category->id }}"
@@ -171,49 +171,44 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($files as $file)
-                                                <tr class="table_row">
-                                                    <td>
-                                                        <input type="checkbox" name="file_ids[]"
-                                                            value="{{ $file->id }}"
-                                                            class="footable-sort-indicator">
-                                                    </td>
-                                                    <td>
-                                                        <a
-                                                            href="{{ route('file.directDownload', ['id' => $file->id]) }}">{{ $file->filename }}</a>
-                                                        <span class="footable-sort-indicator"></span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="label label-success label_big">
-                                                            {{ strtoupper(pathinfo($file->original_url, PATHINFO_EXTENSION)) }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        {{ $file->description ?? 'N/A' }}
-                                                    </td>
-                                                    <td>{{ $file->size }}</td>
-                                                    <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}
-                                                    </td>
-                                                    <td>
-                                                        @if ($file->formattedExpiryDate)
-                                                            <span class="label label-primary label_big">
-                                                                <strong>{{ $file->formattedExpiryDate }}</strong>
-                                                            </span>
-                                                        @else
-                                                            <span class="label label-success label_big">
-                                                                Nunca
-                                                            </span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <a href="{{ route('file.directDownload', ['id' => $file->id]) }}"
-                                                            class="btn btn-primary">
-                                                            Descargar
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
+    @forelse ($files as $file)
+        <tr class="table_row">
+            <td>
+                <input type="checkbox" name="file_ids[]" value="{{ $file->id }}" class="footable-sort-indicator">
+            </td>
+            <td>
+                <a href="{{ route('file.directDownload', ['id' => $file->id]) }}">{{ $file->filename }}</a>
+                <span class="footable-sort-indicator"></span>
+            </td>
+            <td>
+                <span class="label label-success label_big">
+                    {{ strtoupper(pathinfo($file->original_url, PATHINFO_EXTENSION)) }}
+                </span>
+            </td>
+            <td>{{ $file->description ?? 'N/A' }}</td>
+            <td>{{ $file->size }}</td>
+            <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}</td>
+            <td>
+                @if ($file->formattedExpiryDate)
+                    <span class="label label-primary label_big">
+                        <strong>{{ $file->formattedExpiryDate }}</strong>
+                    </span>
+                @else
+                    <span class="label label-success label_big">Nunca</span>
+                @endif
+            </td>
+            <td class="text-center">
+                <a href="{{ route('file.directDownload', ['id' => $file->id]) }}" class="btn btn-primary">
+                    Descargar
+                </a>
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="8" class="text-center">No se encontraron registros.</td>
+        </tr>
+    @endforelse
+</tbody>
                                     </table>
 
                                     <div class="container-fluid text-center">
@@ -311,14 +306,18 @@
                     title: '¡Éxito!',
                     text: '{{ session('success') }}',
                     icon: 'success',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#2778c4'
+
                 });
             @elseif (session('error'))
                 Swal.fire({
                     title: 'Error',
                     text: '{{ session('error') }}',
                     icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#2778c4'
+
                 });
             @endif
 

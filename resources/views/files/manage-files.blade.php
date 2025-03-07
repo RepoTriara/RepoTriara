@@ -95,7 +95,7 @@
                                         <th
                                             class="active {{ request('sort') === 'timestamp' ? 'footable-sorted-' . request('direction') : '' }}">
                                             <a
-                                                href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                                                href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction','desc' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                                 Adicionado
                                             </a>
                                             <span class="footable-sort-indicator"></span>
@@ -121,7 +121,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($files as $file)
+                                    @forelse ($files as $file)
                                         <tr class="table_row">
                                             <td><input type="checkbox" name="batch[]" value="{{ $file->id }}"></td>
 
@@ -142,7 +142,11 @@
                                             <td><a href="{{ route('files.editBasic', $file->id) }}"
                                                     class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a></td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="8" class="text-center">No se encontraron registros.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </form>

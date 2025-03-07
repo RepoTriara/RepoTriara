@@ -15,10 +15,9 @@ class HandleNotFound
             return $next($request);
         } catch (NotFoundHttpException $e) {
             if (Auth::check()) {
-                return redirect()->back()->with('error', 'Página no encontrada. Volviendo atrás.');
+                return redirect()->back(); // Redirige sin mensaje
             }
-            return redirect()->route('login')->with('error', 'Página no encontrada. Inicia sesión.');
+            return redirect()->route('login'); // Redirige sin mensaje
         }
     }
 }
-

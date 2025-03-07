@@ -139,36 +139,57 @@
             <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
             <script src="{{ asset('includes/js/ckeditor/ckeditor.js') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-                document.getElementById('guardar').addEventListener('click', function(event) {
-                    event.preventDefault(); // Evita el envío inmediato del formulario
-                    // Envía el formulario utilizando AJAX (Fetch API)
-                    fetch(event.target.closest('form').action, {
-                        method: 'POST',
-                        body: new FormData(event.target.closest('form'))
-                    }).then(response => {
-                        if (response.ok) {
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $("form").submit(function(event) {
+                        event.preventDefault(); // Evita el envío inmediato del formulario
+
+                        let titulo = $('input[name="filename"]').val().trim();
+                        let descripcion = $('textarea[name="description"]').val().trim();
+
+                        if (titulo === "") {
                             Swal.fire({
-                                title: '¡Guardado!',
-                                text: 'Los cambios se han guardado correctamente.',
-                                icon: 'success',
-                                timer: 2000, // El mensaje se quitará automáticamente después de 2 segundos
-                                showConfirmButton: false
+                                title: 'Error',
+                                text: 'El campo Título es obligatorio y no puede estar en blanco.',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar',
+                                confirmButtonColor: '#2778c4'
                             });
-                        } else {
+                            return false;
+                        }
+
+                        // Si el título no está vacío, envía el formulario
+                        fetch(event.target.action, {
+                            method: 'POST',
+                            body: new FormData(event.target)
+                        }).then(response => {
+                            if (response.ok) {
+                                Swal.fire({
+                                    title: '¡Guardado!',
+                                    text: 'Los cambios se han guardado correctamente.',
+                                    icon: 'success',
+                                    timer: 2000, // El mensaje se quitará automáticamente después de 2 segundos
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.href = "{{ route('manage-files') }}"; // Redirige después de guardar
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Hubo un problema al guardar los cambios.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Aceptar',
+                                    confirmButtonColor: '#2778c4'
+                                });
+                            }
+                        }).catch(error => {
                             Swal.fire({
                                 title: 'Error',
                                 text: 'Hubo un problema al guardar los cambios.',
                                 icon: 'error',
-                                confirmButtonText: 'Aceptar'
+                                confirmButtonText: 'Aceptar',
+                                confirmButtonColor: '#2778c4'
                             });
-                        }
-                    }).catch(error => {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Hubo un problema al guardar los cambios.',
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
                         });
                     });
                 });

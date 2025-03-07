@@ -56,10 +56,13 @@ class CompanyController extends Controller
     ]);
 
     // Obtener el ID del usuario autenticado
-    $userName = Auth::user()->user;
+    $userName = Auth::user()->name;
 
     // **Modificar aquí: quitar strip_tags para conservar el formato HTML**
     $description = $request->input('add_group_form_description', '');
+        if (empty($description)) {
+            $description = '';
+        }
 
     // Si prefieres permitir solo ciertas etiquetas, puedes hacer:
     // $description = strip_tags($request->input('add_group_form_description', ''), '<b><i><strong><em><u>');

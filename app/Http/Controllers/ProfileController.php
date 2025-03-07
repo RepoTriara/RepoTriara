@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class ProfileController extends Controller
 {
     /**
-     * Show the form for editing the user's profile.
+     * Mostrar el formulario de edición del perfil.
      */
     public function edit(Request $request): View
     {
@@ -22,24 +22,27 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile information.
+     * Actualizar la información del perfil del usuario.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
         $user->fill($request->validated());
 
-        // Agregar los campos address y phone
+        // Guardar los campos adicionales
         $user->address = $request->input('address');
         $user->phone = $request->input('phone');
 
-        // Actualizar la contraseña si se proporciona
+        // Si se proporciona una nueva contraseña, actualizarla
         if ($request->filled('password')) {
             $user->password = Hash::make($request->input('password'));
         }
 
         $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Mensaje de éxito
+        session()->flash('success', 'Perfil actualizado correctamente.');
+
+        return Redirect::route('profile.edit');
     }
 }
