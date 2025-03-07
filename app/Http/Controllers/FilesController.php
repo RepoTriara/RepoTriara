@@ -913,9 +913,9 @@ public function store(Request $request)
     $search    = $request->query('search');
     $category  = $request->query('category', 0);
     $sorts     = $request->query('sort', 'timestamp');
-    $direction = $request->query('direction', 'asc');
+    $direction = $request->query('direction', 'desc');
     $orderby   = $request->input('orderby', 'filename');
-    $order     = $request->input('order', 'asc');
+    $order     = $request->input('order', 'desc');
 
     // Definir título de la página
     $pageTitle = __('Administración del Sistema');

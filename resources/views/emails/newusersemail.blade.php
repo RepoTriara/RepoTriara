@@ -87,11 +87,11 @@
             </div>
 
             <p>Puede acceder al repositorio a través de la siguiente URL:</p>
-            <p><a href="{{ config('app.url') }}" target="_blank">{{ config('app.url') }}</a></p> <p>Para mayor seguridad le recomendamos iniciar sesión y cambiar su contraseña por una nueva.</p>
+            <p>  <a href="{{ url('/') }}" target="_blank">Ingresando aquí</a>.</p> <p>Para mayor seguridad le recomendamos iniciar sesión y cambiar su contraseña por una nueva.</p>
         </div>
         <div class="footer">
-            <a href="{{ config('app.url') }}" target="_blank">
-                <img src="{{ asset('img/icon-footer-email.jpg')}}" alt="" >
+            <a href="{{ url('/') }}" target="_blank">
+                <img src="{{ asset('img/icon-footer-email.jpg')}}" alt="Claro" >
             </a>
         </div>
     </div>

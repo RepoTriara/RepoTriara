@@ -51,7 +51,12 @@
                             <b>
                                 <p class="text-muted">
                                     Favor, complete la siguiente información para finalizar el proceso de carga.
-                                    Recuerde que "Título", "Asignación" y "Categoría" son campos obligatorios.
+
+                                    @if(in_array(auth()->user()->level, [8, 10]))
+                                        Recuerde que "Título", "Asignación" y "Categoría" son campos obligatorios.
+                                    @elseif(auth()->user()->level == 0)
+                                        Recuerde que solo el campo "Título" es obligatorio.
+                                    @endif
                                 </p>
                             </b>
                             <!--div class="message message_info"><strong>Notas</strong>: Puedes saltarte la asignación si quiere. Los archivos se conservan y puede añadir a clientes o grupos más tarde.</div-->

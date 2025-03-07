@@ -114,7 +114,14 @@ class ClientController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users'],
             'password' => ['required', 'string', 'min:8'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+            'email' => [
+            'required',
+            'string',
+            'email:rfc,dns', // Verifica formato RFC y existencia del dominio
+            'max:255',
+            'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',
+            'unique:' . User::class
+            ],
             'address' => ['nullable', 'string'],
             'phone' => ['nullable', 'string', 'max:32'],
             'contact' => ['nullable', 'string', 'max:255'],
@@ -233,7 +240,14 @@ public function update(Request $request, $id)
             'name' => ['required', 'string', 'max:255'],
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users,user,' . $id],
             'password' => ['nullable', 'string', 'min:8'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:tbl_users,email,' . $id],
+            'email' => [
+                'required',
+                'string',
+                'email:rfc,dns', // Verifica formato RFC y existencia del dominio
+                'max:255',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/', // Dominios de 2 a 63 caracteres
+                'unique:tbl_users,email,' . ($id ?? 'NULL') . ',id'
+            ],
             'address' => ['nullable', 'string'],
             'phone' => ['nullable', 'string', 'max:32'],
             'contact' => ['nullable', 'string', 'max:255'],

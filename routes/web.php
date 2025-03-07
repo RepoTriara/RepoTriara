@@ -13,6 +13,8 @@ use App\Http\Controllers\FilesController;
 use Carbon\Carbon;
 use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ActivityLogService;
+use App\Enums\ActionType;
 
 Route::get('/test-timezone', function () {
     return response()->json([
@@ -25,14 +27,10 @@ Route::redirect('/', '/login');
 // Ruta genérica del dashboard protegida por autenticación (para level 8 y 10)
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'level:8,10,0'])->name('dashboard');
-
-
+})->middleware(['auth', 'level:8,10'])->name('dashboard');
 
 //Estadisticas Temporales
-
 Route::get('/statistics/data', [StatisticsController::class, 'getStatistics']);
-
 
 //Limpiar archivos temporales
 Route::post('/clear-temporary-files', [FilesController::class, 'clearTemporaryFiles'])->middleware(['auth', 'level:0,8,10'])->name('files.clearTemporaryFiles');
@@ -43,7 +41,6 @@ Route::get('/manage-files', action: [FilesController::class, 'manageFiles'])->mi
 Route::get('/direct-download/{id}', [FilesController::class, 'directDownload'])->name('file.directDownload');
 Route::post('/download-compresed', [FilesController::class, 'downloadCompresed'])->name('files.downloadCompresed');
 
-
 // Rutas para el manejo de clientes
 Route::middleware('auth', 'level:8,10')->group(function () {
 Route::get('/add_client', [ClientController::class, 'create'])->name('add_client');
@@ -53,7 +50,6 @@ Route::post('/customers/bulk_Action', [ClientController::class, 'bulkAction'])->
 Route::get('/customer_manager/{id}/edit', [ClientController::class, 'edit'])->name('customer_manager.edit');
 Route::put('/customer_manager/{id}', [ClientController::class, 'update'])->name('customer_manager.update');
 });
-
 
 // Rutas para el perfil de usuario
 Route::middleware('auth', 'level:0,8,10')->group(function () {
@@ -141,15 +137,32 @@ Route::middleware('auth' ,'level:10')->group(function () {
 });
 
 
-Route::fallback(function () {
-    // Si el usuario está autenticado, lo redirige a la página anterior
-    if (Auth::check()) {
-        return redirect()->back()->with('error', 'Página no encontrada. Redirigiendo a la anterior.');
-    }
 
-    // Si no está autenticado, lo envía al login
-    return redirect()->route('login')->with('error', 'Página no encontrada. Inicia sesión.');
+
+Route::middleware('auth')->group(function () {
+
+    // Iniciar sesión (Breeze maneja el login automáticamente)
+    Route::get('/login', function () {
+        ActivityLogService::log(ActionType::LOGIN, 'Inicio de sesión');
+        return redirect('/dashboard');
+    })->name('login');
+
+    // Cerrar sesión
+    Route::post('/logout', function () {
+        ActivityLogService::log(ActionType::LOGOUT, 'Cierre de sesión');
+        Auth::logout();
+        return redirect('/login');
+    })->name('logout');
 });
 
+
+/*Route::fallback(function () {
+    if (Auth::check()) {
+        return redirect()->back(); // Redirige sin mensaje
+    }
+    return redirect()->route('login'); // Redirige sin mensaje
+});
+*/
 // Incluir las rutas de autenticación
+
 require __DIR__ . '/auth.php';

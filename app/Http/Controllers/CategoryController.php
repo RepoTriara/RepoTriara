@@ -12,28 +12,48 @@ class CategoryController extends Controller
 {
     // Mostrar todas las categorías con la cantidad de archivos asociados
     public function index(Request $request)
-    {
-        // Iniciamos la consulta
-        $query = TblCategory::query();
+{
+    // Iniciamos la consulta
+    $query = TblCategory::query();
 
-        // Verificamos si hay un término de búsqueda
-        if ($request->has('search') && !empty($request->search)) {
-            // Filtramos por nombre o descripción de la categoría
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%');
-        }
-
-        // Agregamos el conteo de archivos relacionados
-        $query->withCount(['categoryRelations as files_count' => function ($q) {
-            $q->selectRaw('count(distinct file_id)');
-        }]);
-
-        // Usamos paginación en lugar de `all()`
-        $categories = $query->paginate(10); // 10 categorías por página
-        $totalCategories = $categories->total(); // Total de categorías
-
-        return view('category.categories', compact('categories', 'totalCategories'));
+    // Verificamos si hay un término de búsqueda
+    if ($request->has('search') && !empty($request->search)) {
+        $query->where('name', 'like', '%' . $request->search . '%')
+            ->orWhere('description', 'like', '%' . $request->search . '%');
     }
+
+    // Agregamos el conteo de archivos relacionados
+    $query->withCount(['categoryRelations as files_count' => function ($q) {
+        $q->selectRaw('count(distinct file_id)');
+    }]);
+
+    // Manejo del ordenamiento dinámico
+    $orderBy = $request->get('orderby', 'name'); // Por defecto, ordena por nombre
+    $order = $request->get('order', 'asc'); // Por defecto, en orden ascendente
+
+    // Validar que el ordenamiento sea válido
+    if (!in_array($orderBy, ['name', 'description'])) {
+        $orderBy = 'name'; // Solo permitimos ordenar por nombre o descripción
+    }
+    if (!in_array($order, ['asc', 'desc'])) {
+        $order = 'asc'; // Aseguramos que el orden sea válido
+    }
+
+    // Aplicamos la ordenación
+    $query->orderBy($orderBy, $order);
+
+    // Aplicamos paginación
+    $categories = $query->paginate(10)->appends([
+        'search' => $request->search,
+        'orderby' => $orderBy,
+        'order' => $order,
+    ]);
+
+    $totalCategories = $categories->total(); // Total de categorías
+
+    return view('category.categories', compact('categories', 'totalCategories'));
+}
+
 
     // Mostrar un formulario para crear una nueva categoría
     public function create()
@@ -86,18 +106,18 @@ class CategoryController extends Controller
 
     // Actualizar una categoría
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|unique:tbl_categories',
-            'parent' => 'nullable|exists:tbl_categories,id',
-            'description' => 'nullable',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|unique:tbl_categories,name,' . $id,
+        'parent' => 'nullable|exists:tbl_categories,id',
+        'description' => 'nullable',
+    ]);
 
-        $category = TblCategory::findOrFail($id);
-        $category->update($request->all());
+    $category = TblCategory::findOrFail($id);
+    $category->update($request->all());
 
-        return redirect()->route('categories.edit', $id)->with('sweetalert', 'Categoría actualizada correctamente.');
-    }
+    return redirect()->route('categories.edit', $id)->with('sweetalert', 'Categoría actualizada correctamente.');
+}
 
     // Eliminar una categoría individual
     public function destroy($id)
