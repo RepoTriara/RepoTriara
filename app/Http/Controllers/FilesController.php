@@ -771,7 +771,7 @@ public function store(Request $request)
     $search = $request->query('search');
     $selectedCategories = $request->query('categories', []); // Usamos $selectedCategories
     $sortColumn = $request->query('orderby', 'timestamp'); // Predeterminadamente 'timestamp'
-    $sortDirection = $request->query('order', 'asc');
+    $sortDirection = $request->query('order', 'desc'); // Predeterminadamente 'desc'
 
     // Validar que la columna a ordenar sea válida para evitar inyección SQL
     $allowedColumns = ['filename', 'description', 'timestamp'];
