@@ -17,10 +17,10 @@ class ProfileUpdateRequest extends FormRequest
 {
     return [
         'name' => [
-        'required',            
+        'required',
         'string',
         'max:60',
-        'min:3',
+        'min:5',
         'regex:/^[a-zA-ZÁÉÍÓÚáéíóúñÑ ]+$/u',
         'not_regex:/\s{2,}/',
         ],
