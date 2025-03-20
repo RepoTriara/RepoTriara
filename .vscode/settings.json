@@ -6,7 +6,7 @@
         "editor.defaultFormatter": "shufo.vscode-blade-formatter"
     },
     "[php]": {
-        "editor.defaultFormatter": "DEVSENSE.phptools-vscode"
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
     },
     "CodeGPT.apiKey": "CodeGPT Plus Beta",
     "[css]": {
