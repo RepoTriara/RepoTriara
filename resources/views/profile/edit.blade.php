@@ -153,7 +153,7 @@
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-            <script>
+           <script>
                 // Mensaje de éxito al actualizar el perfil
                 @if (session()->has('success'))
                     Swal.fire({
@@ -166,33 +166,78 @@
                     });
                 @endif
 
-                // Mensaje de error general
-                @if (session()->has('error'))
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: '{{ session('error') }}',
-                        confirmButtonText: 'Reintentar'
-                        confirmButtonColor: '#2778c4'
-
-                    });
-                @endif
-
-                // Validación de errores en el formulario
                 @if ($errors->any())
-                    let errorMessages = '<ul>';
-                    @foreach ($errors->all() as $error)
-                        errorMessages += '<li>{{ $error }}</li>';
-                    @endforeach
-                    errorMessages += '</ul>';
+        let errorMessages = '';
+        let uniqueErrors = {}; // Objeto para agrupar errores por campo
 
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Errores en el formulario',
-                        html: errorMessages,
-                        confirmButtonText: 'Corregir'
-                    });
-                @endif
+        // Clasificar y filtrar los errores por campo
+        @foreach ($errors->getMessages() as $field => $messages)
+            // Priorizar el mensaje específico para el campo "email"
+            if ('{{ $field }}' === 'email') {
+                if ({{ in_array('El formato del campo E-mail no es válido.', $messages) ? 'true' : 'false' }}) {
+                    uniqueErrors['email'] = ['El formato del campo E-mail no es válido.'];
+                } else {
+                    uniqueErrors['email'] = ['{{ $messages[0] }}']; // Tomar el primer mensaje de error para el campo "email"
+                }
+            } else {
+                // Otros campos (nombre, contraseña, etc.)
+                uniqueErrors['{{ $field }}'] = [];
+                @foreach ($messages as $message)
+                    if (!uniqueErrors['{{ $field }}'].includes('{{ $message }}')) {
+                        uniqueErrors['{{ $field }}'].push('{{ $message }}');
+                    }
+                @endforeach
+            }
+        @endforeach
+
+        // Construir el mensaje de error con una línea por campo
+        for (const [field, messages] of Object.entries(uniqueErrors)) {
+            if (messages.length > 0) {
+                errorMessages += `
+                    <div style="
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        width: 100%;
+                        margin-bottom: 5px;
+                        text-align: left;
+                        padding-left: 10px;
+                    ">
+                        ${messages.join(' | ')}
+                    </div>
+                `;
+            }
+        }
+
+        // Inyectar estilos CSS directamente en el documento
+        const style = document.createElement('style');
+        style.textContent = `
+            .custom-swal-popup {
+                max-width: 90% !important; /* Ajusta el ancho máximo del popup */
+                width: auto !important; /* Permite que el ancho se ajuste al contenido */
+            }
+            .custom-swal-html {
+                width: 100% !important; /* Ocupa todo el ancho disponible */
+                font-size: 14px !important; /* Ajusta el tamaño del texto */
+                text-align: left !important; /* Alinea el texto a la izquierda */
+                padding: 10px !important; /* Añade un poco de padding */
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Mostrar la alerta con los errores
+        Swal.fire({
+            icon: 'warning',
+            title: 'Errores en el formulario',
+            html: `<div class="custom-swal-html">${errorMessages}</div>`,
+            confirmButtonText: 'Corregir',
+            confirmButtonColor: '#2778c4',
+            customClass: {
+                popup: 'custom-swal-popup', // Clase personalizada para el contenedor de SweetAlert2
+                htmlContainer: 'custom-swal-html' // Clase personalizada para el contenido HTML
+            }
+        });
+    @endif
             </script>
 
         </div> <!-- main_content -->
