@@ -299,7 +299,8 @@
                                             @if ($savedFile->public_allow)
                                             <button type="button" class="btn btn-primary btn-sm"
                                                 data-toggle="modal" data-target="#urlModal"
-                                                data-url="{{ url('repositorio/public.php?id=' . $savedFile->id . '&token=' . $savedFile->public_token) }}">Público</button>
+                                                data-url="{{ route('file.showDownload', ['id' => $savedFile->id, 'token' => $savedFile->public_token]) }}"
+>Público</button>
                                             @else
                                             <button type="button" class="btn btn-secondary btn-sm"
                                                 disabled>Privado</button>
