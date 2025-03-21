@@ -12,7 +12,7 @@
                 h.remove()
             }
         });
-        e.prepend('<div class="plupload_wrapper plupload_scroll"><div id="' + f + '_container" class="plupload_container"><div class="plupload"><div class="plupload_header"><div class="plupload_header_content"><div class="plupload_header_title">' + a("Select files") + '</div><div class="plupload_header_text">' + a("Add files to the upload queue and click the start button.") + '</div></div></div><div class="plupload_content"><div class="plupload_filelist_header"><div class="plupload_file_name">' + a("Filename") + '</div><div class="plupload_file_action">&nbsp;</div><div class="plupload_file_status"><span>' + a("Status") + '</span></div><div class="plupload_file_size">' + a("Size") + '</div><div class="plupload_clearer">&nbsp;</div></div><ul id="' + f + '_filelist" class="plupload_filelist"></ul><div class="plupload_filelist_footer"><div class="plupload_file_name"><div class="plupload_buttons"><a href="#" class="plupload_button plupload_add">' + a("Add files") + '</a><a href="#" class="plupload_button plupload_start">' + a("Start upload") + '</a></div><span class="plupload_upload_status"></span></div><div class="plupload_file_action"></div><div class="plupload_file_status"><span class="plupload_total_status">0%</span></div><div class="plupload_file_size"><span class="plupload_total_file_size">0 b</span></div><div class="plupload_clearer">&nbsp;</div></div></div></div></div><input type="hidden" id="' + f + '_count" name="' + f + '_count" value="0" /></div><div class="plupload_progress"><div class="plupload_progress_container progress progress-striped progress-success active"><div class="plupload_progress_bar bar"></div></div></div>')
+        e.prepend('<div class="plupload_wrapper plupload_scroll"><div id="' + f + '_container" class="plupload_container"><div class="plupload"><div class="plupload_header"><div class="plupload_header_content"><div class="plupload_header_title">' + a("Select files") + '</div><div class="plupload_header_text">' + a("Add files to the upload queue and click the start button.") + '</div></div></div><div class="plupload_content"><div class="plupload_filelist_header"><div class="plupload_file_name">' + a("Nombre del archivo") + '</div><div class="plupload_file_action">&nbsp;</div><div class="plupload_file_status"><span>' + a("Estado") + '</span></div><div class="plupload_file_size">' + a("Tamaño") + '</div><div class="plupload_clearer">&nbsp;</div></div><ul id="' + f + '_filelist" class="plupload_filelist"></ul><div class="plupload_filelist_footer"><div class="plupload_file_name"><div class="plupload_buttons"><a href="#" class="plupload_button plupload_add">' + a("Agregar archivos") + '</a><a href="#" class="plupload_button plupload_start">' + a("Start upload") + '</a></div><span class="plupload_upload_status"></span></div><div class="plupload_file_action"></div><div class="plupload_file_status"><span class="plupload_total_status">0%</span></div><div class="plupload_file_size"><span class="plupload_total_file_size">0 b</span></div><div class="plupload_clearer">&nbsp;</div></div></div></div></div><input type="hidden" id="' + f + '_count" name="' + f + '_count" value="0" /></div><div class="plupload_progress"><div class="plupload_progress_container progress progress-striped progress-success active"><div class="plupload_progress_bar bar"></div></div></div>')
     }
     c.fn.pluploadQueue = function (e) {
         if (e) {
@@ -128,7 +128,11 @@
                     l.settings.browse_button = k + "_browse";
                     if (l.features.dragdrop && l.settings.dragdrop) {
                         l.settings.drop_element = k + "_filelist";
-                        c("#" + k + "_filelist").append('<li class="plupload_droptext">' + a("Drag files here.") + "</li>")
+                        c("#" + k + "_filelist").append(
+                            '<li class="plupload_droptext">' +
+                                a("Arrastra archivos aquí.") +
+                                "</li>"
+                        );
                     }
                     c("#" + k + "_container").attr("title", "Using runtime: " + m.runtime);
                     c("a.plupload_start", i).click(function (n) {

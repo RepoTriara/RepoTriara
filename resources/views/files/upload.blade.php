@@ -44,7 +44,7 @@
                         <div class="alert alert-info">Haz clic en Añadir archivos para seleccionar todos los archivos
                             que quieras subir, y luego haga clic en continuar. En el siguiente paso, podrá establecer un
                             nombre y descripción de cada archivo cargado. Recuerde que el tamaño máximo permitido por
-                            archivo (en mb.) es <strong>2048</strong>. Además, los archivos expirarán un año posterior a
+                            archivo (en MB.) es <strong>2048</strong>. Además, los archivos expirarán un año posterior a
                             la fecha de subida.</div>
                         </p>
                      <script type="text/javascript">
