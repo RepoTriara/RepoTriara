@@ -765,85 +765,60 @@ public function store(Request $request)
         }
     }
 
-    public function myFiles(Request $request)
+  public function myFiles(Request $request)
 {
-    // Obtener parámetros opcionales de la query string
     $search = $request->query('search');
-    $selectedCategories = $request->query('categories', []); // Usamos $selectedCategories
-    $sortColumn = $request->query('orderby', 'timestamp'); // Predeterminadamente 'timestamp'
-    $sortDirection = $request->query('order', 'desc'); // Predeterminadamente 'desc'
+    $selectedCategories = $request->query('categories', []);
+    $sortColumn = $request->query('orderby', 'timestamp');
+    $sortDirection = $request->query('order', 'desc');
 
-    // Validar que la columna a ordenar sea válida para evitar inyección SQL
     $allowedColumns = ['filename', 'description', 'timestamp'];
     if (!in_array($sortColumn, $allowedColumns)) {
         $sortColumn = 'timestamp';
     }
 
-    // Definir título de la página
     $pageTitle = __('Administración del Sistema');
-
-    // Obtener el ID del cliente (si no se pasa, se usa el del usuario autenticado)
     $clientId = $request->query('cliente_id', Auth::user()->id);
-
-    // Obtener IDs de los grupos a los que pertenece el cliente
     $groupIds = Members::where('client_id', $clientId)->pluck('group_id')->toArray();
 
-    // Construir la consulta para los archivos propios del cliente y los de sus grupos
     $filesQuery = TblFile::where(function ($query) use ($clientId, $groupIds) {
         $query->whereHas('fileRelations', function ($subQuery) use ($clientId) {
-            $subQuery->where('client_id', $clientId); // Archivos propios del cliente
+            $subQuery->where('client_id', $clientId);
         })->orWhereHas('fileRelations', function ($subQuery) use ($groupIds) {
-            $subQuery->whereIn('group_id', $groupIds); // Archivos de los grupos a los que pertenece
+            $subQuery->whereIn('group_id', $groupIds);
         });
     })
-    ->with([
-        'groups' => function ($query) {
-            $query->select('tbl_groups.id', 'tbl_groups.description'); // Evitar ambigüedad
-        },
-        'fileRelations' // Necesario para filtrar los que están ocultos
-    ]);
+    ->with(['groups:id,description', 'fileRelations', 'categoryRelations']);
 
-    // Filtrar por categoría si se han seleccionado
-    if (!empty($selectedCategories)) {
+    if (!empty($selectedCategories) && !in_array('all', $selectedCategories)) {
         $filesQuery->whereHas('categoryRelations', function ($query) use ($selectedCategories) {
             $query->whereIn('cat_id', $selectedCategories);
         });
     }
 
-    // Filtrar por búsqueda (por filename, description o timestamp)
     if ($search) {
         $filesQuery->where(function ($query) use ($search) {
-            $query->where('filename', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%')
-                ->orWhere('timestamp', 'like', '%' . $search . '%');
+            $query->where('filename', 'like', "%$search%")
+                ->orWhere('description', 'like', "%$search%")
+                ->orWhere('timestamp', 'like', "%$search%");
         });
     }
 
-    // Excluir archivos ocultos: si alguna relación tiene hidden = 1, se descarta el archivo
     $filesQuery->whereDoesntHave('fileRelations', function ($q) {
         $q->where('hidden', 1);
     });
 
-    // Aplicar ordenación
     $filesQuery->orderBy($sortColumn, $sortDirection);
-
-    // Obtener los archivos (sin paginar aún)
     $files = $filesQuery->get();
 
-    // Asignar propiedades adicionales a cada archivo
     foreach ($files as $file) {
-        // Usar el valor de 'url' como nombre almacenado
         $file->stored_filename = $file->url;
-
-        // Rutas de almacenamiento (privado y público)
         $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
         $publicFilePath  = storage_path('app/public/uploads/' . $file->stored_filename);
 
-        // Obtener las rutas reales
         $realPrivatePath = realpath($privateFilePath);
         $realPublicPath  = realpath($publicFilePath);
 
-        // Asignar tamaño del archivo
         if ($realPrivatePath && file_exists($realPrivatePath)) {
             $file->size = $this->getFormattedFileSize($realPrivatePath);
         } elseif ($realPublicPath && file_exists($realPublicPath)) {
@@ -852,7 +827,6 @@ public function store(Request $request)
             $file->size = '--';
         }
 
-        // Procesar la fecha de expiración
         if ($file->expires && $file->expiry_date) {
             $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
             $file->isExpired = $expiryDate->isPast();
@@ -863,7 +837,6 @@ public function store(Request $request)
         }
     }
 
-    // Filtrar los archivos: mostrar siempre los archivos propios y, para los demás, sólo los que no han expirado
     $files = $files->filter(function ($file) use ($clientId) {
         if ($file->fileRelations->contains('client_id', $clientId)) {
             return true;
@@ -871,37 +844,22 @@ public function store(Request $request)
         return !$file->isExpired;
     });
 
-    // Obtener las categorías asociadas a los archivos visibles
     $categoryIds = TblCategoryRelation::whereIn('file_id', $files->pluck('id'))
         ->pluck('cat_id')
         ->unique();
     $categories = TblCategory::whereIn('id', $categoryIds)->get();
 
-    // Si se han enviado categorías en el request, filtrar los archivos según las seleccionadas
-    if ($request->has('categories')) {
-        if (!in_array('all', $selectedCategories)) {
-            $files = $files->filter(function ($file) use ($selectedCategories) {
-                return $file->categoryRelations->whereIn('cat_id', $selectedCategories)->isNotEmpty();
-            });
-        }
-    }
-
-    // Total de archivos después de aplicar los filtros
     $filteredTotal = $files->count();
-
-    // Paginación manual de los resultados
     $files = new \Illuminate\Pagination\LengthAwarePaginator(
-        $files->forPage($request->get('page', 1), 10), // Archivos de la página actual
+        $files->forPage($request->get('page', 1), 10),
         $filteredTotal,
         10,
         $request->get('page', 1),
         ['path' => $request->url(), 'query' => $request->query()]
     );
 
-    // Renderizar la vista con los datos necesarios
     return view('files.my_files', compact('pageTitle', 'files', 'filteredTotal', 'categories'));
 }
-
 
 
 
