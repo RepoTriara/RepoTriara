@@ -1589,4 +1589,15 @@ li .required.password_toggle {
     white-space: nowrap;
     display: inline-block;
 }
-/*# sourceMappingURL=main.min.css.map */
+
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.file-info-container {
+    flex-grow: 1;
+}
+
+

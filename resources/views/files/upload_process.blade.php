@@ -97,22 +97,20 @@
                                     style="border: 1px solid #ccc; border-radius: 0 0 5px 5px; padding: 20px; margin-bottom: 20px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); background-color: #fff;">
                                     <div class="row">
                                         <!-- Información del archivo -->
-                                        <div class="col-sm-6 col-md-3" style="margin-bottom: 20px;">
-                                            <h3 style="font-size: 16px; margin-bottom: 15px;">Información de
-                                                archivo</h3>
-                                            <input type="hidden" name="file[{{ $file->id }}][file]"
-                                                value="{{ $file->file }}" />
+                                        <div class="col-sm-6 col-md-3 file-info-container" style="margin-bottom: 20px;">
+                                            <h3 style="font-size: 16px; margin-bottom: 15px;">Información de archivo</h3>
+                                            <input type="hidden" name="file[{{ $file->id }}][file]" value="{{ $file->file }}" />
                                             <div class="form-group">
                                                 <label style="font-weight: bold;">Título</label>
                                                 <input type="text" name="file[{{ $file->id }}][name]"
                                                     value="{{ old('file.' . $file->id . '.name', $file->title) }}"
-                                                    class="form-control"
-                                                    placeholder="Ingrese aquí el título del archivo" required />
+                                                    class="form-control" placeholder="Ingrese aquí el título del archivo" required />
                                             </div>
                                             <div class="form-group">
                                                 <label style="font-weight: bold;">Descripción</label>
                                                 <textarea name="file[{{ $file->id }}][description]" class="form-control"
-                                                    placeholder="Opcionalmente, introduzca aquí una descripción del archivo.">{{ old('file.' . $file->id . '.description', $file->description) }}</textarea>
+                                                    placeholder="Opcionalmente, introduzca aquí una descripción del archivo."
+                                                    style="resize: none; width: 100%;">{{ old('file.' . $file->id . '.description', $file->description) }}</textarea>
                                             </div>
                                         </div>
 
