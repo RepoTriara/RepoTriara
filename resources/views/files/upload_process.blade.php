@@ -291,7 +291,8 @@
                                             @endphp
                                             <span
                                                 class="label {{ $isHidden ? 'label-danger' : 'label-success' }}">
-                                                Visible
+                                                {{ $isHidden ? 'Oculto' : 'Visible' }}
+                                               
                                             </span>
                                         </td>
                                         <td>{{ $savedFile->fileRelations->count() }}</td>

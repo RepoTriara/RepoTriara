@@ -33,7 +33,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Informacion de perfil</h2>
+                            <h2>Informacón de perfil</h2>
                         </div>
                     </div>
                 </div>
@@ -93,8 +93,7 @@
                                         <label for="email" class="col-sm-4 control-label">E-Mail</label>
                                         <div class="col-sm-8">
                                             <input type="text" name="email" id="email"
-                                                class="form-control required" value="{{ $user->email }}"
-                                                placeholder="Debe ser válido y único" />
+                                                class="form-control required" value="{{ $user->email }}"/>
                                         </div>
                                     </div>
 
@@ -111,7 +110,8 @@
                                             <label for="phone" class="col-sm-4 control-label">Teléfono</label>
                                             <div class="col-sm-8">
                                                 <input type="text" name="phone" id="phone"
-                                                    class="form-control" value="{{ $user->phone }}" />
+                                                    class="form-control" value="{{ $user->phone }}"
+                                                    placeholder="Solo números, sin espacios ni caracteres especiales" /> 
                                             </div>
                                         </div>
 
@@ -153,92 +153,105 @@
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-           <script>
-                // Mensaje de éxito al actualizar el perfil
-                @if (session()->has('success'))
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: '{{ session('success') }}',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#2778c4'
+           <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-                    });
-                @endif
+<script>
+    // Mensaje de éxito
+    @if (session()->has('success'))
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '{{ session('success') }}',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2778c4'
+        });
+    @endif
 
-                @if ($errors->any())
-        let errorMessages = '';
-        let uniqueErrors = {}; // Objeto para agrupar errores por campo
+   @if ($errors->any())
+    let errorMessages = '';
+    let uniqueErrors = {};
 
-        // Clasificar y filtrar los errores por campo
-        @foreach ($errors->getMessages() as $field => $messages)
-            // Priorizar el mensaje específico para el campo "email"
-            if ('{{ $field }}' === 'email') {
-                if ({{ in_array('El formato del campo E-mail no es válido.', $messages) ? 'true' : 'false' }}) {
-                    uniqueErrors['email'] = ['El formato del campo E-mail no es válido.'];
-                } else {
-                    uniqueErrors['email'] = ['{{ $messages[0] }}']; // Tomar el primer mensaje de error para el campo "email"
+    // Procesar errores
+    @foreach ($errors->getMessages() as $field => $messages)
+        uniqueErrors['{{ $field }}'] = [];
+        @foreach ($messages as $message)
+            
+            // SECCIÓN MODIFICADA: Manejo especial para campos
+            @if ($field == 'phone')
+                // Mensaje personalizado para errores de teléfono
+                uniqueErrors['{{ $field }}'].push('El teléfono debe contener solo números');
+            @elseif ($field == 'email')
+                // Manejo especial para errores de email - priorizar mensaje de formato
+                if ('{{ $message }}'.includes('formato') || '{{ $message }}'.includes('formato')) {
+                    uniqueErrors['{{ $field }}'] = ['El formato del correo electrónico no es válido.'];
+                } else if (uniqueErrors['{{ $field }}'].length === 0) {
+                    uniqueErrors['{{ $field }}'].push('{{ $message }}');
                 }
-            } else {
-                // Otros campos (nombre, contraseña, etc.)
-                uniqueErrors['{{ $field }}'] = [];
-                @foreach ($messages as $message)
-                    if (!uniqueErrors['{{ $field }}'].includes('{{ $message }}')) {
-                        uniqueErrors['{{ $field }}'].push('{{ $message }}');
-                    }
-                @endforeach
-            }
+            @else
+                // Mantener otros mensajes de error como están
+                if (!uniqueErrors['{{ $field }}'].includes('{{ $message }}')) {
+                    uniqueErrors['{{ $field }}'].push('{{ $message }}');
+                }
+            @endif
         @endforeach
+    @endforeach
 
-        // Construir el mensaje de error con una línea por campo
+        // Construir bloque de mensajes
+        let allMessages = [];
         for (const [field, messages] of Object.entries(uniqueErrors)) {
-            if (messages.length > 0) {
-                errorMessages += `
-                    <div style="
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        width: 100%;
-                        margin-bottom: 5px;
-                        text-align: left;
-                        padding-left: 10px;
-                    ">
-                        ${messages.join(' | ')}
-                    </div>
-                `;
-            }
+            allMessages = allMessages.concat(messages);
         }
+        errorMessages = allMessages.join('<br>');
 
-        // Inyectar estilos CSS directamente en el documento
+        // Estilos personalizados (modificación mínima)
         const style = document.createElement('style');
         style.textContent = `
             .custom-swal-popup {
-                max-width: 90% !important; /* Ajusta el ancho máximo del popup */
-                width: auto !important; /* Permite que el ancho se ajuste al contenido */
+                max-width: 90% !important;
+                width: auto !important;
+            }
+            .custom-swal-title {
+                text-align: center !important;
+                width: 100% !important;
+                font-size: 22px !important;
+                margin-bottom: 14px !important;
+                padding-left: 0 !important;
+                font-weight: bold !important;
             }
             .custom-swal-html {
-                width: 100% !important; /* Ocupa todo el ancho disponible */
-                font-size: 14px !important; /* Ajusta el tamaño del texto */
-                text-align: left !important; /* Alinea el texto a la izquierda */
-                padding: 10px !important; /* Añade un poco de padding */
+                width: 100% !important;
+                font-size: 13px !important;
+                text-align: center !important;  /* Cambiado a center */
+                padding: 0 10px !important;
+                margin-top: 0 !important;
+                white-space: normal !important;
+                
+            }
+            .custom-swal-confirm {
+                margin-top: 15px !important;
+                display: block !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
             }
         `;
         document.head.appendChild(style);
 
-        // Mostrar la alerta con los errores
+        // Mostrar alerta
         Swal.fire({
             icon: 'warning',
-            title: 'Errores en el formulario',
+            title: '<span class="custom-swal-title">Errores en el formulario</span>',
             html: `<div class="custom-swal-html">${errorMessages}</div>`,
             confirmButtonText: 'Corregir',
             confirmButtonColor: '#2778c4',
             customClass: {
-                popup: 'custom-swal-popup', // Clase personalizada para el contenedor de SweetAlert2
-                htmlContainer: 'custom-swal-html' // Clase personalizada para el contenido HTML
+                popup: 'custom-swal-popup',
+                title: 'custom-swal-title',
+                htmlContainer: 'custom-swal-html',
+                confirmButton: 'custom-swal-confirm'
             }
         });
     @endif
-            </script>
+</script>
 
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
