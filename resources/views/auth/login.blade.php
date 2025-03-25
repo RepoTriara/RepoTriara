@@ -79,17 +79,20 @@
                                             </small>
                                         </div>
 
-                                        <!-- Campo de contraseña -->
                                         <div class="form-group">
                                             <label for="password">Contraseña</label>
-                                            <input type="password" name="password" id="password"
-                                                class="form-control @error('password') is-invalid @enderror" required
-                                                aria-describedby="passwordHelp" />
-                                            <small id="passwordHelp" class="form-text text-muted">
+                                            <div class="input-group">
+                                                <input type="password" name="password" id="password" required class="form-control" autocomplete="new-password" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default toggle-password" data-target="#password">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                             <small id="loginHelp" class="form-text text-muted">
                                                 Ingrese su contraseña.
                                             </small>
                                         </div>
-
                                         <!-- Botón de envío -->
                                         <div class="inside_form_buttons">
                                             <button type="submit" id="submitBtn"
@@ -149,6 +152,21 @@
                     document.getElementById('loginForm').submit(); // Enviar el formulario
                 }, 3000); // Retraso de 3 segundos
             });
+            $(document).ready(function(){
+        $('.toggle-password').on('click', function(){
+            var target = $(this).data('target');
+            var input = $(target);
+            var icon = $(this).find('i');
+
+            if(input.attr('type') === 'password'){
+                input.attr('type', 'text');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                input.attr('type', 'password');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+    });
         </script>
     </div>
 </body>
