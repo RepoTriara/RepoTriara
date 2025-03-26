@@ -108,17 +108,17 @@
                                @if (request()->has('client_id'))
                                     <p>
                                          Total de usuarios: {{ $filteredUsersCount }}
- 
+
                                     </p>
                                 @elseif (request()->has('search') || request()->has('role'))
                                     <p>
                                          Total de usuarios: {{ $filteredUsersCount }}
- 
+
                                     </p>
                                 @else
                                     <p>
                                         Total de usuarios: {{ $totalUsers }}
- 
+
                                     </p>
                                 @endif
                             </div>
@@ -289,13 +289,27 @@
                     });
                 });
 
-                function goToPageUsers() {
-                    const page = document.getElementById('go_to_page_users').value;
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('page', page);
-                    window.location.href = url.toString();
-                }
+               function goToPageUsers() {
+    const pageInput = document.getElementById('go_to_page_users');
+    const page = parseInt(pageInput.value);
+    const lastPage = parseInt("{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->lastPage() : 1 }}");
 
+    if (isNaN(page) || page < 1 || page > lastPage) {
+        Swal.fire({
+            title: 'Página inválida',
+            text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+            icon: 'warning',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2778c4'
+        });
+        pageInput.value = "{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->currentPage() : 1 }}"; // Optionally reset the input
+        return;
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', page);
+    window.location.href = url.toString();
+}
                 document.addEventListener('DOMContentLoaded', function () {
                     document.querySelector('form[action="{{ route('system_users.bulk_action') }}"]').addEventListener('submit', function (e) {
                         var action = document.getElementById('action').value;
@@ -311,7 +325,7 @@
                                 title: 'Error',
                                 text: 'Debes seleccionar una acción para proceder.',
                                 icon: 'error',
-                                confirmButtonText: 'Aceptar', 
+                                confirmButtonText: 'Aceptar',
                                 confirmButtonColor: '#2778c4'
 
                             });

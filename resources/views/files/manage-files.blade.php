@@ -11,11 +11,6 @@
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png') }}" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
-    <!--[if lt IE 9]>
-  <script src="https://repo.triara.co/repositorio/includes/js/html5shiv.min.js"></script>
-  <script src="https://repo.triara.co/repositorio/includes/js/respond.min.js"></script>
- <![endif]-->
-
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
 
@@ -50,11 +45,11 @@
                         </div>
                     </div>
                 </div>
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 <div class="row">
 
                     <div class="col-xs-12">
@@ -95,12 +90,12 @@
                                         <th
                                             class="active {{ request('sort') === 'timestamp' ? 'footable-sorted-' . request('direction') : '' }}">
                                             <a
-                                                href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction','desc' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
+                                                href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                                 Adicionado
+                                                <i
+                                                    class="fa fa-sort{{ request('sort') === 'timestamp' ? (request('direction') === 'asc' ? '-asc' : '-desc') : '-desc' }}"></i>
                                             </a>
-                                            <span class="footable-sort-indicator"></span>
                                         </th>
-
                                         <th data-hide="phone">Tipo</th>
 
                                         <th>

@@ -195,32 +195,38 @@
                                             </td>
 
                                             <td>
-                                               @if ($client->own_files_count > 0 || $client->group_files_count > 0)
-                                                    <a href="{{ route('file_manager', ['client_id' => $client->id]) }}" class="btn btn-primary">
+                                                @if ($client->own_files_count > 0 || $client->group_files_count > 0)
+                                                    <a href="{{ route('file_manager', ['client_id' => $client->id]) }}"
+                                                        class="btn btn-primary">
                                                         {{ __('Archivos') }}
                                                     </a>
                                                 @else
-                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
+                                                    <a href="javascript:void(0);" class="btn disabled-btn"
+                                                        tabindex="-1">
                                                         {{ __('Archivos') }}
                                                     </a>
                                                 @endif
 
                                                 @if ($client->group_count > 0)
-                                                    <a href="{{ route('manage_company', ['member' => $client->id]) }}" class="btn btn-primary">
+                                                    <a href="{{ route('manage_company', ['member' => $client->id]) }}"
+                                                        class="btn btn-primary">
                                                         {{ __('Grupos') }}
                                                     </a>
                                                 @else
-                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
+                                                    <a href="javascript:void(0);" class="btn disabled-btn"
+                                                        tabindex="-1">
                                                         {{ __('Grupos') }}
                                                     </a>
                                                 @endif
 
                                                 @if ($client->own_files_count)
-                                                    <a href="{{ route('my_files', ['cliente_id' => $client->id]) }}" class="btn btn-primary">
+                                                    <a href="{{ route('my_files', ['cliente_id' => $client->id]) }}"
+                                                        class="btn btn-primary">
                                                         {{ __('Como cliente') }}
                                                     </a>
                                                 @else
-                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
+                                                    <a href="javascript:void(0);" class="btn disabled-btn"
+                                                        tabindex="-1">
                                                         {{ __('Como cliente') }}
                                                     </a>
                                                 @endif
@@ -295,89 +301,111 @@
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
             <script>
-    document.getElementById('select_all').addEventListener('click', function() {
-        var isChecked = this.checked;
-        var checkboxes = document.querySelectorAll('input[name="batch[]"]');
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = isChecked;
-        });
-    });
-
-    function goToPageClientes() {
-        const page = document.getElementById('go_to_page_clientes').value;
-        const url = new URL(window.location.href);
-        url.searchParams.set('page', page);
-        window.location.href = url.toString();
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelector('form[name="clients_list"]').addEventListener('submit', function (e) {
-            var action = document.getElementById('action').value;
-            var selectedClients = [];
-
-            document.querySelectorAll('input[name="batch[]"]:checked').forEach(function (checkbox) {
-                selectedClients.push(checkbox.value);
-            });
-
-            if (action === 'none') {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Debes seleccionar una acción para proceder.',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
+                document.getElementById('select_all').addEventListener('click', function() {
+                    var isChecked = this.checked;
+                    var checkboxes = document.querySelectorAll('input[name="batch[]"]');
+                    checkboxes.forEach(function(checkbox) {
+                        checkbox.checked = isChecked;
+                    });
                 });
-                return;
-            }
 
-            if (action === 'delete' && selectedClients.length > 0) {
-                e.preventDefault();
+                function goToPageClientes() {
+                    // Obtener el valor ingresado en el campo "Vaya a:"
+                    const pageInput = document.getElementById('go_to_page_clientes');
+                    const page = parseInt(pageInput.value, 10);
 
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡No podrás revertir esta acción!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.submit();
+                    // Obtener el número total de páginas disponibles
+                    const lastPage =
+                        {{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->lastPage() : 1 }};
+
+                    // Validar si la página ingresada está dentro del rango válido
+                    if (isNaN(page) || page < 1 || page > lastPage) {
+                        // Mostrar SweetAlert indicando que la página no existe
+                        Swal.fire({
+                            title: 'Página inválida',
+                            text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+                            icon: 'warning',
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            // Limpiar el campo de entrada después del error
+                            pageInput.value = '';
+                        });
+                        return;
                     }
-                });
-            } else if (action === 'delete' && selectedClients.length === 0) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Debes seleccionar al menos un cliente para eliminar.',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
-                });
-            }
-        });
 
-         @if(session('success'))
-            Swal.fire({
-                title: 'Éxito',
-                text: '{{ session('success') }}',
-                icon: 'success',
-                timer: 3000, // Se cierra automáticamente después de 3 segundos
-                showConfirmButton: false // No muestra el botón "OK"
-            });
-        @endif
+                    // Redirigir al usuario a la página seleccionada
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('page', page);
+                    window.location.href = url.toString();
+                }
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelector('form[name="clients_list"]').addEventListener('submit', function(e) {
+                        var action = document.getElementById('action').value;
+                        var selectedClients = [];
 
-        @if(session('error'))
-            Swal.fire({
-                title: 'Error',
-                text: '{{ session('error') }}',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        @endif
-    });
-</script>
+                        document.querySelectorAll('input[name="batch[]"]:checked').forEach(function(checkbox) {
+                            selectedClients.push(checkbox.value);
+                        });
+
+                        if (action === 'none') {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Debes seleccionar una acción para proceder.',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
+                            });
+                            return;
+                        }
+
+                        if (action === 'delete' && selectedClients.length > 0) {
+                            e.preventDefault();
+
+                            Swal.fire({
+                                title: '¿Estás seguro?',
+                                text: "¡No podrás revertir esta acción!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Sí, eliminar',
+                                cancelButtonText: 'Cancelar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    this.submit();
+                                }
+                            });
+                        } else if (action === 'delete' && selectedClients.length === 0) {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Debes seleccionar al menos un cliente para eliminar.',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
+                            });
+                        }
+                    });
+
+                    @if (session('success'))
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: '{{ session('success') }}',
+                            icon: 'success',
+                            timer: 3000, // Se cierra automáticamente después de 3 segundos
+                            showConfirmButton: false // No muestra el botón "OK"
+                        });
+                    @endif
+
+                    @if (session('error'))
+                        Swal.fire({
+                            title: 'Error',
+                            text: '{{ session('error') }}',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    @endif
+                });
+            </script>
 
         </div> <!-- main_content -->
     </div> <!-- container-custom -->

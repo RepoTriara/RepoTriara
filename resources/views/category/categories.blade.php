@@ -182,15 +182,33 @@
            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
            <script>
     function goToPageCategories() {
-        var page = document.getElementById("go_to_page_categories").value;
-        var maxPage = parseInt("{{ $categories instanceof \Illuminate\Pagination\LengthAwarePaginator ? $categories->lastPage() : 1 }}");
+    // Obtener el valor ingresado en el campo "Vaya a:"
+    const pageInput = document.getElementById('go_to_page_categories');
+    const page = parseInt(pageInput.value, 10);
 
-        if (page >= 1 && page <= maxPage) {
-            window.location.href = "?page=" + page;
-        } else {
-            Swal.fire("Error", "Número de página inválido", "error");
-        }
+    // Obtener el número total de páginas disponibles
+    const lastPage = {{ $categories instanceof \Illuminate\Pagination\LengthAwarePaginator ? $categories->lastPage() : 1 }};
+
+    // Validar si la página ingresada está dentro del rango válido
+    if (isNaN(page) || page < 1 || page > lastPage) {
+        // Mostrar SweetAlert indicando que la página no existe
+        Swal.fire({
+            title: 'Página inválida',
+            text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+            icon: 'warning',
+            confirmButtonText: 'Aceptar'
+        }).then(() => {
+            // Limpiar el campo de entrada después del error
+            pageInput.value = '';
+        });
+        return;
     }
+
+    // Redirigir al usuario a la página seleccionada
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', page);
+    window.location.href = url.toString();
+}
 </script>
 
 <script>
@@ -214,7 +232,7 @@
                 icon: 'error',
                 title: 'Error',
                 text: message,
-                confirmButtonText: 'Aceptar',            
+                confirmButtonText: 'Aceptar',
                 confirmButtonColor: '#2778c4'
 
             });
@@ -236,7 +254,7 @@
             text: 'Por favor, seleccione al menos una categoría para eliminar.',
             confirmButtonText: 'Aceptar',
             confirmButtonColor: '#2778c4'
-        });                
+        });
         return;
             }
 

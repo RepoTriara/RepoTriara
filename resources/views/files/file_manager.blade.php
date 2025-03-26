@@ -146,46 +146,56 @@
                             <div class="clear"></div>
 
                             <table id="files_tbl" class="footable table">
-                                                               <thead>
+                                <thead>
                                     <tr>
                                         <th class="td_checkbox"><input type="checkbox" id="select_all"></th>
-                                        <th class="{{ request('sort') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                        <th
+                                            class="{{ request('sort') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
                                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
-                                               class="{{ request('sort') === 'timestamp' ? 'active-sort' : '' }}">
+                                                class="{{ request('sort') === 'timestamp' ? 'active-sort' : '' }}">
                                                 Adicionado
-                                                <i class="fa fa-sort{{ request('sort') === 'timestamp' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i
+                                                    class="fa fa-sort{{ request('sort') === 'timestamp' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Tipo</th>
-                                        <th class="{{ request('sort') === 'filename' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                        <th
+                                            class="{{ request('sort') === 'filename' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
                                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'filename', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
-                                               class="{{ request('sort') === 'filename' ? 'active-sort' : '' }}">
+                                                class="{{ request('sort') === 'filename' ? 'active-sort' : '' }}">
                                                 Título
-                                                <i class="fa fa-sort{{ request('sort') === 'filename' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i
+                                                    class="fa fa-sort{{ request('sort') === 'filename' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Tamaño</th>
-                                        <th class="{{ request('sort') === 'uploader' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                        <th
+                                            class="{{ request('sort') === 'uploader' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
                                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'uploader', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
-                                               class="{{ request('sort') === 'uploader' ? 'active-sort' : '' }}">
+                                                class="{{ request('sort') === 'uploader' ? 'active-sort' : '' }}">
                                                 Cargador
-                                                <i class="fa fa-sort{{ request('sort') === 'uploader' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i
+                                                    class="fa fa-sort{{ request('sort') === 'uploader' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Asignado</th>
-                                        <th class="{{ request('sort') === 'public_allow' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                        <th
+                                            class="{{ request('sort') === 'public_allow' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
                                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'public_allow', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
-                                               class="{{ request('sort') === 'public_allow' ? 'active-sort' : '' }}">
+                                                class="{{ request('sort') === 'public_allow' ? 'active-sort' : '' }}">
                                                 Permisos públicos
-                                                <i class="fa fa-sort{{ request('sort') === 'public_allow' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i
+                                                    class="fa fa-sort{{ request('sort') === 'public_allow' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Expira</th>
-                                        <th class="{{ request('sort') === 'download_count' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
+                                        <th
+                                            class="{{ request('sort') === 'download_count' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}">
                                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'download_count', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}"
-                                               class="{{ request('sort') === 'download_count' ? 'active-sort' : '' }}">
+                                                class="{{ request('sort') === 'download_count' ? 'active-sort' : '' }}">
                                                 Total descargas
-                                                <i class="fa fa-sort{{ request('sort') === 'download_count' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
+                                                <i
+                                                    class="fa fa-sort{{ request('sort') === 'download_count' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                             </a>
                                         </th>
                                         <th>Comportamiento</th>
@@ -225,7 +235,7 @@
                                             <td>
                                                 @if ($file->expires && $file->expiry_date)
                                                     @php
-        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
+                                                        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
                                                     @endphp
                                                     @if ($expiryDate->isPast())
                                                         <span class="label label-danger"
@@ -330,7 +340,7 @@
             window.location.href = url.toString();
         }
     </script>
-   <script>
+    <script>
         document.getElementById('select_all').addEventListener('click', function() {
             let isChecked = this.checked;
             let checkboxes = document.querySelectorAll('input[name="batch[]"]');
@@ -338,9 +348,9 @@
                 checkbox.checked = isChecked;
             });
         });
- 
- 
- 
+
+
+
         $(document).ready(function() {
             $('#urlModal').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
@@ -352,99 +362,125 @@
                 });
             });
         });
- 
+
         function goToPageFiles() {
-            const page = document.getElementById('go_to_page_files').value;
+            const pageInput = document.getElementById('go_to_page_files');
+            const page = parseInt(pageInput.value);
+            const lastPage = parseInt(
+                "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->lastPage() : 1 }}"
+            ); // Assuming $files is relevant here
+
+            if (isNaN(page) || page < 1 || page > lastPage) {
+                Swal.fire({
+                    title: 'Página inválida',
+                    text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+                    icon: 'warning',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#2778c4'
+                });
+                pageInput.value =
+                    "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->currentPage() : 1 }}"; // Optionally reset the input
+                return;
+            }
+
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            window.location.href = url.toString();
+        }
+
+        function goToPageClientes() {
+            const form = document.getElementById('go_to_page_form_clientes');
+            const page = document.getElementById('go_to_page_clientes').value;
             const url = new URL(window.location.href);
             url.searchParams.set('page', page);
             window.location.href = url.toString();
         }
     </script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const downloadForm = document.getElementById('bulkActionForm');
-        const delay = 3000; // Tiempo de espera (en milisegundos)
- 
-        downloadForm.onsubmit = function(e) {
-            const action = document.getElementById('action').value;
-            const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
- 
-            if (action === 'none' || selectedFiles.length === 0) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No se ha seleccionado ningún archivo.',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
- 
-            if (action === 'delete') {
-                e.preventDefault();
-                Swal.fire({
-                    title: '¿Está seguro?',
-                    text: `Está a punto de eliminar ${selectedFiles.length} archivos. Esta acción no se puede deshacer.`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        downloadForm.submit();
-                    }
-                });
-            } else if (action === 'zip') {
-                e.preventDefault();
- 
-                Swal.fire({
-                    title: 'Por favor, espera',
-                    html: `
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadForm = document.getElementById('bulkActionForm');
+            const delay = 3000; // Tiempo de espera (en milisegundos)
+
+            downloadForm.onsubmit = function(e) {
+                const action = document.getElementById('action').value;
+                const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
+
+                if (action === 'none' || selectedFiles.length === 0) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se ha seleccionado ningún archivo.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
+                if (action === 'delete') {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: '¿Está seguro?',
+                        text: `Está a punto de eliminar ${selectedFiles.length} archivos. Esta acción no se puede deshacer.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            downloadForm.submit();
+                        }
+                    });
+                } else if (action === 'zip') {
+                    e.preventDefault();
+
+                    Swal.fire({
+                        title: 'Por favor, espera',
+                        html: `
                         <p>Estamos procesando tu descarga comprimida...</p>
                         <div style="margin-top: 10px;">
                             <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando..." width="50">
                         </div>
                     `,
-                    allowOutsideClick: false,
-                    showConfirmButton: false
+                        allowOutsideClick: false,
+                        showConfirmButton: false
+                    });
+
+                    setTimeout(() => {
+                        Swal.close();
+                        e.target.submit();
+                    }, delay);
+                }
+            };
+
+            // Verificar si hay un mensaje de éxito o error desde el backend
+            @if (session('success'))
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
                 });
- 
-                setTimeout(() => {
-                    Swal.close();
-                    e.target.submit();
-                }, delay);
-            }
-        };
- 
-        // Verificar si hay un mensaje de éxito o error desde el backend
-        @if (session('success'))
-            Swal.fire({
-                title: '¡Éxito!',
-                text: '{{ session('success') }}',
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-            });
-        @elseif (session('error'))
-            Swal.fire({
-                title: 'Error',
-                text: '{{ session('error') }}',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        @endif
- 
-        // Funcionalidad para seleccionar todos los checkboxes
-        document.getElementById('select_all').addEventListener('click', function() {
-            var isChecked = this.checked;
-            var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = isChecked;
+            @elseif (session('error'))
+                Swal.fire({
+                    title: 'Error',
+                    text: '{{ session('error') }}',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            @endif
+
+            // Funcionalidad para seleccionar todos los checkboxes
+            document.getElementById('select_all').addEventListener('click', function() {
+                var isChecked = this.checked;
+                var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = isChecked;
+                });
             });
         });
-    });
-</script>
+    </script>
 
 
     <!-- Modal para mostrar la URL pública -->

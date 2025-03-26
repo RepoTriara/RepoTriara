@@ -149,21 +149,21 @@
                                                 <th class="{{ request('orderby') === 'filename' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }} "
                                                     data-hide="phone,tablet">
                                                     <a
-                                                        href="{{ route('my_files', ['orderby' => 'filename', 'order' => request('orderby') === 'filename' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Titulo</a>
+                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'filename', 'order' => request('orderby') === 'filename' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">Titulo</a>
                                                     <span class="footable-sort-indicator"></span>
                                                 </th>
                                                 <th data-hide="phone">Tipo</th>
                                                 <th class="{{ request('orderby') === 'description' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
                                                     data-hide="phone,tablet">
                                                     <a
-                                                        href="{{ route('my_files', ['orderby' => 'description', 'order' => request('orderby') === 'description' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Descripción</a>
+                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'description', 'order' => request('orderby') === 'description' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">Descripción</a>
                                                     <span class="footable-sort-indicator"></span>
                                                 </th>
                                                 <th data-hide="phone">Tamaño</th>
                                                 <th class="{{ request('orderby') === 'Timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
                                                     data-hide="phone,tablet">
                                                     <a
-                                                        href="{{ route('my_files', ['orderby' => 'Timestamp', 'order' => request('orderby') === 'Timestamp' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Fecha</a>
+                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'Timestamp', 'order' => request('orderby') === 'Timestamp' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">Fecha</a>
                                                     <span class="footable-sort-indicator"></span>
                                                 </th>
                                                 <th data-hide="phone">Fecha de expiración</th>
@@ -171,44 +171,50 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-    @forelse ($files as $file)
-        <tr class="table_row">
-            <td>
-                <input type="checkbox" name="file_ids[]" value="{{ $file->id }}" class="footable-sort-indicator">
-            </td>
-            <td>
-                <a href="{{ route('file.directDownload', ['id' => $file->id]) }}">{{ $file->filename }}</a>
-                <span class="footable-sort-indicator"></span>
-            </td>
-            <td>
-                <span class="label label-success label_big">
-                    {{ strtoupper(pathinfo($file->original_url, PATHINFO_EXTENSION)) }}
-                </span>
-            </td>
-            <td>{{ $file->description ?? 'N/A' }}</td>
-            <td>{{ $file->size }}</td>
-            <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}</td>
-            <td>
-                @if ($file->formattedExpiryDate)
-                    <span class="label label-primary label_big">
-                        <strong>{{ $file->formattedExpiryDate }}</strong>
-                    </span>
-                @else
-                    <span class="label label-success label_big">Nunca</span>
-                @endif
-            </td>
-            <td class="text-center">
-                <a href="{{ route('file.directDownload', ['id' => $file->id]) }}" class="btn btn-primary">
-                    Descargar
-                </a>
-            </td>
-        </tr>
-    @empty
-        <tr>
-            <td colspan="8" class="text-center">No se encontraron registros.</td>
-        </tr>
-    @endforelse
-</tbody>
+                                            @forelse ($files as $file)
+                                                <tr class="table_row">
+                                                    <td>
+                                                        <input type="checkbox" name="file_ids"
+                                                            value="{{ $file->id }}"
+                                                            class="footable-sort-indicator">
+                                                    </td>
+                                                    <td>
+                                                        <a
+                                                            href="{{ route('file.directDownload', ['id' => $file->id]) }}">{{ $file->filename }}</a>
+                                                        <span class="footable-sort-indicator"></span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="label label-success label_big">
+                                                            {{ strtoupper(pathinfo($file->original_url, PATHINFO_EXTENSION)) }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ $file->description ?? 'N/A' }}</td>
+                                                    <td>{{ $file->size }}</td>
+                                                    <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}
+                                                    </td>
+                                                    <td>
+                                                        @if ($file->formattedExpiryDate)
+                                                            <span class="label label-primary label_big">
+                                                                <strong>{{ $file->formattedExpiryDate }}</strong>
+                                                            </span>
+                                                        @else
+                                                            <span class="label label-success label_big">Nunca</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="{{ route('file.directDownload', ['id' => $file->id]) }}"
+                                                            class="btn btn-primary">
+                                                            Descargar
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="8" class="text-center">No se encontraron
+                                                        registros.</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
                                     </table>
 
                                     <div class="container-fluid text-center">
@@ -338,7 +344,24 @@
 
         function goToPage() {
             const form = document.getElementById('go_to_page_form');
-            const page = document.getElementById('go_to_page').value;
+            const pageInput = document.getElementById('go_to_page');
+            const page = parseInt(pageInput.value);
+            const lastPage = parseInt(
+                "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->lastPage() : 1 }}");
+
+            if (isNaN(page) || page < 1 || page > lastPage) {
+                Swal.fire({
+                    title: 'Página inválida',
+                    text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+                    icon: 'warning',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#2778c4'
+                });
+                pageInput.value =
+                    "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->currentPage() : 1 }}"; // Optionally reset the input to the current page
+                return;
+            }
+
             const url = new URL(window.location.href);
             url.searchParams.set('page', page);
             window.location.href = url.toString();
