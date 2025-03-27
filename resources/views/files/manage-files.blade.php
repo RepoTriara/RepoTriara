@@ -88,17 +88,19 @@
                                         <th class="td_checkbox"><input type="checkbox" name="select_all" id="select_all"
                                                 value="0" /></th>
                                         <th
-                                            class="active {{ request('sort') === 'timestamp' ? 'footable-sorted-' . request('direction') : '' }}">
+                                            class="{{ request('sort') === 'timestamp' ? 'active footable-sorted-' . request('direction') : '' }}">
                                             <a
                                                 href="{{ request()->fullUrlWithQuery(['sort' => 'timestamp', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                                 Adicionado
                                                 <i
-                                                    class="fa fa-sort{{ request('sort') === 'timestamp' ? (request('direction') === 'asc' ? '-asc' : '-desc') : '-desc' }}"></i>
+                                                    class="fa fa-sort{{ request('sort') === 'timestamp' ? (request('direction') === 'asc' ? '-asc' : '-desc') : '' }}"></i>
                                             </a>
                                         </th>
+
                                         <th data-hide="phone">Tipo</th>
 
-                                        <th>
+                                        <th
+                                            class="{{ request('sort') === 'filename' ? 'active footable-sorted-' . request('direction') : '' }}">
                                             <a
                                                 href="{{ request()->fullUrlWithQuery(['sort' => 'filename', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                                 Título

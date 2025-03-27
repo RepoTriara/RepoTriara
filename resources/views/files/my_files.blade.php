@@ -146,25 +146,34 @@
                                                     <input type="checkbox" id="select_all"
                                                         class="footable-sort-indicator" />
                                                 </th>
-                                                <th class="{{ request('orderby') === 'filename' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }} "
-                                                    data-hide="phone,tablet">
+                                                <th
+                                                    class="{{ request('orderby') === 'filename' ? 'active footable-sorted-' . request('order') : '' }}">
                                                     <a
-                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'filename', 'order' => request('orderby') === 'filename' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">Titulo</a>
-                                                    <span class="footable-sort-indicator"></span>
+                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'filename', 'order' => request('orderby') === 'filename' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                        Título
+                                                        <i
+                                                            class="fa fa-sort{{ request('orderby') === 'filename' ? (request('order') === 'asc' ? '-asc' : '-desc') : '' }}"></i>
+                                                    </a>
                                                 </th>
                                                 <th data-hide="phone">Tipo</th>
-                                                <th class="{{ request('orderby') === 'description' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                                    data-hide="phone,tablet">
+                                                <th
+                                                    class="{{ request('orderby') === 'description' ? 'active footable-sorted-' . request('order') : '' }}">
                                                     <a
-                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'description', 'order' => request('orderby') === 'description' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">Descripción</a>
-                                                    <span class="footable-sort-indicator"></span>
+                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'description', 'order' => request('orderby') === 'description' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                        Descripción
+                                                        <i
+                                                            class="fa fa-sort{{ request('orderby') === 'description' ? (request('order') === 'asc' ? '-asc' : '-desc') : '' }}"></i>
+                                                    </a>
                                                 </th>
                                                 <th data-hide="phone">Tamaño</th>
-                                                <th class="{{ request('orderby') === 'Timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                                    data-hide="phone,tablet">
+                                                <th
+                                                    class="{{ request('orderby') === 'Timestamp' ? 'active footable-sorted-' . request('order') : '' }}">
                                                     <a
-                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'Timestamp', 'order' => request('orderby') === 'Timestamp' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">Fecha</a>
-                                                    <span class="footable-sort-indicator"></span>
+                                                        href="{{ route('my_files', array_merge(request()->except('orderby', 'order', 'page'), ['orderby' => 'Timestamp', 'order' => request('orderby') === 'Timestamp' && request('order') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                        Fecha
+                                                        <i
+                                                            class="fa fa-sort{{ request('orderby') === 'Timestamp' ? (request('order') === 'asc' ? '-asc' : '-desc') : '' }}"></i>
+                                                    </a>
                                                 </th>
                                                 <th data-hide="phone">Fecha de expiración</th>
                                                 <th data-hide="phone">Descarga</th>
