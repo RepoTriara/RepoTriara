@@ -179,7 +179,7 @@
             // SECCIÓN MODIFICADA: Manejo especial para campos
             @if ($field == 'phone')
                 // Mensaje personalizado para errores de teléfono
-                uniqueErrors['{{ $field }}'].push('El teléfono debe contener solo números');
+                uniqueErrors['{{ $field }}'].push('El teléfono debe ser solo números, entre 7 y 10 dígitos.');
             @elseif ($field == 'email')
                 // Manejo especial para errores de email - priorizar mensaje de formato
                 if ('{{ $message }}'.includes('formato') || '{{ $message }}'.includes('formato')) {
@@ -187,6 +187,7 @@
                 } else if (uniqueErrors['{{ $field }}'].length === 0) {
                     uniqueErrors['{{ $field }}'].push('{{ $message }}');
                 }
+                
             @else
                 // Mantener otros mensajes de error como están
                 if (!uniqueErrors['{{ $field }}'].includes('{{ $message }}')) {
@@ -206,36 +207,55 @@
         // Estilos personalizados (modificación mínima)
         const style = document.createElement('style');
         style.textContent = `
-            .custom-swal-popup {
-                max-width: 90% !important;
-                width: auto !important;
+               .custom-swal-popup {
+                max-width: 95% !important;
+                width: 390px !important;
+                min-height: 180px !important;
+                padding: 15px !important;
             }
             .custom-swal-title {
                 text-align: center !important;
                 width: 100% !important;
-                font-size: 22px !important;
-                margin-bottom: 14px !important;
-                padding-left: 0 !important;
+                font-size: 20px !important;
+                margin-bottom: 10px !important;
                 font-weight: bold !important;
             }
             .custom-swal-html {
                 width: 100% !important;
-                font-size: 13px !important;
-                text-align: center !important;  /* Cambiado a center */
+                font-size: 14px !important;
+                text-align: center !important; /* CENTRADO */
                 padding: 0 10px !important;
                 margin-top: 0 !important;
-                white-space: normal !important;
-                
+                line-height: 1.2 !important;
+                white-space: nowrap !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important; /* CENTRADO */
             }
             .custom-swal-confirm {
-                margin-top: 15px !important;
+                margin-top: 10px !important;
                 display: block !important;
                 margin-left: auto !important;
                 margin-right: auto !important;
+                font-size: 14px !important;
+            }
+            .swal2-warning-custom {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 50px !important;
+                height: 50px !important;
+                font-size: 30px !important;
+                font-weight: bold !important;
+                color: #facea8 !important;
+                border: 2px solid #f8bb86 !important;
+                border-radius: 50% !important;
+                margin: 0 auto 10px auto !important;
             }
         `;
+        
         document.head.appendChild(style);
-
+          
         // Mostrar alerta
         Swal.fire({
             icon: 'warning',
