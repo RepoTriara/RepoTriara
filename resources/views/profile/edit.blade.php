@@ -33,7 +33,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Informacón de perfil</h2>
+                            <h2>Información de perfil</h2>
                         </div>
                     </div>
                 </div>
