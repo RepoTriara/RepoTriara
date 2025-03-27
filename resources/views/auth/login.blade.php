@@ -21,6 +21,8 @@
         href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
+
+
 </head>
 
 <body class="body login backend">
@@ -125,6 +127,24 @@
             </div>
         </footer>
 
+        <!-- Modal de Carga -->
+        <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <!-- Barra de Progreso -->
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <!-- Texto de Carga -->
+                        <p class="mt-3">Iniciando sesión, por favor espere...</p>
+                        <!-- Botón ficticio dentro del modal -->
+                        <button class="btn modal-btn mt-3" disabled>Iniciando...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Scripts -->
         <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
@@ -139,34 +159,55 @@
             document.getElementById('loginForm').addEventListener('submit', function (event) {
                 event.preventDefault(); // Evitar el envío inmediato del formulario
 
+                // Mostrar el modal de carga
+                $('#loadingModal').modal('show');
+
                 const submitBtn = document.getElementById('submitBtn');
                 submitBtn.classList.add('btn-disabled'); // Deshabilitar el botón
                 submitBtn.textContent = ''; // Limpiar el texto del botón
                 submitBtn.classList.add('loading'); // Agregar la animación
 
-                // Simular un retraso de 3 segundos antes de enviar el formulario
-                setTimeout(function () {
-                    submitBtn.classList.remove('loading'); // Detener la animación
-                    submitBtn.textContent = 'Ingresar'; // Restaurar el texto del botón
-                    submitBtn.classList.remove('btn-disabled'); // Habilitar el botón
-                    document.getElementById('loginForm').submit(); // Enviar el formulario
-                }, 3000); // Retraso de 3 segundos
-            });
-            $(document).ready(function(){
-        $('.toggle-password').on('click', function(){
-            var target = $(this).data('target');
-            var input = $(target);
-            var icon = $(this).find('i');
+                // Animación de la barra de progreso
+                let progress = 0;
+                const progressBar = $('.progress-bar');
+                const interval = setInterval(function () {
+                    progress += 10; // Incrementar el progreso
+                    progressBar.css('width', progress + '%').attr('aria-valuenow', progress);
 
-            if(input.attr('type') === 'password'){
-                input.attr('type', 'text');
-                icon.removeClass('fa-eye').addClass('fa-eye-slash');
-            } else {
-                input.attr('type', 'password');
-                icon.removeClass('fa-eye-slash').addClass('fa-eye');
-            }
-        });
-    });
+                    if (progress >= 100) {
+                        clearInterval(interval); // Detener la animación
+
+                        // Restaurar el botón y ocultar el modal después de 3 segundos
+                        setTimeout(function () {
+                            submitBtn.classList.remove('loading'); // Detener la animación
+                            submitBtn.textContent = 'Ingresar'; // Restaurar el texto del botón
+                            submitBtn.classList.remove('btn-disabled'); // Habilitar el botón
+
+                            // Ocultar el modal de carga
+                            $('#loadingModal').modal('hide');
+
+                            // Enviar el formulario
+                            document.getElementById('loginForm').submit();
+                        }, 500); // Retraso breve antes de enviar el formulario
+                    }
+                }, 300); // Intervalo de tiempo para la animación
+            });
+
+            $(document).ready(function () {
+                $('.toggle-password').on('click', function () {
+                    var target = $(this).data('target');
+                    var input = $(target);
+                    var icon = $(this).find('i');
+
+                    if (input.attr('type') === 'password') {
+                        input.attr('type', 'text');
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                    } else {
+                        input.attr('type', 'password');
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                    }
+                });
+            });
         </script>
     </div>
 </body>
