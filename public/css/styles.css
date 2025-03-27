@@ -4,3 +4,147 @@
     color: white !important;
     font-weight: bold;
 }
+
+/*Estilos personalizados para el modal
+
+/* Estilo para el fondo del modal */
+.modal {
+    background: rgba(255, 255, 255, 0.8);
+    /* Fondo blanco semi-transparente */
+    backdrop-filter: blur(5px);
+    /* Efecto de desenfoque */
+}
+
+/* Ajustes para el contenido del modal */
+.modal-dialog-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    /* Altura total de la pantalla */
+}
+
+.modal-content {
+    background: #ffffff;
+    /* Fondo blanco */
+    border-radius: 20px;
+    /* Bordes redondeados */
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
+    /* Sombra azul suave */
+    width: 400px;
+    /* Ancho fijo */
+    text-align: center;
+    /* Centrar texto */
+    position: relative;
+    /* Para animaciones */
+    overflow: hidden;
+    /* Evitar bordes irregulares */
+}
+
+/* Animación de entrada del modal */
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 123, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: spin 6s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Estilo para la barra de progreso */
+.progress {
+    height: 10px;
+    /* Altura de la barra */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    overflow: hidden;
+    /* Evitar bordes irregulares */
+    margin-bottom: 20px;
+    /* Espaciado inferior */
+    background: #e9ecef;
+    /* Color de fondo gris claro */
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #007bff, #00bfff);
+    /* Gradiente azul */
+    transition: width 0.3s ease-in-out;
+    /* Animación suave */
+}
+
+/* Texto dentro del modal */
+.modal-body p {
+    font-size: 1.1rem;
+    /* Tamaño del texto */
+    color: #333;
+    /* Color del texto */
+    margin-top: 10px;
+    /* Espaciado superior */
+}
+
+/* Botón de Ingresar en el formulario */
+.btn-wide {
+    background: #004B92;
+    /* Verde (color original del botón) */
+    border: none;
+    color: #ffffff;
+    /* Texto blanco */
+    transition: all 0.3s ease;
+    /* Transición suave */
+}
+
+.btn-wide:hover {
+    background: #004B92;
+    /* Verde oscuro al pasar el mouse */
+}
+
+/* Botón dentro del modal */
+.modal-btn {
+    background: #007bff;
+    /* Azul principal */
+    border: none;
+    color: #ffffff;
+    /* Texto blanco */
+    transition: all 0.3s ease;
+    /* Transición suave */
+}
+
+.modal-btn:hover {
+    background: #0056b3;
+    /* Azul oscuro al pasar el mouse */
+}
+
+/* Efecto de pulsación en el botón */
+.btn-wide::after,
+.modal-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    background: rgba(0, 123, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease-out;
+}
+
+.btn-wide:active::after,
+.modal-btn:active::after {
+    transform: translate(-50%, -50%) scale(1);
+}
