@@ -119,29 +119,29 @@
                     </thead>
                     <tbody>
                         @foreach ($groups as $group)
-                            <tr>
-                                <td><input type="checkbox" name="batch[]" value="{{ $group->id }}"></td>
-                                <td>{{ $group->name }}</td>
-                                <td>{{ $group->description ?? 'N/A' }}</td>
-                                <td>{{ $group->members_count }}</td>
-                                <td>{{ $group->file_relations_count ?? 0 }}</td>
-                                <td>{{ $group->created_by }}</td>
-                                <td>{{ $group->timestamp ?? 'N/A' }}</td>
-                                <td>
-                                    @if ($group->file_relations_count > 0)
-                                        <a href="{{ route('file_manager', ['group_id' => $group->id]) }}"
-                                            class="btn btn-primary btn-sm">Archivos</a>
-                                    @else
-                                        <a href="javascript:void(0);" class="btn btn-secondary btn-sm disabled"
-                                            title="No hay archivos">Archivos</a>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('groups.edit', $group->id) }}" class="btn btn-sm btn-primary">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td><input type="checkbox" name="batch[]" value="{{ $group->id }}"></td>
+                            <td>{{ $group->name }}</td>
+                            <td>{{ $group->description ?? 'N/A' }}</td>
+                            <td>{{ $group->members_count }}</td>
+                            <td>{{ $group->file_relations_count ?? 0 }}</td>
+                            <td>{{ $group->created_by }}</td>
+                            <td>{{ $group->timestamp ?? 'N/A' }}</td>
+                            <td>
+                                @if ($group->file_relations_count > 0)
+                                <a href="{{ route('file_manager', ['group_id' => $group->id]) }}"
+                                    class="btn btn-primary btn-sm">Archivos</a>
+                                @else
+                                <a href="javascript:void(0);" class="btn btn-secondary btn-sm disabled"
+                                    title="No hay archivos">Archivos</a>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('groups.edit', $group->id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -187,11 +187,13 @@
     <script>
         document.getElementById('select_all').addEventListener('click', function() {
             let isChecked = this.checked;
-            let checkboxes = document.querySelectorAll('input[name="batch"]');
+            let checkboxes = document.querySelectorAll('input[name="batch[]"]');
+
             checkboxes.forEach(function(checkbox) {
                 checkbox.checked = isChecked;
             });
         });
+
 
         function goToPage() {
             const pageInput = document.getElementById('go_to_page');
@@ -233,7 +235,7 @@
         document.getElementById('bulkActionForm').addEventListener('submit', function(e) {
             e.preventDefault();
             let action = document.getElementById('do_action').value;
-            let selectedGroups = document.querySelectorAll('input[name="batch"]:checked');
+            let selectedGroups = document.querySelectorAll('input[name="batch[]"]:checked');
 
             if (action === 'delete' && selectedGroups.length > 0) {
                 Swal.fire({
@@ -259,23 +261,25 @@
             }
         });
 
-        @if (session('success'))
-            Swal.fire({
-                title: 'Éxito',
-                text: '{{ session('success') }}',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 1500 // Opcional: cierra automáticamente el mensaje después de 1.5 segundos
-            });
+        @if(session('success'))
+        Swal.fire({
+            title: 'Éxito',
+            text: '{{ session('
+            success ') }}',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500 // Opcional: cierra automáticamente el mensaje después de 1.5 segundos
+        });
         @endif
 
-        @if (session('error'))
-            Swal.fire({
-                title: 'Error',
-                text: '{{ session('error') }}',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
+        @if(session('error'))
+        Swal.fire({
+            title: 'Error',
+            text: '{{ session('
+            error ') }}',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         @endif
     </script>
 
