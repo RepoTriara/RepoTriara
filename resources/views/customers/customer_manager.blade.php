@@ -110,27 +110,22 @@
                                         <th><input type="checkbox" id="select_all" class="footable-sort-indicator" />
                                         </th>
 
-                                        <th class="{{ request('orderby') === 'name' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('customer_manager', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Nombre
-                                                Completo</a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
+                                       <th class="{{ request('orderby') === 'name' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'name' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('customer_manager', ['orderby' => 'name', 'order' => (request('orderby') === 'name' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Nombre Completo</a>
+    <span class="footable-sort-indicator"></span>
+</th>
 
-                                        <th class="{{ request('orderby') === 'user' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('customer_manager', ['orderby' => 'user', 'order' => request('orderby') === 'user' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Ingresar
-                                                nombre de usuario</a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
-                                        <th class="{{ request('orderby') === 'email' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('customer_manager', ['orderby' => 'email', 'order' => request('orderby') === 'email' && request('order') === 'asc' ? 'desc' : 'asc']) }}">E-mail</a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
+                                        <th class="{{ request('orderby') === 'user' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'user' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('customer_manager', ['orderby' => 'user', 'order' => (request('orderby') === 'user' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Usuario</a>
+    <span class="footable-sort-indicator"></span>
+</th>
+                                        <th class="{{ request('orderby') === 'email' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'email' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('customer_manager', ['orderby' => 'email', 'order' => (request('orderby') === 'email' && request('order') === 'asc') ? 'desc' : 'asc']) }}">E-mail</a>
+    <span class="footable-sort-indicator"></span>
+</th>
 
                                         <th data-hide="phone">Cargas</th>
 
@@ -138,30 +133,24 @@
 
                                         <th data-hide="phone">Archivos Grupos</th>
 
-                                        <th class="{{ request('orderby') === 'active' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('customer_manager', ['orderby' => 'active', 'order' => request('orderby') === 'active' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                Estado</a>
-                                            <span class="footable-sort-indicator"></span>
-
-                                        </th>
+                                        <th class="{{ request('orderby') === 'active' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'active' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('customer_manager', ['orderby' => 'active', 'order' => (request('orderby') === 'active' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Estado</a>
+    <span class="footable-sort-indicator"></span>
+</th>
 
                                         <th data-hide="phone">Grupos Activos</th>
                                         <th data-hide="phone,tablet">Notificación</th>
-                                        <th class="{{ request('orderby') === 'max_file_size' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('customer_manager', ['orderby' => 'max_file_size', 'order' => request('orderby') === 'max_file_size' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Max.
-                                                tamaño permitido</a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
-                                        <th class="{{ request('orderby') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('customer_manager', ['orderby' => 'timestamp', 'order' => request('orderby') === 'timestamp' && request('order') === 'asc' ? 'desc' : 'asc']) }}">Adicionado</a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
+                                        <th class="{{ request('orderby') === 'max_file_size' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'max_file_size' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('customer_manager', ['orderby' => 'max_file_size', 'order' => (request('orderby') === 'max_file_size' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Max. tamaño</a>
+    <span class="footable-sort-indicator"></span>
+</th>
+                                        <th class="{{ request('orderby') === 'timestamp' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'timestamp' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('customer_manager', ['orderby' => 'timestamp', 'order' => (request('orderby') === 'timestamp' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Adicionado</a>
+    <span class="footable-sort-indicator"></span>
+</th>
                                         <th>Ver</th>
                                         <th>Comportamiento</th>
                                     </tr>
