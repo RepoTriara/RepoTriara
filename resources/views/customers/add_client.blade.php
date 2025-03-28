@@ -310,24 +310,26 @@
             // Función para validar campos con SweetAlert2
             function validateForm() {
                 let errors = [];
-
-                if ($("#name").val().trim() === '') {
+             // Validación del campo "Nombre" (solo letras)
+              let nameValue = $("#name").val().trim();
+                if (nameValue === '') {
                     errors.push({ field: 'Nombre', message: 'Complete el nombre.' });
+                } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/.test(nameValue)) {
+                    errors.push({ field: 'Nombre', message: 'El nombre solo puede contener texto' });
                 }
                 if ($("#user").val().trim() === '') {
                     errors.push({ field: 'Ingresar nombre de usuario', message: 'Complete el usuario.' });
                 }
                 if ($("#email").val().trim() === '') {
-                    errors.push({ field: 'Correo Electrónico', message: 'Complete el correo electrónico.' });
+                    errors.push({ field: 'Correo Electrónico', message: 'El correo electrónico es obligatorio.' });
+                } else if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
+                    errors.push({ field: 'Correo Electrónico', message: 'Formato no válido.' });
                 }
                 if ($("#user").val().length < 5 || $("#user").val().length > 60) {
                     errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe tener entre 5 y 60 caracteres.' });
                 }
                 if (!/^[a-zA-Z0-9.]+$/.test($("#user").val())) {
-                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe ser alfanumérico, no puede tener espacios y puede contener (a-z, A-Z, 0-9, .).' });
-                }
-                if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
-                    errors.push({ field: 'E-Mail', message: 'Formato no válido.' });
+                    errors.push({ field: 'Ingresar nombre de usuario', message: 'Debe ser alfanumérico, no puede tener espacios.' });
                 }
 
                 // Agregar validadores adicionales
@@ -339,6 +341,11 @@
                 }
                 if (!/^[a-zA-Z0-9`!"?$%^&*()_+\-={}[\]:;@~#|<,>.?\'/\\]*$/.test($("#password").val())) {
                     errors.push({ field: 'Contraseña', message: 'Su clave puede unicamente contener letras, numeros y los siguientes caracteres: ` ! \" ? $ ? % ^ & * ( ) _ - + = { [ } ] : ; @ ~ # | < , > . ? \' / \\ ' });
+                }
+                // Validación del campo "Contact" (opcional, pero mínimo 5 caracteres si se llena)
+                let contact = $("#contact").val().trim();
+                if (contact !== '' && contact.length < 4) {
+                    errors.push({ field: 'Contacto', message: 'Debe tener al menos 5 caracteres si se agrega.' });
                 }
 
                 // Validación del campo "Máximo tamaño de subida"

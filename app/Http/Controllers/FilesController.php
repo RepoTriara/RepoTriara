@@ -1046,7 +1046,7 @@ public function store(Request $request)
                     $zip->addFile($filePath, $relativeName); // Agregar el archivo al ZIP
                 } else {
                     // Si el archivo no se encuentra, agregarlo al array de archivos faltantes
-                    $missingFiles[] = $file->url;
+                    $missingFiles[] = $file->filename;
                 }
             }
         }
@@ -1058,7 +1058,8 @@ public function store(Request $request)
             $missingCount = count($missingFiles);
             $message = $missingCount === 1
                 ? 'El archivo ' . $missingFiles[0] . ' no existe.'
-                : 'Algunos de los archivos no existen: ' . implode(', ', $missingFiles);
+                : 'Algunos de los archivos no existe: ' . implode(', ', $missingFiles);
+
 
             return back()->with('error', $message);
         }
