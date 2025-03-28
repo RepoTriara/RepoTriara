@@ -43,7 +43,7 @@
                             <input type="text" name="search" id="search" value="{{ request('search') }}"
                                 class="txtfield form_actions_search_box form-control" placeholder="Buscar grupo" />
                         </div>
-                        <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-default">Búsqueda</button>
+                        <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-primary">Búsqueda</button>
                     </form>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                                 <option value="delete">Eliminar</option>
                             </select>
                             <button type="submit" id="do_action_button"
-                                class="btn btn-sm btn-default">Proceder</button>
+                                class="btn btn-sm btn-primary">Proceder</button>
                         </div>
                     </div>
                 </div>

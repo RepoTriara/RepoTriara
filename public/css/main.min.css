@@ -1315,7 +1315,7 @@ li .required.password_toggle {
 }
 
 .form_actions .form_actions_submit select {
-    width: 140px
+    width: 170px
 }
 
 .form_actions .form_actions_submit select.large_select {
@@ -1323,11 +1323,11 @@ li .required.password_toggle {
 }
 
 .form_actions_limit_results .txtfield {
-    width: 140px
+    width: 170px
 }
 
 .form_actions_limit_results .form_actions_search_box {
-    width: 80px !important
+    width: 200px !important
 }
 
 #btn_proceed_search {

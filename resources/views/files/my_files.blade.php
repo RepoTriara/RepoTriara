@@ -70,7 +70,7 @@
                                                     placeholder="Buscar por título o descripción" />
                                             </div>
                                             <button type="submit" id="btn_proceed_search"
-                                                class="btn btn-sm btn-default">
+                                                class="btn btn-sm btn-primary">
                                                 Búsqueda
                                             </button>
                                         </form>
@@ -96,7 +96,7 @@
                                                 </select>
                                             </div>
                                             <button type="submit" id="btn_proceed_filter_files"
-                                                class="btn btn-sm btn-default">Filtrar</button>
+                                                class="btn btn-sm btn-primary">Filtrar</button>
                                         </form>
 
 
@@ -123,7 +123,7 @@
                                                     </select>
                                                 </div>
                                                 <button type="submit" id="do_action"
-                                                    class="btn btn-sm btn-default">Proceder</button>
+                                                    class="btn btn-sm btn-primary">Proceder</button>
 
                                             </div>
                                         </div>

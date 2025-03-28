@@ -44,11 +44,11 @@
                                 <form action="{{ route('system_users.index') }}" method="get" class="form-inline">
                                     <div class="form-group group_float">
                                         <input type="text" name="search" id="search"
-                                            value="{{ request('search') }}"
+                                            value="{{ request('search') }}" placeholder="Buscar usuario"
                                             class="txtfield form_actions_search_box form-control" />
                                     </div>
                                     <button type="submit" id="btn_proceed_search"
-                                        class="btn btn-sm btn-default">Búsqueda</button>
+                                        class="btn btn-sm btn-primary">Búsqueda</button>
                                 </form>
 
                                 <!-- Formulario de filtros (roles y estado) -->
@@ -76,7 +76,7 @@
                                     </div>
 
                                     <button type="submit" id="btn_proceed_filter_clients"
-                                        class="btn btn-sm btn-default">Filtrar</button>
+                                        class="btn btn-sm btn-primary">Filtrar</button>
                                 </form>
                             </div>
                         </div>
@@ -98,7 +98,7 @@
                                             </select>
                                         </div>
                                         <button type="submit" id="do_action"
-                                            class="btn btn-sm btn-default">Proceder</button>
+                                            class="btn btn-sm btn-primary">Proceder</button>
                                     </div>
                                 </div>
                             </div>

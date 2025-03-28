@@ -63,7 +63,7 @@
                                             class="txtfield form_actions_search_box form-control"
                                             placeholder="Buscar por título o descripción" />
                                     </div>
-                                    <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-default">
+                                    <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-primary">
                                         Búsqueda
                                     </button>
                                 </form>
