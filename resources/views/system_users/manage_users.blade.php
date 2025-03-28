@@ -129,62 +129,68 @@
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" id="select_all" /></th>
-                                        <th class="{{ request('orderby') === 'name' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('system_users.index', ['orderby' => 'name', 'order' => request('orderby') === 'name' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                Nombre Completo
-                                            </a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
-                                        <th class="{{ request('orderby') === 'user' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('system_users.index', ['orderby' => 'user', 'order' => request('orderby') === 'user' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                Ingresar nombre de usuario
-                                            </a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
-                                        <th class="{{ request('orderby') === 'email' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('system_users.index', ['orderby' => 'email', 'order' => request('orderby') === 'email' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                E-mail
-                                            </a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
-                                        <th class="{{ request('orderby') === 'level' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('system_users.index', ['orderby' => 'level', 'order' => request('orderby') === 'level' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                Rol
-                                            </a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
-                                        <th class="{{ request('orderby') === 'active' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('system_users.index', ['orderby' => 'active', 'order' => request('orderby') === 'active' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                Estado
-                                            </a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
-                                        <th class="{{ request('orderby') === 'max_file_size' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('system_users.index', ['orderby' => 'max_file_size', 'order' => request('orderby') === 'max_file_size' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                Max. tamaño permitido
-                                            </a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
-                                        <th class="{{ request('orderby') === 'timestamp' ? 'footable-sorted-desc footable-visible footable-sorted-active active' : 'footable-visible' }}"
-                                            data-hide="phone,tablet">
-                                            <a
-                                                href="{{ route('system_users.index', ['orderby' => 'timestamp', 'order' => request('orderby') === 'timestamp' && request('order') === 'asc' ? 'desc' : 'asc']) }}">
-                                                Adicionado
-                                            </a>
-                                            <span class="footable-sort-indicator"></span>
-                                        </th>
+                                       <!-- Nombre Completo -->
+<th class="{{ request('orderby') === 'name' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'name' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('system_users.index', ['orderby' => 'name', 'order' => (request('orderby') === 'name' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+        Nombre Completo
+    </a>
+    <span class="footable-sort-indicator"></span>
+</th>
+
+<!-- Usuario -->
+<th class="{{ request('orderby') === 'user' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'user' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('system_users.index', ['orderby' => 'user', 'order' => (request('orderby') === 'user' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+        Ingresar nombre de usuario
+    </a>
+    <span class="footable-sort-indicator"></span>
+</th>
+
+<!-- E-mail -->
+<th class="{{ request('orderby') === 'email' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'email' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('system_users.index', ['orderby' => 'email', 'order' => (request('orderby') === 'email' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+        E-mail
+    </a>
+    <span class="footable-sort-indicator"></span>
+</th>
+
+<!-- Rol -->
+<th class="{{ request('orderby') === 'level' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'level' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('system_users.index', ['orderby' => 'level', 'order' => (request('orderby') === 'level' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+        Rol
+    </a>
+    <span class="footable-sort-indicator"></span>
+</th>
+
+<!-- Estado -->
+<th class="{{ request('orderby') === 'active' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'active' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('system_users.index', ['orderby' => 'active', 'order' => (request('orderby') === 'active' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+        Estado
+    </a>
+    <span class="footable-sort-indicator"></span>
+</th>
+
+<!-- Max. tamaño -->
+<th class="{{ request('orderby') === 'max_file_size' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'max_file_size' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('system_users.index', ['orderby' => 'max_file_size', 'order' => (request('orderby') === 'max_file_size' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+        Max. tamaño permitido
+    </a>
+    <span class="footable-sort-indicator"></span>
+</th>
+
+<!-- Adicionado -->
+<th class="{{ request('orderby') === 'timestamp' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'timestamp' ? 'footable-sorted-active active' : '' }}"
+    data-hide="phone,tablet">
+    <a href="{{ route('system_users.index', ['orderby' => 'timestamp', 'order' => (request('orderby') === 'timestamp' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+        Adicionado
+    </a>
+    <span class="footable-sort-indicator"></span>
+</th>
                                         <th>Comportamiento</th>
                                     </tr>
                                 </thead>
