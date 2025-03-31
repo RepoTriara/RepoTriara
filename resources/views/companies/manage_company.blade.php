@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Administraci&oacute;n de Compañias &raquo; Repositorio</title>
+    <title>Administraci&oacute;n de Compañías &raquo; Repositorio</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico')}}" />
     <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32.png')}}"
         sizes="32x32">
@@ -31,7 +31,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>{{ $pageTitle ?? 'Administración de Compañias' }}</h2>
+                            <h2>{{ $pageTitle ?? 'Administración de Compañías' }}</h2>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                     <form action="{{ route('manage_company') }}" method="get" class="form-inline">
                         <div class="form-group group_float">
                             <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                class="txtfield form_actions_search_box form-control" placeholder="Buscar compañia" />
+                                class="txtfield form_actions_search_box form-control" placeholder="Buscar compañía" />
                         </div>
                         <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-primary">Búsqueda</button>
                     </form>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="clear"></div>
                 <div class="form_actions_count">
-                    <p class="form_count_total">Total de Compañias: <span>{{ $groups->total() }}</span></p>
+                    <p class="form_count_total">Total de Compañías: <span>{{ $groups->total() }}</span></p>
                 </div>
                 <div class="clear"></div>
                 <table id="groups_tbl" class="footable table">
@@ -78,7 +78,7 @@
                                 data-hide="phone,tablet">
                                 <a
                                     href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => request('direction') === 'asc' ? 'desc' : 'asc']) }}">
-                                    Nombre de la compañia
+                                    Nombre de la compañía
                                     <i
                                         class="fa fa-sort{{ request('sort') === 'name' ? (request('direction') === 'asc' ? '-up' : '-down') : '' }}"></i>
                                 </a>

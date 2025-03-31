@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es_CO">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,6 +23,7 @@
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 </head>
+
 <body class="groups-add logged-in logged-as-admin menu_hidden backend">
     <div class="container-custom">
         <div class="main_content">
@@ -31,7 +33,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Adicionar compañia de clientes</h2>
+                            <h2>Adicionar compañía de clientes</h2>
                         </div>
                     </div>
                 </div>
@@ -41,49 +43,49 @@
                         <div class="white-box">
                             <div class="white-box-interior">
                                 @if (session('success'))
-                                    <div class="alert alert-success">
-                                        {{ session('success') }}
-                                    </div>
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
                                 @else
-                                    <form action="{{ route('company.store') }}" name="addgroup" method="POST" class="form-horizontal">
-                                        @csrf <!-- Token CSRF necesario para formularios POST -->
+                                <form action="{{ route('company.store') }}" name="addgroup" method="POST" class="form-horizontal">
+                                    @csrf <!-- Token CSRF necesario para formularios POST -->
 
-                                        <div class="form-group">
-                                            <label for="add_group_form_name" class="col-sm-4 control-label">Nombre de la compañía</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="add_group_form_name" id="add_group_form_name" class="form-control required" value="{{ old('add_group_form_name') }}" />
-                                                @error('add_group_form_name')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
+                                    <div class="form-group">
+                                        <label for="add_group_form_name" class="col-sm-4 control-label">Nombre de la compañía</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="add_group_form_name" id="add_group_form_name" class="form-control required" value="{{ old('add_group_form_name') }}" />
+                                            @error('add_group_form_name')
+                                            <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
+                                    </div>
 
-                                        <div class="form-group">
-                                            <label for="add_group_form_description" class="col-sm-4 control-label">Descripción</label>
-                                            <div class="col-sm-8">
-                                                <!-- Se eliminan espacios extra en el textarea -->
-                                                <textarea name="add_group_form_description" id="add_group_form_description" class="ckeditor form-control">{{ old('add_group_form_description') }}</textarea>
-                                                @error('add_group_form_description')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
+                                    <div class="form-group">
+                                        <label for="add_group_form_description" class="col-sm-4 control-label">Descripción</label>
+                                        <div class="col-sm-8">
+                                            <!-- Se eliminan espacios extra en el textarea -->
+                                            <textarea name="add_group_form_description" id="add_group_form_description" class="ckeditor form-control">{{ old('add_group_form_description') }}</textarea>
+                                            @error('add_group_form_description')
+                                            <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
+                                    </div>
 
-                                        <div class="form-group assigns">
-                                            <label for="add_group_form_members" class="col-sm-4 control-label">Integrantes</label>
-                                            <div class="col-sm-8">
-                                                <select multiple="multiple" id="members-select" class="form-control chosen-select" name="add_group_form_members[]" data-placeholder="Seleccione una o más opciones. Escriba para buscar">
-                                                    @foreach ($members as $member)
-                                                        <option value="{{ $member->id }}">{{ $member->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                    <div class="form-group assigns">
+                                        <label for="add_group_form_members" class="col-sm-4 control-label">Integrantes</label>
+                                        <div class="col-sm-8">
+                                            <select multiple="multiple" id="members-select" class="form-control chosen-select" name="add_group_form_members[]" data-placeholder="Seleccione una o más opciones. Escriba para buscar">
+                                                @foreach ($members as $member)
+                                                <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
+                                    </div>
 
-                                        <div class="inside_form_buttons">
-                                            <button type="submit" name="submit" class="btn btn-wide btn-primary">Crear grupo</button>
-                                        </div>
-                                    </form>
+                                    <div class="inside_form_buttons">
+                                        <button type="submit" name="submit" class="btn btn-wide btn-primary">Crear grupo</button>
+                                    </div>
+                                </form>
                                 @endif
                             </div>
                         </div>
@@ -109,84 +111,85 @@
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
             <script>
-            $(document).ready(function () {
-                // Inicializar el select con Chosen
-                $("#members-select").chosen({
-                    width: "100%",
-                    no_results_text: "No se encontró esta opción",
-                    placeholder_text_multiple: "Seleccione una o más opciones. Escriba para buscar"
-                });
-
-                // Inicializar CKEditor en el textarea (sin espacios extra)
-                CKEDITOR.replace('add_group_form_description');
-
-                // Función para mostrar mensajes de éxito con SweetAlert2
-                function showSuccessMessage(message) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: message,
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#2778c4'
-
-                    }).then(() => {
-                        // Recargar la página después de mostrar el mensaje de éxito
-                        window.location.reload();
+                $(document).ready(function() {
+                    // Inicializar el select con Chosen
+                    $("#members-select").chosen({
+                        width: "100%",
+                        no_results_text: "No se encontró esta opción",
+                        placeholder_text_multiple: "Seleccione una o más opciones. Escriba para buscar"
                     });
-                }
 
-                // Función para mostrar mensajes de error con SweetAlert2
-                function showErrorMessage(message) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: message,
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#2778c4'
+                    // Inicializar CKEditor en el textarea (sin espacios extra)
+                    CKEDITOR.replace('add_group_form_description');
 
-                    });
-                }
+                    // Función para mostrar mensajes de éxito con SweetAlert2
+                    function showSuccessMessage(message) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: message,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#2778c4'
 
-                // Manejar el envío del formulario vía AJAX
-                $('form[name="addgroup"]').on('submit', function (e) {
-                    e.preventDefault(); // Evitar el envío tradicional del formulario
-                    
-
-                    // Actualizar el contenido de CKEditor al textarea
-                    for (var instance in CKEDITOR.instances) {
-                        if (CKEDITOR.instances.hasOwnProperty(instance)) {
-                            CKEDITOR.instances[instance].updateElement();
-                        }
+                        }).then(() => {
+                            // Recargar la página después de mostrar el mensaje de éxito
+                            window.location.reload();
+                        });
                     }
-                    // (Opcional) Verificar en consola que se envía el HTML formateado
-                    console.log("Contenido del editor:", $("#add_group_form_description").val());
 
-                    // Enviar la solicitud AJAX
-                    $.ajax({
-                        type: 'POST',
-                        url: $(this).attr('action'),
-                        data: $(this).serialize(),
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response.success) {
-                                showSuccessMessage(response.success);
-                            } else if (response.error) {
-                                showErrorMessage(response.error);
-                            }
-                        },
-                        error: function (xhr) {
-                            // Manejar errores de validación del servidor
-                            if (xhr.status === 400 && xhr.responseJSON.error) {
-                                showErrorMessage(xhr.responseJSON.error);
-                            } else {
-                                showErrorMessage("El campo nombre es obligatorio y no puede quedar vacío.");
+                    // Función para mostrar mensajes de error con SweetAlert2
+                    function showErrorMessage(message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: message,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#2778c4'
+
+                        });
+                    }
+
+                    // Manejar el envío del formulario vía AJAX
+                    $('form[name="addgroup"]').on('submit', function(e) {
+                        e.preventDefault(); // Evitar el envío tradicional del formulario
+
+
+                        // Actualizar el contenido de CKEditor al textarea
+                        for (var instance in CKEDITOR.instances) {
+                            if (CKEDITOR.instances.hasOwnProperty(instance)) {
+                                CKEDITOR.instances[instance].updateElement();
                             }
                         }
+                        // (Opcional) Verificar en consola que se envía el HTML formateado
+                        console.log("Contenido del editor:", $("#add_group_form_description").val());
+
+                        // Enviar la solicitud AJAX
+                        $.ajax({
+                            type: 'POST',
+                            url: $(this).attr('action'),
+                            data: $(this).serialize(),
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    showSuccessMessage(response.success);
+                                } else if (response.error) {
+                                    showErrorMessage(response.error);
+                                }
+                            },
+                            error: function(xhr) {
+                                // Manejar errores de validación del servidor
+                                if (xhr.status === 400 && xhr.responseJSON.error) {
+                                    showErrorMessage(xhr.responseJSON.error);
+                                } else {
+                                    showErrorMessage("El campo nombre es obligatorio y no puede quedar vacío.");
+                                }
+                            }
+                        });
                     });
                 });
-            });
             </script>
         </div>
     </div>
 </body>
+
 </html>
