@@ -37,9 +37,10 @@
                             <button class="stats_days btn btn-sm btn-default " onclick="loadData(30)">30 Días</button>
                             <button class="stats_days btn btn-sm btn-default " onclick="loadData(60)">60 Días</button>
                         </div>
-                        <div style="width: 100%; height: 400px;">
+                        <div class="chart-container">
                             <canvas id="statisticsChart"></canvas>
                         </div>
+
 
                     </div>
 
@@ -130,7 +131,7 @@
                         });
                     </script>
 
-                  
+
 
 
                 </div> <!-- container-fluid -->
