@@ -1005,6 +1005,7 @@ public function store(Request $request)
     public function downloadCompresed(Request $request)
     {
         $fileIds = $request->input('file_ids'); // Array de IDs de archivos seleccionados
+        $fileIds = is_array($fileIds) ? $fileIds : (array)$fileIds; // Convertir a array si no lo es
 
         if (empty($fileIds)) {
             // Manejar el caso en que no se seleccionen archivos

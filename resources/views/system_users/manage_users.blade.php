@@ -45,7 +45,7 @@
                                     <div class="form-group group_float">
                                         <input type="text" name="search" id="search"
                                             value="{{ request('search') }}" placeholder="Buscar usuario"
-                                            class="txtfield form_actions_search_box form-control" />
+                                            class="form-control" />
                                     </div>
                                     <button type="submit" id="btn_proceed_search"
                                         class="btn btn-sm btn-primary">Búsqueda</button>

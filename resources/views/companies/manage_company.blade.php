@@ -41,7 +41,7 @@
                     <form action="{{ route('manage_company') }}" method="get" class="form-inline">
                         <div class="form-group group_float">
                             <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                class="txtfield form_actions_search_box form-control" placeholder="Buscar compañía" />
+                                class="form-control" placeholder="Buscar compañía" />
                         </div>
                         <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-primary">Búsqueda</button>
                     </form>
@@ -185,6 +185,31 @@
     <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
+        // Agregar estilos dinámicamente
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .custom-search-icon {
+            color: #facea8 !important;
+            border: 2px solid #f8bb86 !important;
+            border-radius: 50%;
+            padding: 10px;
+            background-color: #fff8ee;
+        }
+    `;
+    document.head.appendChild(style);
+        // Función para mostrar mensaje cuando no hay resultados de búsqueda
+    function showNoResultsMessage(message) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Búsqueda sin resultados',
+            text: message,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2778c4',
+            customClass: {
+                icon: 'custom-search-icon'
+            }
+        });
+    }    
         document.getElementById('select_all').addEventListener('click', function() {
             let isChecked = this.checked;
             let checkboxes = document.querySelectorAll('input[name="batch[]"]');
@@ -193,6 +218,11 @@
                 checkbox.checked = isChecked;
             });
         });
+         // Mostrar mensaje si no hay resultados en la búsqueda de grupos (compañías)
+    @if(request('search') && $groups->isEmpty())
+        showNoResultsMessage('No se encontraron compañías que coincidan con: "{{ request('search') }}"');
+    @endif
+
 
 
         function goToPage() {
@@ -281,7 +311,9 @@
             confirmButtonText: 'Aceptar'
         });
         @endif
+        
     </script>
+   
 
     <!-- Modal para mostrar la URL pública -->
     <div class="modal fade" id="urlModal" tabindex="-1" role="dialog" aria-labelledby="urlModalLabel"

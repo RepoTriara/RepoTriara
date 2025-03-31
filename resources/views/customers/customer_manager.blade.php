@@ -45,7 +45,7 @@
                                     <div class="form-group group_float">
                                         <input type="text" name="search" id="search"
                                             value="{{ request('search') }}" placeholder="Buscar cliente"
-                                            class="txtfield form_actions_search_box form-control" />
+                                            class="form-control" />
                                     </div>
                                     <button type="submit" id="btn_proceed_search"
                                         class="btn btn-sm btn-primary">Búsqueda</button>
@@ -289,112 +289,145 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
-            <script>
-                document.getElementById('select_all').addEventListener('click', function() {
-                    var isChecked = this.checked;
-                    var checkboxes = document.querySelectorAll('input[name="batch[]"]');
-                    checkboxes.forEach(function(checkbox) {
-                        checkbox.checked = isChecked;
-                    });
+           <script>
+    document.getElementById('select_all').addEventListener('click', function() {
+        var isChecked = this.checked;
+        var checkboxes = document.querySelectorAll('input[name="batch[]"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = isChecked;
+        });
+    });
+
+    function goToPageClientes() {
+        // Obtener el valor ingresado en el campo "Vaya a:"
+        const pageInput = document.getElementById('go_to_page_clientes');
+        const page = parseInt(pageInput.value, 10);
+
+        // Obtener el número total de páginas disponibles
+        const lastPage =
+            {{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->lastPage() : 1 }};
+
+        // Validar si la página ingresada está dentro del rango válido
+        if (isNaN(page) || page < 1 || page > lastPage) {
+            // Mostrar SweetAlert indicando que la página no existe
+            Swal.fire({
+                title: 'Página inválida',
+                text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                // Limpiar el campo de entrada después del error
+                pageInput.value = '';
+            });
+            return;
+        }
+
+        // Redirigir al usuario a la página seleccionada
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page);
+        window.location.href = url.toString();
+    }
+
+   // Función para mostrar mensaje cuando no hay resultados de búsqueda
+    function showNoResultsMessage(searchTerm) {
+        // Crear y agregar estilos personalizados para el icono
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .custom-search-icon {
+                color: #facea8 !important;
+                border: 2px solid #f8bb86 !important;
+                border-radius: 50%;
+                padding: 10px;
+                background-color: #fff8ee;
+                
+            }
+        `;
+        document.head.appendChild(style);
+
+        Swal.fire({
+            title: 'Búsqueda sin resultados',
+            text: `No se encontraron clientes que coincidan con: "${searchTerm}"`,
+            icon: 'info',
+            confirmButtonText: 'Aceptar',
+            customClass: {
+                icon: 'custom-search-icon'
+            }
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar si hay término de búsqueda y no hay resultados
+        @if(request('search') && $clientes->isEmpty())
+            showNoResultsMessage('{{ request('search') }}');
+        @endif
+
+        document.querySelector('form[name="clients_list"]').addEventListener('submit', function(e) {
+            var action = document.getElementById('action').value;
+            var selectedClients = [];
+
+            document.querySelectorAll('input[name="batch[]"]:checked').forEach(function(checkbox) {
+                selectedClients.push(checkbox.value);
+            });
+
+            if (action === 'none') {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Debes seleccionar una acción para proceder.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
                 });
+                return;
+            }
 
-                function goToPageClientes() {
-                    // Obtener el valor ingresado en el campo "Vaya a:"
-                    const pageInput = document.getElementById('go_to_page_clientes');
-                    const page = parseInt(pageInput.value, 10);
+            if (action === 'delete' && selectedClients.length > 0) {
+                e.preventDefault();
 
-                    // Obtener el número total de páginas disponibles
-                    const lastPage =
-                        {{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->lastPage() : 1 }};
-
-                    // Validar si la página ingresada está dentro del rango válido
-                    if (isNaN(page) || page < 1 || page > lastPage) {
-                        // Mostrar SweetAlert indicando que la página no existe
-                        Swal.fire({
-                            title: 'Página inválida',
-                            text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
-                            icon: 'warning',
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            // Limpiar el campo de entrada después del error
-                            pageInput.value = '';
-                        });
-                        return;
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡No podrás revertir esta acción!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
                     }
-
-                    // Redirigir al usuario a la página seleccionada
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('page', page);
-                    window.location.href = url.toString();
-                }
-                document.addEventListener('DOMContentLoaded', function() {
-                    document.querySelector('form[name="clients_list"]').addEventListener('submit', function(e) {
-                        var action = document.getElementById('action').value;
-                        var selectedClients = [];
-
-                        document.querySelectorAll('input[name="batch[]"]:checked').forEach(function(checkbox) {
-                            selectedClients.push(checkbox.value);
-                        });
-
-                        if (action === 'none') {
-                            e.preventDefault();
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Debes seleccionar una acción para proceder.',
-                                icon: 'error',
-                                confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
-                            });
-                            return;
-                        }
-
-                        if (action === 'delete' && selectedClients.length > 0) {
-                            e.preventDefault();
-
-                            Swal.fire({
-                                title: '¿Estás seguro?',
-                                text: "¡No podrás revertir esta acción!",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Sí, eliminar',
-                                cancelButtonText: 'Cancelar'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    this.submit();
-                                }
-                            });
-                        } else if (action === 'delete' && selectedClients.length === 0) {
-                            e.preventDefault();
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Debes seleccionar al menos un cliente para eliminar.',
-                                icon: 'error',
-                                confirmButtonText: 'Aceptar' // Cambiar "OK" por "Aceptar"
-                            });
-                        }
-                    });
-
-                    @if (session('success'))
-                        Swal.fire({
-                            title: 'Éxito',
-                            text: '{{ session('success') }}',
-                            icon: 'success',
-                            timer: 3000, // Se cierra automáticamente después de 3 segundos
-                            showConfirmButton: false // No muestra el botón "OK"
-                        });
-                    @endif
-
-                    @if (session('error'))
-                        Swal.fire({
-                            title: 'Error',
-                            text: '{{ session('error') }}',
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    @endif
                 });
-            </script>
+            } else if (action === 'delete' && selectedClients.length === 0) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Debes seleccionar al menos un cliente para eliminar.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                    
+                });
+            }
+        });
+
+        @if (session('success'))
+            Swal.fire({
+                title: 'Éxito',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if (session('error'))
+            Swal.fire({
+                title: 'Error',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        @endif
+    });
+</script>
 
         </div> <!-- main_content -->
     </div> <!-- container-custom -->

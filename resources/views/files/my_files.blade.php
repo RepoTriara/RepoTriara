@@ -66,7 +66,7 @@
                                             <div class="form-group group_float">
                                                 <input type="text" name="search" id="search"
                                                     value="{{ request()->get('search') }}"
-                                                    class="txtfield form_actions_search_box form-control"
+                                                    class="form-control"
                                                     placeholder="Buscar por título o descripción" />
                                             </div>
                                             <button type="submit" id="btn_proceed_search"
@@ -282,109 +282,153 @@
     <script src="{{ asset('includes/js/main.js') }}"></script>
     <script src="{{ asset('includes/js/js.functions.php') }}"></script>
     <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
-    <script>
-        // Mostrar mensaje de espera al enviar el formulario
-        document.addEventListener('DOMContentLoaded', function() {
-            const downloadForm = document.forms['files_list'];
-            const delay = 3000; // Tiempo de espera (en milisegundos)
+  <script>
+    // Agregar estilos dinámicamente
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .custom-search-icon {
+            color: #facea8 !important;
+            border: 2px solid #f8bb86 !important;
+            border-radius: 50%;
+            padding: 10px;
+            background-color: #fff8ee;
+        }
+    `;
+    document.head.appendChild(style);
 
-            downloadForm.onsubmit = function(e) {
-                const action = document.getElementById('action').value;
+    // Función para mostrar mensaje cuando no hay resultados de búsqueda
+    function showNoResultsMessage(message) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Búsqueda sin resultados',
+            text: message,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2778c4',
+            customClass: {
+                icon: 'custom-search-icon'
+            }
+        });
+    }
 
-                if (action === 'zip') {
-                    e.preventDefault(); // Evitar envío inmediato
+    // Mostrar mensaje si no hay resultados en la búsqueda de archivos
+    @if(request('search') && $files->isEmpty())
+        showNoResultsMessage('No se encontraron archivos que coincidan con: "{{ request('search') }}"');
+    @endif
 
-                    // Mostrar mensaje de carga con SweetAlert
-                    Swal.fire({
-                        title: 'Por favor, espera',
-                        html: `
-                        <p>Estamos procesando tu descarga comprimida...</p>
-                        <div style="margin-top: 10px;">
-                            <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando..." width="50">
-                        </div>
-                    `,
-                        allowOutsideClick: false,
-                        showConfirmButton: false
-                    });
-
-                    // Configurar el temporizador para cerrar automáticamente el mensaje y enviar el formulario
-                    const swalTimer = setTimeout(() => {
-                        Swal.close(); // Cerrar el mensaje
-                        e.target.submit(); // Enviar el formulario
-                    }, delay); // Tiempo sincronizado
-                }
-            };
-
-            // Verificar si hay un mensaje de error o éxito (esto dependerá de cómo manejes la respuesta en el backend)
-            @if (session('success'))
-                Swal.fire({
-                    title: '¡Éxito!',
-                    text: '{{ session('success') }}',
-                    icon: 'success',
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#2778c4'
-
-                });
-            @elseif (session('error'))
-                Swal.fire({
-                    title: 'Error',
-                    text: '{{ session('error') }}',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#2778c4'
-
-                });
-            @endif
-
-            // Agregar funcionalidad para seleccionar todos los checkboxes
-            document.getElementById('select_all').addEventListener('click', function() {
-                // Obtener el estado del checkbox principal
-                var isChecked = this.checked;
-
-                // Seleccionar todos los checkboxes que están en el grupo 'file_ids[]'
-                var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
-
-                // Iterar sobre todos los checkboxes y actualizarlos con el mismo estado
-                checkboxes.forEach(function(checkbox) {
+    // Función para manejar la selección/deselección de checkboxes
+    function setupCheckboxes() {
+        const selectAllCheckbox = document.getElementById('select_all');
+        const fileCheckboxes = document.querySelectorAll('input[name="file_ids"]');
+        
+        if (selectAllCheckbox && fileCheckboxes.length > 0) {
+            // Seleccionar/deseleccionar todos
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                fileCheckboxes.forEach(checkbox => {
                     checkbox.checked = isChecked;
                 });
             });
-        });
 
-        function goToPage() {
-            const form = document.getElementById('go_to_page_form');
-            const pageInput = document.getElementById('go_to_page');
-            const page = parseInt(pageInput.value);
-            const lastPage = parseInt(
-                "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->lastPage() : 1 }}");
-
-            if (isNaN(page) || page < 1 || page > lastPage) {
-                Swal.fire({
-                    title: 'Página inválida',
-                    text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
-                    icon: 'warning',
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#2778c4'
+            // Actualizar el estado del checkbox "Seleccionar todos" cuando se cambian checkboxes individuales
+            fileCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allChecked = Array.from(fileCheckboxes).every(cb => cb.checked);
+                    selectAllCheckbox.checked = allChecked;
                 });
-                pageInput.value =
-                    "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->currentPage() : 1 }}"; // Optionally reset the input to the current page
-                return;
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar los checkboxes
+        setupCheckboxes();
+
+        const downloadForm = document.forms['files_list'];
+        const delay = 3000;
+
+        downloadForm.onsubmit = function(e) {
+            const action = document.getElementById('action').value;
+
+            if (action === 'zip') {
+                e.preventDefault();
+                
+                // Verificar si hay archivos seleccionados
+                const selectedFiles = document.querySelectorAll('input[name="file_ids"]:checked');
+                if (selectedFiles.length === 0) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Por favor selecciona al menos un archivo para descargar',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Por favor, espera',
+                    html: `
+                    <p>Estamos procesando tu descarga comprimida...</p>
+                    <div style="margin-top: 10px;">
+                        <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando..." width="50">
+                    </div>
+                    `,
+                    allowOutsideClick: false,
+                    showConfirmButton: false
+                });
+
+                setTimeout(() => {
+                    Swal.close();
+                    downloadForm.submit();
+                }, delay);
             }
+        };
 
-            const url = new URL(window.location.href);
-            url.searchParams.set('page', page);
-            window.location.href = url.toString();
+        @if (session('success'))
+            Swal.fire({
+                title: '¡Éxito!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#2778c4'
+            });
+        @endif
+
+        @if (session('error'))
+            Swal.fire({
+                title: 'Error',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#2778c4'
+            });
+        @endif
+    });
+
+    function goToPage() {
+        const pageInput = document.getElementById('go_to_page');
+        const page = parseInt(pageInput.value);
+        const lastPage = parseInt(
+            "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->lastPage() : 1 }}");
+
+        if (isNaN(page) || page < 1 || page > lastPage) {
+            Swal.fire({
+                title: 'Página inválida',
+                text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+                icon: 'warning',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#2778c4'
+            });
+            pageInput.value =
+                "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->currentPage() : 1 }}";
+            return;
         }
 
-        function goToPageClientes() {
-            const form = document.getElementById('go_to_page_form_clientes');
-            const page = document.getElementById('go_to_page_clientes').value;
-            const url = new URL(window.location.href);
-            url.searchParams.set('page', page);
-            window.location.href = url.toString();
-        }
-    </script>
-
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page);
+        window.location.href = url.toString();
+    }
+</script>
 
 
 

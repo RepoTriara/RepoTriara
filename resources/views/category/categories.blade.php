@@ -185,6 +185,7 @@
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
                 function goToPageCategories() {
+                    
                     // Obtener el valor ingresado en el campo "Vaya a:"
                     const pageInput = document.getElementById('go_to_page_categories');
                     const page = parseInt(pageInput.value, 10);
@@ -195,7 +196,7 @@
                             $categories instanceof\ Illuminate\ Pagination\ LengthAwarePaginator ? $categories - > lastPage() : 1
                         }
                     };
-
+                     
                     // Validar si la página ingresada está dentro del rango válido
                     if (isNaN(page) || page < 1 || page > lastPage) {
                         // Mostrar SweetAlert indicando que la página no existe
@@ -218,87 +219,119 @@
                 }
             </script>
 
-            <script>
-                $(document).ready(function() {
-                    // Función para mostrar el mensaje de éxito
-                    function showSuccessMessage(message) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: message,
-                            timer: 4000, // Tiempo en milisegundos (3000ms = 3 segundos)
-                            showConfirmButton: false
-                        }).then(() => {
-                            location.reload(); // Recargar la página después de mostrar el mensaje de éxito
-                        });
-                    }
+           <script>
+    $(document).ready(function() {
+        // Crear estilos para el icono de búsqueda sin resultados
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .custom-search-icon {
+                color: #facea8 !important;
+                border: 2px solid #f8bb86 !important;
+                border-radius: 50%;
+                padding: 10px;
+                background-color: #fff8ee;
+                
+            }
+        `;
+        document.head.appendChild(style);
 
-                    // Función para mostrar el mensaje de error
-                    function showErrorMessage(message) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: message,
-                            confirmButtonText: 'Aceptar',
-                            confirmButtonColor: '#2778c4'
+        // Función para mostrar el mensaje de éxito
+        function showSuccessMessage(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: message,
+                timer: 4000,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
+        }
 
-                        });
-                    }
+        // Función para mostrar el mensaje de error
+        function showErrorMessage(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#2778c4'
+            });
+        }
 
-                    // Seleccionar/Deseleccionar todos los checkboxes
-                    $('#select_all').on('click', function() {
-                        $('input[name="categories[]"]').prop('checked', this.checked);
-                    });
+        // Función para mostrar mensaje cuando no hay resultados de búsqueda
+        function showNoResultsMessage(message) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Búsqueda sin resultados',
+                text: message,
+                confirmButtonText: 'Aceptar',
+                   confirmButtonColor: '#2778c4',
+                customClass: {
+                    icon: 'custom-search-icon'
+                }
+            });
+        }
 
-                    // Función para eliminar las categorías seleccionadas
-                    $('#btn_delete_selected').on('click', function() {
-                        // Verificar si se han seleccionado categorías
-                        var selectedCategories = $('input[name="categories[]"]:checked');
-                        if (selectedCategories.length === 0) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Por favor, seleccione al menos una categoría para eliminar.',
-                                confirmButtonText: 'Aceptar',
-                                confirmButtonColor: '#2778c4'
-                            });
-                            return;
-                        }
+        // Mostrar mensaje si no hay resultados en la búsqueda
+        @if(request('search') && $categories->isEmpty())
+            showNoResultsMessage('No se encontraron categorías que coincidan con: "{{ request('search') }}"');
+        @endif
 
-                        // Confirmación antes de enviar el formulario
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Confirmación',
-                            text: '¿Estás seguro de eliminar las categorías seleccionadas?',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Si, Eliminar', // Cambiado de "Sí" a "Eliminar"
-                            cancelButtonText: 'Cancelar' // Mantener "Cancelar"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // Realizar la solicitud AJAX al servidor
-                                $.ajax({
-                                    type: 'POST',
-                                    url: $('#bulk_delete_form').attr('action'),
-                                    data: $('#bulk_delete_form').serialize(),
-                                    dataType: 'json',
-                                    success: function(response) {
-                                        if (response.error) {
-                                            showErrorMessage(response.error);
-                                        } else if (response.success) {
-                                            showSuccessMessage(response.success);
-                                        }
-                                    },
-                                    error: function(xhr, status, error) {
-                                        showErrorMessage('Hubo un error en el servidor. Por favor, inténtalo de nuevo más tarde.');
-                                    }
-                                });
-                            }
-                        });
-                    });
+        // Seleccionar/Deseleccionar todos los checkboxes
+        $('#select_all').on('click', function() {
+            $('input[name="categories[]"]').prop('checked', this.checked);
+        });
+
+        // Función para eliminar las categorías seleccionadas
+        $('#btn_delete_selected').on('click', function() {
+            // Verificar si se han seleccionado categorías
+            var selectedCategories = $('input[name="categories[]"]:checked');
+            if (selectedCategories.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Por favor, seleccione al menos una categoría para eliminar.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#2778c4'
                 });
-            </script>
+                return;
+            }
+
+            // Confirmación antes de enviar el formulario
+            Swal.fire({
+                icon: 'warning',
+                title: 'Confirmación',
+                text: '¿Estás seguro de eliminar las categorías seleccionadas?',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Si, Eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Realizar la solicitud AJAX al servidor
+                    $.ajax({
+                        type: 'POST',
+                        url: $('#bulk_delete_form').attr('action'),
+                        data: $('#bulk_delete_form').serialize(),
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.error) {
+                                showErrorMessage(response.error);
+                            } else if (response.success) {
+                                showSuccessMessage(response.success);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            showErrorMessage('Hubo un error en el servidor. Por favor, inténtalo de nuevo más tarde.');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
 
 
         </div> <!-- main_content -->

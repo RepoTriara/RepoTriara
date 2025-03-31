@@ -60,7 +60,7 @@
                                     <div class="form-group group_float">
                                         <input type="text" name="search" id="search"
                                             value="{{ request()->get('search') }}"
-                                            class="txtfield form_actions_search_box form-control"
+                                            class="form-control"
                                             placeholder="Buscar por título o descripción" />
                                     </div>
                                     <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-primary">
@@ -173,7 +173,60 @@
             <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    // Agregar estilos dinámicamente
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .custom-search-icon {
+            color: #facea8 !important;
+            border: 2px solid #f8bb86 !important;
+            border-radius: 50%;
+            padding: 10px;
+            background-color: #fff8ee;
+        }
+    `;
+    document.head.appendChild(style);
 
+    // Función para mostrar mensaje cuando no hay resultados de búsqueda
+    function showNoResultsMessage(message) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Búsqueda sin resultados',
+            text: message,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2778c4',
+            customClass: {
+                icon: 'custom-search-icon'
+            }
+        });
+    }
+
+    // Mostrar mensaje si no hay resultados en la búsqueda de archivos
+    @if(request('search') && $files->isEmpty())
+        showNoResultsMessage('No se encontraron archivos que coincidan con: "{{ request('search') }}"');
+    @endif
+
+    // Seleccionar/Deseleccionar todos los checkboxes
+    document.getElementById('select_all').addEventListener('click', function() {
+        let isChecked = this.checked;
+        let checkboxes = document.querySelectorAll('input[name="batch[]"]');
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = isChecked;
+        });
+    });
+
+    @if(session('error'))
+    Swal.fire({
+        title: 'Error',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#2778c4'
+    });
+    @endif
+</script>
 </body>
 
 </html>
