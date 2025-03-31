@@ -19,8 +19,7 @@
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('includes/js/footable/css/footable.core.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/footable.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css"
-        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 </head>
@@ -44,10 +43,24 @@
                         <div class="form_actions_left">
                             <div class="form_actions_limit_results">
                                 <!-- Formulario de búsqueda -->
-                                <form action="{{ route('file_manager', ['groupId' => $group->id ?? '']) }}"
-                                    method="GET" class="form-inline">
+                                <!-- Formulario de búsqueda unificado -->
+                                <form action="{{ route('file_manager') }}" method="GET" class="form-inline">
+                                    <!-- Campos ocultos para mantener los filtros activos -->
+                                    @if(request()->has('client_id'))
+                                        <input type="hidden" name="client_id" value="{{ request('client_id') }}">
+                                    @endif
+
+                                    @if(request()->has('group_id'))
+                                        <input type="hidden" name="group_id" value="{{ request('group_id') }}">
+                                    @endif
+
+                                    @if(request()->has('category_id'))
+                                        <input type="hidden" name="category_id" value="{{ request('category_id') }}">
+                                    @endif
+
                                     <div class="form-group group_float">
-                                        <input type="text" name="search" id="search" placeholder="Buscar Archivos"
+                                        <input type="text" name="search" id="search"
+                                            placeholder="Buscar Archivos{{ isset($entityType) ? ' del ' . $entityType : '' }}"
                                             value="{{ request('search') }}" class="form-control">
                                     </div>
                                     <button type="submit" id="btn_proceed_search"
@@ -55,38 +68,51 @@
                                 </form>
 
                                 @if (isset($group))
-                                <!-- Filtro por estado del archivo para el grupo -->
-                                <form action="{{ route('files.manage', $group->id) }}" method="GET"
-                                    class="form-inline form_filters">
-                                    <div class="form-group group_float">
-                                        <select name="hidden" id="hidden" class="txtfield form-control">
-                                            <option value="2"
-                                                {{ request('hidden') == '2' ? 'selected' : '' }}>Todos los estados
-                                            </option>
-                                            <option value="0"
-                                                {{ request('hidden') == '0' ? 'selected' : '' }}>Visible</option>
-                                            <option value="1"
-                                                {{ request('hidden') == '1' ? 'selected' : '' }}>Oculto</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" id="btn_proceed_filter_clients"
-                                        class="btn btn-sm btn-default">Filtrar</button>
-                                </form>
+                                    <!-- Filtro por estado del archivo para el grupo -->
+                                    <form action="{{ route('files.manage', $group->id) }}" method="GET"
+                                        class="form-inline form_filters">
+                                        <div class="form-group group_float">
+                                            <select name="hidden" id="hidden" class="txtfield form-control">
+                                                <option value="2" {{ request('hidden') == '2' ? 'selected' : '' }}>Todos los
+                                                    estados
+                                                </option>
+                                                <option value="0" {{ request('hidden') == '0' ? 'selected' : '' }}>Visible
+                                                </option>
+                                                <option value="1" {{ request('hidden') == '1' ? 'selected' : '' }}>Oculto
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" id="btn_proceed_filter_clients"
+                                            class="btn btn-sm btn-default">Filtrar</button>
+                                    </form>
                                 @elseif (!request()->has('category_id'))
-                                <!-- Filtro por cargador -->
-                                <form action="{{ route('file_manager') }}" method="GET" class="form-inline form_filters">
-                                    <div class="form-group group_float">
-                                        <select name="uploader" id="uploader" class="txtfield form-control">
-                                            <option value="">Cargador</option>
-                                            @foreach ($uploaders as $uploader)
-                                            <option value="{{ $uploader }}" {{ request('uploader') == $uploader ? 'selected' : '' }}>
-                                                {{ $uploader }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <button type="submit" id="btn_proceed_filter_clients" class="btn btn-sm btn-primary">Filtrar</button>
-                                </form>
+                                    <!-- Filtro por cargador -->
+                                    <form action="{{ route('file_manager') }}" method="GET"
+                                        class="form-inline form_filters">
+                                        <!-- Mantener filtros activos -->
+                                        @if(request()->has('client_id'))
+                                            <input type="hidden" name="client_id" value="{{ request('client_id') }}">
+                                        @endif
+                                        @if(request()->has('group_id'))
+                                            <input type="hidden" name="group_id" value="{{ request('group_id') }}">
+                                        @endif
+                                        @if(request()->has('category_id'))
+                                            <input type="hidden" name="category_id" value="{{ request('category_id') }}">
+                                        @endif
+
+                                        <div class="form-group group_float">
+                                            <select name="uploader" id="uploader" class="txtfield form-control">
+                                                <option value="">Todos los cargadores</option>
+                                                @foreach ($uploaders as $uploader)
+                                                    <option value="{{ $uploader }}" {{ request('uploader') == $uploader ? 'selected' : '' }}>
+                                                        {{ $uploader }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <button type="submit" id="btn_proceed_filter_clients"
+                                            class="btn btn-sm btn-primary">Filtrar</button>
+                                    </form>
                                 @endif
 
                             </div>
@@ -118,25 +144,25 @@
 
                             <div class="form_actions_count">
                                 @if (request()->has('client_id'))
-                                <p class="form_count_total">Total de archivos del cliente:
-                                    <span>{{ $filteredTotal }}</span>
-                                </p>
+                                    <p class="form_count_total">Total de archivos del cliente:
+                                        <span>{{ $filteredTotal }}</span>
+                                    </p>
                                 @elseif (request()->has('group_id'))
-                                <p class="form_count_total">Total de archivos en el grupo:
-                                    <span>{{ $filteredTotal }}</span>
-                                </p>
+                                    <p class="form_count_total">Total de archivos en el grupo:
+                                        <span>{{ $filteredTotal }}</span>
+                                    </p>
                                 @elseif (request()->has('category_id'))
-                                <p class="form_count_total">Total de archivos en la categoría:
-                                    <span>{{ $filteredTotal }}</span>
-                                </p>
+                                    <p class="form_count_total">Total de archivos en la categoría:
+                                        <span>{{ $filteredTotal }}</span>
+                                    </p>
                                 @elseif(request()->has('search') || request()->has('uploader'))
-                                <p class="form_count_total">Resultados filtrados:
-                                    <span>{{ $filteredTotal }}</span>
-                                </p>
+                                    <p class="form_count_total">Resultados filtrados:
+                                        <span>{{ $filteredTotal }}</span>
+                                    </p>
                                 @else
-                                <p class="form_count_total">Total de archivos:
-                                    <span>{{ $totalFiles }}</span>
-                                </p>
+                                    <p class="form_count_total">Total de archivos:
+                                        <span>{{ $totalFiles }}</span>
+                                    </p>
                                 @endif
                             </div>
 
@@ -201,63 +227,67 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($files as $file)
-                                    <tr>
-                                        <td><input type="checkbox" name="batch[]" value="{{ $file->id }}">
-                                        </td>
-                                        <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}</td>
-                                        <td>{{ pathinfo($file->original_url, PATHINFO_EXTENSION) }}</td>
-                                        <td><a
-                                                href="{{ route('file.directDownload', ['id' => $file->id]) }}">{{ $file->filename }}</a>
-                                        </td>
-                                        <td>{{ $file->size }}</td>
-                                        <td>{{ $file->uploader ?? 'Desconocido' }}</td>
-                                        <td>
-                                            @if ($file->fileRelations->isNotEmpty())
-                                            <span class="label label-success">Si</span>
-                                            @else
-                                            <span class="label label-danger">No</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($file->public_allow)
-                                            <button type="button" class="btn btn-primary btn-sm"
-                                                data-toggle="modal" data-target="#urlModal"
-                                                data-url="{{ route('file.showDownload', ['id' => $file->id, 'token' => $file->public_token]) }}">
-                                                Descarga
-                                            </button>
-                                            @else
-                                            <button type="button" class="btn btn-secondary btn-sm"
-                                                disabled>Privado</button>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($file->expires && $file->expiry_date)
-                                            @php
-                                            $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
-                                            @endphp
-                                            @if ($expiryDate->isPast())
-                                            <span class="label label-danger"
-                                                style="display: block; text-align: center;">
-                                                Expiró en<br>
-                                                <strong>{{ $expiryDate->format('Y/m/d') }}</strong>
-                                            </span>
-                                            @else
-                                            <span class="btn btn-info disabled btn-sm"
-                                                style="display: block; text-align: center;">
-                                                Expira en<br>
-                                                <strong>{{ $expiryDate->format('Y/m/d') }}</strong>
-                                            </span>
-                                            @endif
-                                            @else
-                                            <span class="btn btn-success disabled btn-sm">No expira</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $file->downloads->count() }} veces</td>
-                                        <td><a href="{{ route('files.edit', $file->id) }}"
-                                                class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a>
-                                        </td>
-                                    </tr>
+                                                                    <tr>
+                                                                        <td><input type="checkbox" name="batch[]" value="{{ $file->id }}">
+                                                                        </td>
+                                                                        <td>{{ $file->timestamp ? $file->timestamp->format('Y/m/d') : 'N/A' }}</td>
+                                                                        <td>{{ pathinfo($file->original_url, PATHINFO_EXTENSION) }}</td>
+                                                                        <td><a
+                                                                                href="{{ route('file.directDownload', ['id' => $file->id]) }}">{{ $file->filename }}</a>
+                                                                        </td>
+                                                                        <td>{{ $file->size }}</td>
+                                                                        <td>{{ $file->uploader ?? 'Desconocido' }}</td>
+                                                                        <td>
+                                                                            @if ($file->fileRelations->isNotEmpty())
+                                                                                <span class="label label-success">Si</span>
+                                                                            @else
+                                                                                <span class="label label-danger">No</span>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td>
+                                                                            @if ($file->public_allow)
+                                                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                                                                    data-target="#urlModal"
+                                                                                    data-url="{{ route('file.showDownload', ['id' => $file->id, 'token' => $file->public_token]) }}">
+                                                                                    Descarga
+                                                                                </button>
+                                                                            @else
+                                                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                                                    disabled>Privado</button>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td>
+                                                                            @if ($file->expires && $file->expiry_date)
+                                                                                                                    @php
+                                                                                                                        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
+                                                                                                                    @endphp
+                                                                                                                    @if ($expiryDate->isPast())
+                                                                                                                        <span class="label label-danger"
+                                                                                                                            style="display: block; text-align: center;">
+                                                                                                                            Expiró en<br>
+                                                                                                                            <strong>{{ $expiryDate->format('Y/m/d') }}</strong>
+                                                                                                                        </span>
+                                                                                                                    @else
+                                                                                                                        <span class="btn btn-info disabled btn-sm"
+                                                                                                                            style="display: block; text-align: center;">
+                                                                                                                            Expira en<br>
+                                                                                                                            <strong>{{ $expiryDate->format('Y/m/d') }}</strong>
+                                                                                                                        </span>
+                                                                                                                    @endif
+                                                                            @else
+                                                                                <span class="btn btn-success disabled btn-sm">No expira</span>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td>{{ $file->downloads->count() }} veces</td>
+                                                                        <td><a href="{{ route('files.edit', $file->id) }}"
+                                                                                class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a>
+                                                                        </td>
+                                                                    </tr>
+
                                     @endforeach
+                                    
+
+
                                 </tbody>
                             </table>
                         </form>
@@ -309,23 +339,23 @@
     </div>
 
     <script>
-        document.getElementById('select_all').addEventListener('click', function() {
+        document.getElementById('select_all').addEventListener('click', function () {
             let isChecked = this.checked;
             let checkboxes = document.querySelectorAll('input[name="batch[]"]');
-            checkboxes.forEach(function(checkbox) {
+            checkboxes.forEach(function (checkbox) {
                 checkbox.checked = isChecked;
             });
         });
 
 
 
-        $(document).ready(function() {
-            $('#urlModal').on('show.bs.modal', function(event) {
+        $(document).ready(function () {
+            $('#urlModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget);
                 var url = button.data('url');
                 var modal = $(this);
                 modal.find('#publicUrl').val(url);
-                modal.find('#publicUrl').click(function() {
+                modal.find('#publicUrl').click(function () {
                     $(this).select();
                 });
             });
@@ -339,23 +369,23 @@
         }
     </script>
     <script>
-        document.getElementById('select_all').addEventListener('click', function() {
+        document.getElementById('select_all').addEventListener('click', function () {
             let isChecked = this.checked;
             let checkboxes = document.querySelectorAll('input[name="batch[]"]');
-            checkboxes.forEach(function(checkbox) {
+            checkboxes.forEach(function (checkbox) {
                 checkbox.checked = isChecked;
             });
         });
 
 
 
-        $(document).ready(function() {
-            $('#urlModal').on('show.bs.modal', function(event) {
+        $(document).ready(function () {
+            $('#urlModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget);
                 var url = button.data('url');
                 var modal = $(this);
                 modal.find('#publicUrl').val(url);
-                modal.find('#publicUrl').click(function() {
+                modal.find('#publicUrl').click(function () {
                     $(this).select();
                 });
             });
@@ -395,14 +425,42 @@
         }
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const downloadForm = document.getElementById('bulkActionForm');
             const delay = 3000; // Tiempo de espera (en milisegundos)
+            
+              // Mostrar mensaje si no hay resultados en la búsqueda
+            @if(request()->has('search') && $files->isEmpty())
+                    Swal.fire({
+                        title: 'Búsqueda sin resultados',
+                        text: 'No se encontraron archivos que coincidan con "{{ request('search') }}"' +
+                            '@if(request()->has('client_id')) para este cliente' +
+                            '@elseif(request()->has('group_id')) en esta compañía' +
+                            '@elseif(request()->has('category_id')) en esta categoría' +
+                            '@endif',
+                        icon: 'info',
+                        confirmButtonText: 'Aceptar',
+                     customClass: {
+                            icon: 'custom-search-icon'
+                        }
+                    });
 
-            downloadForm.onsubmit = function(e) {
+                // Añadir estilos al icono
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    .custom-search-icon {
+                        color: #facea8 !important;
+                        border: 2px solid #f8bb86 !important;
+                        border-radius: 50%;
+                    }
+                `;
+                document.head.appendChild(style);
+            @endif
+
+            downloadForm.onsubmit = function (e) {
                 const action = document.getElementById('action').value;
                 const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
-
+ 
                 if (action === 'none' || selectedFiles.length === 0) {
                     e.preventDefault();
                     Swal.fire({
@@ -454,28 +512,28 @@
 
             // Verificar si hay un mensaje de éxito o error desde el backend
             @if(session('success'))
-            Swal.fire({
-                title: '¡Éxito!',
-                text: '{{ session('
-                success ') }}',
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-            });
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: '{{ session('
+                                success ') }}',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
             @elseif(session('error'))
-            Swal.fire({
-                title: 'Error',
-                text: '{{ session('
-                error ') }}',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
+                Swal.fire({
+                    title: 'Error',
+                    text: '{{ session('
+                                error ') }}',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
             @endif
 
             // Funcionalidad para seleccionar todos los checkboxes
-            document.getElementById('select_all').addEventListener('click', function() {
+            document.getElementById('select_all').addEventListener('click', function () {
                 var isChecked = this.checked;
                 var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
-                checkboxes.forEach(function(checkbox) {
+                checkboxes.forEach(function (checkbox) {
                     checkbox.checked = isChecked;
                 });
             });

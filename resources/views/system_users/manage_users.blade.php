@@ -232,7 +232,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="9" class="text-center">No hay usuarios registrados.</td>
+                                            <td colspan="8" class="text-center">No hay usuarios registrados.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -317,6 +317,30 @@
     window.location.href = url.toString();
 }
                 document.addEventListener('DOMContentLoaded', function () {
+                    // Mostrar mensaje si no hay resultados en la búsqueda
+                    @if(request()->has('search') && $users->isEmpty())
+                                Swal.fire({
+                                    title: 'Búsqueda sin resultados',
+                                    text: 'No se encontraron usuarios que coincidan con "{{ request('search') }}"',
+                                    icon: 'info',
+                                    confirmButtonText: 'Aceptar',
+                                    customClass: {
+                                        icon: 'custom-search-icon'
+                                    }
+                                });
+
+                                // Estilo personalizado para el icono
+                                const style = document.createElement('style');
+                                style.innerHTML = `
+                            .custom-search-icon {
+                                color: #facea8 !important;
+                                border: 2px solid #f8bb86 !important;
+                                border-radius: 50%;
+                            }
+                        `;
+                                document.head.appendChild(style);
+                    @endif
+
                     document.querySelector('form[action="{{ route('system_users.bulk_action') }}"]').addEventListener('submit', function (e) {
                         var action = document.getElementById('action').value;
                         var selectedUsers = [];
