@@ -41,7 +41,7 @@
                     <form action="{{ route('manage_company') }}" method="get" class="form-inline">
                         <div class="form-group group_float">
                             <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                class="txtfield form_actions_search_box form-control" placeholder="Buscar grupo" />
+                                class="txtfield form_actions_search_box form-control" placeholder="Buscar compañia" />
                         </div>
                         <button type="submit" id="btn_proceed_search" class="btn btn-sm btn-primary">Búsqueda</button>
                     </form>
