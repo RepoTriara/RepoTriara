@@ -399,6 +399,21 @@
                         });
                     @endif
                 });
+                 document.getElementById("do_action").addEventListener("click", function (event) {
+                    let action = document.getElementById("action").value;
+                    let checkboxes = document.querySelectorAll("input[name='batch[]']:checked");
+
+                    if ((action === "activate" || action === "deactivate") && checkboxes.length === 0) {
+                        event.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Debes seleccionar al menos un usuario para activar o desactivar.',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
             </script>
         </div> <!-- main_content -->
     </div> <!-- container-custom -->

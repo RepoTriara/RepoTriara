@@ -61,7 +61,7 @@
 
                                     <div class="form-group group_float">
                                         <input type="text" name="search" id="search"
-                                            placeholder="Buscar Archivos{{ isset($entityType) ? ' del ' . $entityType : '' }}"
+                                            placeholder="Buscar archivos{{ isset($entityType) ? ' del ' . $entityType : '' }}"
                                             value="{{ request('search') }}" class="form-control">
                                     </div>
                                     <button type="submit" id="btn_proceed_search"
@@ -356,12 +356,13 @@
                     </div>
                 </div>
             </div>
+            <footer>
+                <div id="footer">
+                    Claro Colombia
+                </div>
+            </footer>
         </div>
-        <footer>
-            <div id="footer">
-                Claro Colombia
-            </div>
-        </footer>
+        
 
         <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>

@@ -41,10 +41,10 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <p>
-                        <div class="alert alert-info">Haz clic en Añadir archivos para seleccionar todos los archivos
-                            que quieras subir, y luego haga clic en continuar. En el siguiente paso, podrá establecer un
+                        <div class="alert alert-info">Haz clic en "Agregar archivos" para seleccionar los archivos
+                            que quieras subir, y luego en "Subir archivos". En el siguiente paso, podrá establecer un
                             nombre y descripción de cada archivo cargado. Recuerde que el tamaño máximo permitido por
-                            archivo (en MB.) es <strong>2048</strong>. Además, los archivos expirarán un año posterior a
+                            archivo es de <strong>2048 MB</strong>. Además, los archivos expirarán un año después a
                             la fecha de subida.</div>
                         </p>
                      <script type="text/javascript">

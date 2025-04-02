@@ -1,5 +1,5 @@
 <?php
-
+ 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -15,23 +15,43 @@ use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Auth;
 use App\Services\ActivityLogService;
 use App\Enums\ActionType;
-
+ 
 Route::get('/test-timezone', function () {
     return response()->json([
         'timezone' => config('app.timezone'),
         'current_time' => Carbon::now()->setTimezone(config('app.timezone'))->toDateTimeString(),
     ]);
 });
-Route::redirect('/', '/login');
-
+// Ruta raíz
+Route::get('/', function () {
+    if (Auth::check()) {
+        $user = Auth::user();
+        switch ($user->level) {
+            case 10:
+            case 8:
+                return redirect()->route('dashboard'); // Dashboard para administradores
+            case 0:
+                return redirect()->route('my_files'); // Vista para usuarios normales
+            default:
+                return redirect()->route('login'); // Ruta predeterminada para otros casos
+        }
+    }
+ 
+    // Si el usuario no está autenticado, redirigir al login
+    return redirect()->route('login');
+})->name('root');
+ 
+ 
+ 
+ 
 // Ruta genérica del dashboard protegida por autenticación (para level 8 y 10)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'level:8,10'])->name('dashboard');
-
+ 
 //Estadisticas Temporales
 Route::get('/statistics/data', [StatisticsController::class, 'getStatistics']);
-
+ 
 //Limpiar archivos temporales
 Route::post('/clear-temporary-files', [FilesController::class, 'clearTemporaryFiles'])->middleware(['auth', 'level:0,8,10'])->name('files.clearTemporaryFiles');
 Route::post('/files/clearTemporaryFiles', [FilesController::class, 'clearTemporaryFiles'])->middleware(['auth', 'level:0,8,10'])->name('files.clearTemporaryFiles');
@@ -40,7 +60,7 @@ Route::get('/my_files', action: [FilesController::class, 'myFiles'])->name('my_f
 Route::get('/manage-files', action: [FilesController::class, 'manageFiles'])->middleware(['auth', 'level:0'])->name('manage-files');
 Route::get('/direct-download/{id}', [FilesController::class, 'directDownload'])->name('file.directDownload');
 Route::post('/download-compresed', [FilesController::class, 'downloadCompresed'])->name('files.downloadCompresed');
-
+ 
 // Rutas para el manejo de clientes
 Route::middleware('auth', 'level:8,10')->group(function () {
 Route::get('/add_client', [ClientController::class, 'create'])->name('add_client');
@@ -50,14 +70,14 @@ Route::post('/customers/bulk_Action', [ClientController::class, 'bulkAction'])->
 Route::get('/customer_manager/{id}/edit', [ClientController::class, 'edit'])->name('customer_manager.edit');
 Route::put('/customer_manager/{id}', [ClientController::class, 'update'])->name('customer_manager.update');
 });
-
+ 
 // Rutas para el perfil de usuario
 Route::middleware('auth', 'level:0,8,10')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
+ 
 // Ruta para archivos
 Route::middleware('auth')->group(function () {
     Route::get('/upload', [FilesController::class, 'uploadView'])->middleware(['auth', 'level:0,8,10'])->name('upload');
@@ -74,7 +94,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/files/{fileId}/edit-basic', [FilesController::class, 'editBasic'])->middleware(['auth', 'level:0'])->name('files.editBasic');
     Route::get('/file/download/{id}/{token}', [FilesController::class, 'showDownloadView'])->name('file.showDownload')->withoutMiddleware('auth');
 });
-
+ 
 // Rutas para el manejo de usuarios
 Route::middleware('auth', 'level:10')->group(function () {
 Route::get('/add_user', [UserSystemController::class, 'create'])->name('add_user');
@@ -85,7 +105,7 @@ Route::post('system_users/bulk_action', [UserSystemController::class, 'bulkActio
 Route::get('system_users/{id}/edit', [UserSystemController::class, 'edit'])->name('system_users.edit');
 Route::put('system_users/{id}', [UserSystemController::class, 'update'])->name('system_users.update');
 });
-
+ 
 // Rutas para la gestión de grupos y archivos en empresas
 Route::middleware('auth' ,'level:8,10')->group(function () {
     Route::get('/add_company', [CompanyController::class, 'create'])->name('add_company');
@@ -102,12 +122,12 @@ Route::middleware('auth' ,'level:8,10')->group(function () {
     Route::post('/manage-files/{groupId}/bulk-action', [CompanyController::class, 'bulkAction'])->name('files.bulk_action');
     Route::post('/files/group-bulk-action/{groupId}', [CompanyController::class, 'bulkActionFiles'])->name('files.group-bulk-action');
 });
-
+ 
 // Generación de tokens públicos para archivos
 Route::middleware('auth')->group(function () {
     Route::get('/fix-public-tokens', function () {
         $files = TblFile::whereNull('public_token')->orWhere('public_token', '')->get();
-
+ 
         foreach ($files as $file) {
             $file->public_token = Str::random(32);
             if ($file->save()) {
@@ -116,11 +136,11 @@ Route::middleware('auth')->group(function () {
                 echo "Error al generar el token para el archivo con ID: {$file->id}<br>";
             }
         }
-
+ 
         return "Proceso completado.";
     });
 });
-
+ 
 // Rutas para la gestión de categorías
 Route::middleware('auth' ,'level:10')->group(function () {
     Route::prefix('categories')->group(function () {
@@ -135,18 +155,18 @@ Route::middleware('auth' ,'level:10')->group(function () {
         Route::get('/files', [FilesController::class, 'index'])->name('files.index');
     });
 });
-
-
-
-
+ 
+ 
+ 
+ 
 Route::middleware('auth')->group(function () {
-
+ 
     // Iniciar sesión (Breeze maneja el login automáticamente)
     Route::get('/login', function () {
         ActivityLogService::log(ActionType::LOGIN, 'Inicio de sesión');
         return redirect('/dashboard');
     })->name('login');
-
+ 
     // Cerrar sesión
     Route::post('/logout', function () {
         ActivityLogService::log(ActionType::LOGOUT, 'Cierre de sesión');
@@ -154,8 +174,8 @@ Route::middleware('auth')->group(function () {
         return redirect('/login');
     })->name('logout');
 });
-
-
+ 
+ 
 /*Route::fallback(function () {
     if (Auth::check()) {
         return redirect()->back(); // Redirige sin mensaje
@@ -164,5 +184,5 @@ Route::middleware('auth')->group(function () {
 });
 */
 // Incluir las rutas de autenticación
-
+ 
 require __DIR__ . '/auth.php';

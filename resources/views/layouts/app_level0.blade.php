@@ -35,7 +35,7 @@
             </li>
             <li>
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fa fa-sign-out" aria-hidden="true"></i> Cerrar Sesión
+                    <i class="fa fa-sign-out" aria-hidden="true"></i> Salir
                 </a>
 
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

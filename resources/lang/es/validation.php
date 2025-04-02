@@ -186,7 +186,7 @@ return [
         'password'    => [
             'min'      => 'Contraseña: El campo contraseña debe tener mínimo 8 caracteres.',
             'required' => 'Contraseña: Este campo es obligatorio, ingrese o genere una contraseña.',
-            'regex' => 'Contraseña: El formato del campo contraseña no es válido.',
+            'regex' => 'Contraseña: El formato del campo contraseña no es válido. Solo se permiten los siguientes caracteres: a-z, A-Z, 0-9, !@#$%^&*()_+-=[]{};:".<>/?`~',
         ],
         'phone'       => [
             'digits_between' => 'Teléfono: El número debe tener entre 7 y 10 dígitos.',
@@ -196,11 +196,19 @@ return [
         'user'        => [
             'required' => ' Ingresar nombre de usuario: Este campo es obligatorio, por favor, ingrese nombre de usuario.',
             'unique'   => 'Ingresar nombre de usuario: El nombre de usuario ya está en uso.',
+            'regex'    => 'Ingresar nombre de usuario: Este campo es alfanumérico y no puede contener espacios.',
+
         ],
          'contact' => [
         'min' => 'Contacto: El campo contacto debe tener mínimo 5 caracteres.',
         'max' => 'Contacto: El campo contacto no debe exceder los 60 caracteres.',
-        'string' => 'Contacto: El campo contacto debe ser una cadena de texto válida.',
+        'string' => 'Contacto: El campo contacto debe ser una cadena de texto válida.', 
     ],
+        'max_file_size' => [
+        'integer' => 'Máximo tamaño de subida: El campo debe ser un número entero.',
+        'min' => 'Máximo tamaño de subida: El valor no puede ser negativo.',
+        'max' => 'Máximo tamaño de subida: El valor no debe ser mayor que 2048.',
+    ],
+
     ],
 ];

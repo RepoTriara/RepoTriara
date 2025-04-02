@@ -152,7 +152,7 @@
                                             <input type="text" name="max_file_size" id="max_file_size"
                                                 class="form-control"
                                                 value="{{ old('max_file_size', $client->max_file_size) }}" required />
-                                            <span class="input-group-addon">mb</span>
+                                            <span class="input-group-addon">Mb</span>
                                             @error('max_file_size')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror

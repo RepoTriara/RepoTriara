@@ -24,7 +24,7 @@
     <div class="container-custom">
         <div class="main_content">
             @include('layouts.app')
-            <div class="container-fluid"></div>
+ 
             <div class="container-fluid">
                 <div class="row">
                     <div id="section_title">
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            
             <div class="form_actions_left">
                 <div class="form_actions_limit_results">
                     <form action="{{ route('manage_company') }}" method="GET" class="form-inline">
@@ -167,7 +167,7 @@
                             </button>
                         </div>
                     </form>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -176,6 +176,7 @@
             Claro Colombia
         </div>
     </footer>
+    </div>
     <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
     <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>
@@ -276,7 +277,8 @@
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar'
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         this.submit();

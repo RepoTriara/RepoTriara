@@ -264,13 +264,15 @@
 
                 </form>
 
-            </div> <!-- right_column -->
-        </div> <!-- wrapper -->
+            </div>
+            <!-- right_column -->
+            <footer>
+                <div id="footer">
+                    Claro Colombia </div>
+            </footer>
+            </div> <!-- wrapper -->
 
-        <footer>
-            <div id="footer">
-                Claro Colombia </div>
-        </footer>
+        
 
     </div>
     <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -428,8 +430,6 @@
         window.location.href = url.toString();
     }
 </script>
-
-
 
 </body>
 

@@ -439,51 +439,94 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Debe elegir al menos un cliente antes de activar o desactivar',
+                            text: 'Debes seleccionar al menos un cliente para activar o desactivar.',
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'Aceptar'
                         });
                     }
                 });
             </script>
-
-            <style>
-                /* Ajuste específico para los headers ordenables */
-                #users_tbl thead th {
-                    text-align: center;
-                    white-space: nowrap;
-                    padding: 8px 12px;
-                }
-
-                /* Reduce el espacio entre el título y el indicador de orden */
-                #users_tbl thead th a {
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 4px;
-                    /* Espacio reducido entre texto e icono */
-                }
-
-                /* Ajusta el tamaño del indicador de ordenación */
-                #users_tbl .footable-sort-indicator {
-                    margin-left: 4px;
-                    /* Espacio mínimo entre texto e icono */
-                    font-size: 0.8em;
-                    /* Tamaño ligeramente reducido */
-                }
-
-                /* Columnas no ordenables mantienen el mismo estilo */
-                #users_tbl thead th:not([class*="footable-sorted"]) {
-                    padding: 8px 12px;
-                }
-
-                /* Columna de checkbox */
-                #users_tbl thead th:first-child {
-                    width: 40px;
-                    padding: 8px;
-                }
-            </style>
-
+<style>
+    /* Ajustes específicos para la tabla de clientes */
+    #users_tbl thead th {
+        text-align: center;
+        white-space: nowrap;
+        padding: 8px 10px;
+    }
+    
+    /* Estilo para los encabezados ordenables */
+    #users_tbl thead th a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+    }
+    
+    /* Ajuste para los indicadores de ordenación */
+    #users_tbl .footable-sort-indicator {
+        margin-left: 3px;
+        font-size: 0.8em;
+    }
+    
+    /* Columna de checkbox */
+    #users_tbl thead th:first-child {
+        width: 40px;
+        padding: 8px 5px !important;
+    }
+    
+    /* Asegurar que las celdas del cuerpo mantengan la alineación */
+    #users_tbl tbody td {
+        vertical-align: middle;
+        text-align: center;
+    }
+    
+    /* Alineación especial para columnas de texto */
+    #users_tbl tbody td:nth-child(2), /* Nombre */
+    #users_tbl tbody td:nth-child(3), /* Usuario */
+    #users_tbl tbody td:nth-child(4) { /* Email */
+        text-align: left;
+    }
+    
+    /* Columnas numéricas alineadas a la derecha */
+    #users_tbl tbody td:nth-child(5), /* Cargas */
+    #users_tbl tbody td:nth-child(6), /* Archivos propios */
+    #users_tbl tbody td:nth-child(7), /* Archivos grupos */
+    #users_tbl tbody td:nth-child(9), /* Grupos activos */
+    #users_tbl tbody td:nth-child(11) { /* Max. tamaño */
+        text-align: right;
+    }
+    
+    /* Ajuste para columnas específicas */
+    #users_tbl thead th:nth-child(5), /* Cargas */
+    #users_tbl thead th:nth-child(6), /* Archivos propios */
+    #users_tbl thead th:nth-child(7), /* Archivos grupos */
+    #users_tbl thead th:nth-child(9), /* Grupos activos */
+    #users_tbl thead th:nth-child(10), /* Notificación */
+    #users_tbl thead th:nth-child(11) { /* Max. tamaño */
+        width: 90px;
+    }
+    
+    /* Columnas de acciones */
+    #users_tbl thead th:nth-child(12), /* Ver */
+    #users_tbl thead th:nth-child(13) { /* Comportamiento */
+        width: 120px;
+    }
+    
+    /* Estilo para los botones */
+    #users_tbl tbody td .btn {
+        margin: 2px;
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+    
+    /* Estilo para los labels de estado */
+    #users_tbl tbody td .label {
+        display: inline-block;
+        min-width: 60px;
+        padding: 3px 6px;
+    }
+</style>
+           
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 </body>

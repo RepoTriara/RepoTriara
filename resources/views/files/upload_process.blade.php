@@ -292,7 +292,7 @@
                                             <span
                                                 class="label {{ $isHidden ? 'label-danger' : 'label-success' }}">
                                                 {{ $isHidden ? 'Oculto' : 'Visible' }}
-                                               
+
                                             </span>
                                         </td>
                                         <td>{{ $savedFile->fileRelations->count() }}</td>
@@ -514,12 +514,13 @@
 
 
             </div>
+            <footer>
+            <div id="footer">Claro Colombia </div>
+        </footer>
             <!-- row -->
         </div>
         <!-- container-fluid -->
-        <footer>
-            <div id="footer">Claro Colombia </div>
-        </footer>
+
         <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>

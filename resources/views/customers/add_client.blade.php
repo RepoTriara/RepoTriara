@@ -41,7 +41,7 @@
 
         <div class="main_content">
             @include('layouts.app')
-            <div class="container-fluid"></div>
+            <div class="container-fluid">
             <div class="row">
                 <div id="section_title">
                     <div class="col-xs-12">
@@ -173,7 +173,7 @@
                                         <div class="input-group">
                                             <input type="text" name="max_file_size" id="max_file_size"
                                                 class="form-control" value="{{ old('max_file_size') }}" required />
-                                            <span class="input-group-addon">mb</span>
+                                            <span class="input-group-addon">Mb</span>
                                             @error('max_file_size')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
@@ -240,11 +240,12 @@
                     </div>
                 </div>
             </div> <!-- row -->
+            <footer>
+                <div id="footer">
+                    Claro Colombia </div>
+            </footer>
         </div> <!-- container-fluid -->
-        <footer>
-            <div id="footer">
-                Claro Colombia </div>
-        </footer>
+        
         <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.psendmodal.js') }}"></script>

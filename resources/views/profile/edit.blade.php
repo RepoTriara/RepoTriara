@@ -152,9 +152,6 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-           <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
 <script>
     // Mensaje de éxito
     @if (session()->has('success'))
@@ -209,7 +206,7 @@
         style.textContent = `
                .custom-swal-popup {
                 max-width: 95% !important;
-                width: 390px !important;
+                width: 500px !important;
                 min-height: 180px !important;
                 padding: 15px !important;
             }

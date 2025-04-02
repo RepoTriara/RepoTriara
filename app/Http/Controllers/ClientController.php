@@ -112,8 +112,8 @@ class ClientController extends Controller
         $request->validate([
 
             'name' => ['required', 'string', 'max:60','min:5','regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'], // Solo letras y espacios
-            'user' => ['required', 'string', 'max:60', 'unique:tbl_users'],
-            'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?`~]+$/'],
+            'user' => ['required', 'string', 'max:60', 'unique:tbl_users','regex:/^\S*$/u'],
+            'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
             'email' => [
             'required',
             'string',
@@ -239,7 +239,7 @@ public function update(Request $request, $id)
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users,user,' . $id],
-            'password' => ['nullable', 'string', 'min:8'],
+            'password' => ['nullable', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
             'email' => [
                 'required',
                 'string',

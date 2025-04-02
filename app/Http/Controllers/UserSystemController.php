@@ -138,8 +138,8 @@ class UserSystemController extends Controller
             'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',
             'unique:' . User::class
             ],
-            'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?`~]+$/'],
-            'user' => ['required', 'string', 'max:60', 'unique:tbl_users'],
+            'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
+            'user' => ['required', 'string', 'max:60', 'unique:tbl_users','regex:/^\S*$/u'],
             'level' => ['required', 'in:10,8'], // Validar que level sea 10 o 8
             'notify' => ['nullable', 'boolean'], // Validar que notify sea booleano (0 o 1)
             'active' => ['nullable', 'boolean'], // Validar que active sea booleano (0 o 1)
@@ -187,7 +187,8 @@ class UserSystemController extends Controller
                 'unique:tbl_users,email,' . ($id ?? 'NULL') . ',id'
             ],
         'level' => 'required|in:10,8',
-        'password' => 'nullable|string|min:8',
+        'password' => ['nullable', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
+
         'active' => 'boolean',
         'notify' => 'boolean', // ✅ Agregado
     ]);
