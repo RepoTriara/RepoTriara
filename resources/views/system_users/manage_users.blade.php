@@ -133,7 +133,7 @@
 <th class="{{ request('orderby') === 'name' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'name' ? 'footable-sorted-active active' : '' }}"
     data-hide="phone,tablet">
     <a href="{{ route('system_users.index', ['orderby' => 'name', 'order' => (request('orderby') === 'name' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
-        Nombre Completo
+        Nombre completo
     </a>
     <span class="footable-sort-indicator"></span>
 </th>

@@ -126,102 +126,92 @@ public function manageCompany(Request $request)
 {
     $memberId = $request->query('member');
     $groupId = $request->query('group_id'); // Filtrar por group_id
+    $search = $request->query('search');
 
     if ($memberId) {
-        // Obtener la información del cliente (usuario) por su ID
         $user = User::find($memberId);
 
         if ($user) {
-            // Cambiar el título de la página basado en el nombre del cliente
             $pageTitle = __('Grupos donde') . ' ' . $user->name . ' ' . __('es miembro');
 
-            // Obtener los grupos a los que el cliente pertenece con relaciones y conteo
             $groups = $user->groups()
+                ->when($search, function ($query, $search) {
+                    return $query->where('name', 'like', '%' . $search . '%');
+                })
                 ->with(['members', 'fileRelations'])
                 ->withCount(['members', 'fileRelations'])
-                ->paginate(10);
+                ->paginate(10)
+                ->appends($request->except('page')); // Mantener los filtros al navegar
 
-            // Formatear el timestamp para que se muestre solo la fecha
+
             foreach ($groups as $group) {
                 $group->timestamp = \Carbon\Carbon::parse($group->timestamp)->format('Y/m/d');
             }
 
             return view('companies.manage_company', compact('pageTitle', 'user', 'groups'));
         } else {
-            // Si el cliente no existe, devolver error
             $error = 'client_not_exists';
             return view('companies.manage_company', compact('error'));
         }
     }
 
-    // Filtrar por group_id
     if ($groupId) {
         $group = Groups::find($groupId);
 
         if ($group) {
-            // Cambiar el título de la página basado en el nombre del grupo
             $pageTitle = __('Grupo') . ' ' . $group->name . ' ' . __('y sus miembros');
 
-            // Obtener los miembros de este grupo con relaciones y conteo
             $groups = $group->members()
+                ->when($search, function ($query, $search) {
+                    return $query->where('name', 'like', '%' . $search . '%');
+                })
                 ->with(['groups', 'fileRelations'])
                 ->withCount(['members', 'fileRelations'])
                 ->paginate(10);
 
-            // Formatear el timestamp para que se muestre solo la fecha
             foreach ($groups as $member) {
-                // Asegurarse de que el campo timestamp exista y formatearlo
                 if ($member->timestamp) {
                     $member->timestamp = \Carbon\Carbon::parse($member->timestamp)->format('Y/m/d');
                 }
             }
 
-            $filteredTotal = $groups->total(); // Total de miembros en el grupo
-
+            $filteredTotal = $groups->total();
             return view('companies.manage_company', compact('pageTitle', 'group', 'groups', 'filteredTotal'));
         } else {
-            // Si el grupo no existe, devolver error
             $error = 'group_not_exists';
             return view('companies.manage_company', compact('error'));
         }
     }
 
-    // Incluir las columnas necesarias en la consulta para mostrar todos los grupos
     $query = Groups::select('id', 'name', 'description', 'public', 'created_by', 'timestamp', 'public_token')
-        ->withCount(['members', 'fileRelations']); // Contar las relaciones necesarias
+        ->withCount(['members', 'fileRelations']);
 
-    // Filtro de búsqueda
-    if ($request->has('search') && !empty($request->search)) {
-        $query->where('name', 'like', '%' . $request->search . '%');
+    if ($search) {
+        $query->where('name', 'like', '%' . $search . '%');
     }
 
-    // Aplicar clasificación
     if ($request->has('sort') && $request->has('direction')) {
         $allowedSorts = ['name', 'description', 'members_count', 'file_relations_count', 'created_by', 'timestamp'];
         if (in_array($request->sort, $allowedSorts)) {
             $query->orderBy($request->sort, $request->direction);
         }
     } else {
-        // Orden por defecto: timestamp de más reciente a más antiguo
         $query->orderBy('timestamp', 'desc');
     }
 
     $filteredTotal = $query->count();
-
-    // Paginación de resultados
-    $groups = $query->paginate(perPage: 10);
+    $groups = $query->paginate(10);
     $groups->withPath(url()->current());
 
-    // Formatear el timestamp para que se muestre solo la fecha sin la hora
     foreach ($groups as $group) {
         $group->timestamp = \Carbon\Carbon::parse($group->timestamp)->format('Y/m/d');
     }
 
-    // Total de grupos
     $totalGroups = Groups::count();
 
     return view('companies.manage_company', compact('groups', 'totalGroups', 'filteredTotal'));
 }
+
 
 
 

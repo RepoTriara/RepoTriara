@@ -28,7 +28,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Crear Nueva Categoría</h2>
+                            <h2>Crear nueva categoría</h2>
                         </div>
                     </div>
                 </div>

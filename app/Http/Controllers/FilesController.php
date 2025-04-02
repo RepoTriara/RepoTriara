@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Mail;
 
 class FilesController extends Controller
 {
-    public function index(Request $request)
+   public function index(Request $request)
     {
         // Parámetros de la solicitud
         $clientId = $request->query('client_id');
@@ -36,98 +36,110 @@ class FilesController extends Controller
         $uploaderFilter = $request->get('uploader');
         $sort = $request->get('sort', 'timestamp');
         $direction = $request->get('direction', 'desc');
-
+        $hiddenFilter = $request->get('hidden'); // Capturamos el filtro de estado
+ 
         // Consulta principal para archivos
         $query = TblFile::query();
-
-        // Consulta específica para obtener uploaders filtrados
-        $uploadersQuery = TblFile::query();
-
+ 
         // Variables para la vista
         $entity = null;
         $entityType = '';
         $pageTitle = 'Administrar archivos';
-
+ 
         // Aplicar filtros según el contexto
         if ($clientId) {
-            $entity = User::find($clientId);
-            $entityType = 'cliente';
-            $pageTitle = __('Archivos asignados a') . ' ' . ($entity->name ?? '');
-
-            $filterFn = fn($q) => $q->where('client_id', $clientId);
-            $query->whereHas('fileRelations', $filterFn);
-            $uploadersQuery->whereHas('fileRelations', $filterFn);
-
+            $entity = User::find($clientId); // Buscamos el cliente por su ID
+            if ($entity) {
+                $entityType = 'cliente';
+                $pageTitle = __('Archivos asignados a') . ' ' . $entity->name; // Actualizamos el título con el nombre del cliente
+            } else {
+                return view('files.file_manager', [
+                    'error' => __('El cliente no existe'),
+                    'uploaders' => collect(),
+                    'totalFiles' => 0
+                ]);
+            }
+ 
+            $query->whereHas('fileRelations', function ($q) use ($clientId) {
+                $q->where('client_id', $clientId);
+            });
         } elseif ($groupId) {
             $entity = Groups::find($groupId);
-            $entityType = 'grupo';
-            $pageTitle = __('Archivos asignados al grupo') . ' ' . ($entity->name ?? '');
-
-            $filterFn = fn($q) => $q->where('group_id', $groupId);
-            $query->whereHas('fileRelations', $filterFn);
-            $uploadersQuery->whereHas('fileRelations', $filterFn);
-
+            if ($entity) {
+                $entityType = 'grupo';
+                $pageTitle = __('Archivos asignados al grupo') . ' ' . $entity->name;
+            } else {
+                return view('files.file_manager', [
+                    'error' => __('El grupo no existe'),
+                    'uploaders' => collect(),
+                    'totalFiles' => 0
+                ]);
+            }
+ 
+            $query->whereHas('fileRelations', function ($q) use ($groupId) {
+                $q->where('group_id', $groupId);
+            });
         } elseif ($categoryId) {
             $entity = TblCategory::find($categoryId);
-            $entityType = 'categoría';
-            $pageTitle = __('Archivos de la categoría') . ' ' . ($entity->name ?? '');
-
-            $filterFn = fn($q) => $q->where('cat_id', $categoryId);
-            $query->whereHas('categoryRelations', $filterFn);
-            $uploadersQuery->whereHas('categoryRelations', $filterFn);
+            if ($entity) {
+                $entityType = 'categoría';
+                $pageTitle = __('Archivos de la categoría') . ' ' . $entity->name;
+            } else {
+                return view('files.file_manager', [
+                    'error' => __('La categoría no existe'),
+                    'uploaders' => collect(),
+                    'totalFiles' => 0
+                ]);
+            }
+ 
+            $query->whereHas('categoryRelations', function ($q) use ($categoryId) {
+                $q->where('cat_id', $categoryId);
+            });
         }
-
-        // Validar si la entidad existe
-        if (($clientId || $groupId || $categoryId) && !$entity) {
-            return view('files.file_manager', [
-                'error' => __('El ' . $entityType . ' no existe'),
-                'uploaders' => collect(),
-                'totalFiles' => 0
-            ]);
-        }
-     
+ 
         // Aplicar búsqueda si existe
         if ($search) {
-            $searchFilter = function ($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('filename', 'LIKE', "%$search%")
                     ->orWhere('description', 'LIKE', "%$search%");
-            };
-
-            $query->where($searchFilter);
-            $uploadersQuery->where($searchFilter);
+            });
         }
-
-        // Obtener lista de uploaders filtrados
-        $uploaders = $uploadersQuery->distinct()->pluck('uploader');
-
-        // Aplicar filtro por uploader si existe
+ 
+        // Aplicar filtro por cargador
         if ($uploaderFilter) {
             $query->where('uploader', $uploaderFilter);
         }
-
+ 
+        // Aplicar filtro por estado (hidden)
+        if ($hiddenFilter !== null && $hiddenFilter != '2') {
+            $query->whereHas('fileRelations', function ($q) use ($hiddenFilter) {
+                $q->where('hidden', $hiddenFilter); // Filtrar por estado oculto/visible
+            });
+        }
+ 
         // Ordenamiento
         if ($sort === 'download_count') {
             $query->withCount('downloads as download_count')->orderBy('download_count', $direction);
         } else {
             $query->orderBy($sort, $direction);
         }
-       
+ 
         // Obtener resultados finales
-        $files = $query->with(['fileRelations', 'downloads'])->paginate(10);
+    $files = $query->paginate(10)->appends($request->except('page'));
         $filteredTotal = $files->total();
         $this->assignFileSizes($files);
-
+ 
         // Total general de archivos (sin filtros)
-        $totalFiles = $entity ? TblFile::count() : $filteredTotal;
-
+        $totalFiles = TblFile::count();
+ 
         return view('files.file_manager', [
             'files' => $files,
-            'uploaders' => $uploaders,
+            'uploaders' => TblFile::distinct()->pluck('uploader'),
             'totalFiles' => $totalFiles,
             'filteredTotal' => $filteredTotal,
-            'pageTitle' => $pageTitle,
-            'entity' => $entity,
-            'entityType' => $entityType,
+            'pageTitle' => $pageTitle, // Pasamos el título actualizado a la vista
+            'entity' => $entity ?? null,
+            'entityType' => $entityType ?? '',
             'sort' => $sort,
             'direction' => $direction
         ]);
@@ -767,20 +779,39 @@ public function store(Request $request)
 
     public function myFiles(Request $request)
     {
+        // Parámetros de la solicitud
         $search = $request->query('search');
-        $selectedCategories = $request->query('categories',);
-        $sortColumn = $request->query('orderby', 'Timestamp'); // Changed default to 'Timestamp'
-        $sortDirection = $request->query('order', 'desc');
-
-        $allowedColumns = ['filename', 'description', 'Timestamp']; // Changed 'timestamp' to 'Timestamp'
+        $selectedCategories = $request->query('categories', []);
+        $sortColumn = $request->query('orderby', 'Timestamp'); // Default: 'Timestamp'
+        $sortDirection = $request->query('order', 'desc'); // Default: 'desc'
+ 
+        // Columnas permitidas para ordenamiento
+        $allowedColumns = ['filename', 'description', 'Timestamp'];
         if (!in_array($sortColumn, $allowedColumns)) {
             $sortColumn = 'Timestamp';
         }
-
-        $pageTitle = __('Administración del Sistema');
-        $clientId = $request->query('cliente_id', Auth::user()->id);
+ 
+        // Variables para la vista
+        $clientId = $request->query('cliente_id', Auth::user()->id); // ID del cliente (default: usuario autenticado)
+        $currentUser = Auth::user(); // Usuario autenticado
+        $pageTitle = __('Mis archivos'); // Título predeterminado para el cliente autenticado
+ 
+        // Buscar el cliente si se especifica un cliente_id
+        $client = User::find($clientId);
+        if ($client) {
+            // Si el cliente existe y es diferente al usuario autenticado, actualizar el título
+            if ($clientId != $currentUser->id) {
+                $pageTitle = __('Archivos asignados a') . ' ' . $client->name;
+            }
+        } else {
+            // Si el cliente no existe, usar el título predeterminado
+            $pageTitle = __('Mis archivos');
+        }
+ 
+        // Obtener los IDs de los grupos asociados al cliente
         $groupIds = Members::where('client_id', $clientId)->pluck('group_id')->toArray();
-
+ 
+        // Consulta principal para archivos
         $filesQuery = TblFile::where(function ($query) use ($clientId, $groupIds) {
             $query->whereHas('fileRelations', function ($subQuery) use ($clientId) {
                 $subQuery->where('client_id', $clientId);
@@ -790,40 +821,46 @@ public function store(Request $request)
         })
             ->with(['groups:id,description', 'fileRelations', 'categoryRelations'])
             ->whereDoesntHave('fileRelations', function ($q) {
-                $q->where('hidden', 1);
+                $q->where('hidden', 1); // Excluir archivos ocultos
             })
             ->where(function ($query) {
                 $query->whereNull('expires')
                     ->orWhere('expires', 0)
                     ->orWhere('expiry_date', '>', now());
             });
-
+ 
+        // Aplicar filtro por categorías seleccionadas
         if (!empty($selectedCategories) && !in_array('all', $selectedCategories)) {
             $filesQuery->whereHas('categoryRelations', function ($query) use ($selectedCategories) {
                 $query->whereIn('cat_id', $selectedCategories);
             });
         }
-
+ 
+        // Aplicar búsqueda si existe
         if ($search) {
             $filesQuery->where(function ($query) use ($search) {
                 $query->where('filename', 'like', "%$search%")
                     ->orWhere('description', 'like', "%$search%")
-                    ->orWhere('Timestamp', 'like', "%$search%"); // Changed 'timestamp' to 'Timestamp'
+                    ->orWhere('Timestamp', 'like', "%$search%");
             });
         }
-
+ 
+        // Ordenar los resultados
         $filesQuery->orderBy($sortColumn, $sortDirection);
+ 
+        // Obtener resultados finales
         $filteredTotal = $filesQuery->count();
         $files = $filesQuery->paginate(10)->appends($request->except('page'));
-
+ 
+        // Asignar tamaño y fecha de expiración a cada archivo
         foreach ($files as $file) {
             $file->stored_filename = $file->url;
             $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
             $publicFilePath  = storage_path('app/public/uploads/' . $file->stored_filename);
-
+ 
             $realPrivatePath = realpath($privateFilePath);
             $realPublicPath  = realpath($publicFilePath);
-
+ 
             if ($realPrivatePath && file_exists($realPrivatePath)) {
                 $file->size = $this->getFormattedFileSize($realPrivatePath);
             } elseif ($realPublicPath && file_exists($realPublicPath)) {
@@ -831,7 +868,7 @@ public function store(Request $request)
             } else {
                 $file->size = '--';
             }
-
+ 
             if ($file->expires && $file->expiry_date) {
                 $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
                 $file->isExpired = $expiryDate->isPast();
@@ -841,17 +878,16 @@ public function store(Request $request)
                 $file->formattedExpiryDate = null;
             }
         }
-
+ 
+        // Obtener categorías relacionadas con los archivos
         $categoryIds = TblCategoryRelation::whereIn('file_id', $files->pluck('id'))
             ->pluck('cat_id')
             ->unique();
         $categories = TblCategory::whereIn('id', $categoryIds)->get();
-
+ 
+        // Retornar la vista con los datos
         return view('files.my_files', compact('pageTitle', 'files', 'filteredTotal', 'categories'));
     }
-
-
-
 
     // codigto de la vista manage-files
     public function manageFiles(Request $request)

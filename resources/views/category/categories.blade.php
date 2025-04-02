@@ -31,7 +31,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Administración de Categorías</h2>
+                            <h2>Administración de categorías</h2>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                                         class="txtfield form_actions_search_box form-control" />
                                 </div>
                                 <button type="submit" id="btn_proceed_search"
-                                    class="btn btn-sm btn-default">Búsqueda</button>
+                                    class="btn btn-sm btn-primary">Búsqueda</button>
                             </form>
 
                             <div class="form_actions">

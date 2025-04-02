@@ -129,16 +129,16 @@ class UserSystemController extends Controller
     {
         // Validar los datos enviados desde el formulario
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:60','min:5','regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'], // Solo letras y espacios
             'email' => [
             'required',
             'string',
             'email:rfc,dns', // Verifica formato RFC y existencia del dominio
-            'max:255',
+            'max:60',
             'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',
             'unique:' . User::class
             ],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?`~]+$/'],
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users'],
             'level' => ['required', 'in:10,8'], // Validar que level sea 10 o 8
             'notify' => ['nullable', 'boolean'], // Validar que notify sea booleano (0 o 1)

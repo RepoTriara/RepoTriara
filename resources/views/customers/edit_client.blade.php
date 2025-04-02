@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Agregar cliente &raquo; Repositorio</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
     <link rel="apple-touch-icon" href="{{ asset('img/favicon/favicon-152.png') }}" sizes="152x152">
@@ -82,7 +84,7 @@
                                     <div class="col-sm-8">
                                         <div class="input-group">
                                             <input name="password" id="password" class="form-control password_toggle"
-                                                type="password" maxlength="60" value="" />
+                                                type="password" maxlength="60" value="" placeholder="Contraseña" />
                                             @error('password')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -93,6 +95,8 @@
                                         </div>
                                         <button type="button" name="generate_password" id="generate_password"
                                             class="btn btn-default btn-sm btn_generate_password"
+                                            style="background-color: #004b92; color: white;"
+
                                             data-ref="add_client_form_pass" data-min="20"
                                             data-max="20">Generar</button>
                                     </div>
@@ -134,7 +138,7 @@
                                         interno</label>
                                     <div class="col-sm-8">
                                         <input type="text" name="contact" id="contact" class="form-control"
-                                            value="{{ old('contact', $client->contact) }}" />
+                                            value="{{ old('contact', $client->contact) }}" placeholder="Opcional" />
                                         @error('contact')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
@@ -153,7 +157,7 @@
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <p class="field_note">Ponga 0 como limite predeterminado (2048 mb)</p>
+                                        <p class="field_note">Ponga 0 como límite predeterminado (2048 mb)</p>
                                     </div>
                                 </div>
 
@@ -231,176 +235,214 @@
                 });
             });
         </script>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const button = document.getElementById('guardar');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agregar estilos dinámicamente
+        const style = document.createElement('style');
+        style.textContent = `
+            .is-invalid {
+     
+            }
+            .invalid-feedback, .text-danger {
+          
+                display: none;
+                font-size: 0.875em;
+                margin-top: 3px;
+                text-align: left;
+                width: 100%;
+            }
+            .compact-swal {
+                max-width: 500px;
+                padding: 1em;
+            }
+            .compact-title {
+                text-align: center;
+                margin-bottom: 8px !important;
+                font-size: 1.3em;
+            
+                padding-bottom: 0;
+            }
+            .compact-content {
+                padding: 0 1em;
+                margin-top: 5px !important;
+            }
+            .compact-errors-container {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .compact-error-line {
+                
+                font-size: 0.95em;
+                text-align: left;
+                line-height: 1.4;
+                display: flex;
+                align-items: flex-start;
+            }
+            .error-number {
+                flex-shrink: 0;
+                margin-right: 5px;
+                font-weight: bold;
+            }
+            .error-text {
+                word-break: break-word;
+            }
+            .bold-section {
+                font-weight: bold;
+            }
+        `;
+        document.head.appendChild(style);
 
-                if (!button) {
-                    console.error('No se encontró el botón "Actualizar cliente"');
-                    return;
+        const form = document.querySelector('form[action="{{ route('customer_manager.update', $client->id) }}"]');
+        const button = document.getElementById('guardar');
+
+        if (!button || !form) {
+            console.error('Elementos no encontrados');
+            return;
+        }
+
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Limpiar errores anteriores
+            document.querySelectorAll('.invalid-feedback, .text-danger').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+            document.querySelectorAll('.is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+
+            // Mostrar loader
+            Swal.fire({
+                title: 'Procesando',
+                html: 'Por favor espere...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
                 }
+            });
 
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    const form = button.closest('form');
-                    if (!form) {
-                        console.error('Formulario no encontrado');
-                        return;
-                    }
-
-                    // Función para validar campos con SweetAlert2
-                    function validateForm() {
-                        let errors = [];
-
-                        if ($("#name").val().trim() === '') {
-                            errors.push({
-                                field: 'Nombre',
-                                message: 'Complete el nombre.'
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+                body: new FormData(form),
+            })
+            .then(response => {
+                if (response.status === 422) {
+                    return response.json().then(data => {
+                        if (data.errors) {
+                            Object.keys(data.errors).forEach(field => {
+                                const input = form.querySelector(`[name="${field}"]`);
+                                if (input) {
+                                    const errorElement = input.nextElementSibling || 
+                                                       input.parentNode.nextElementSibling ||
+                                                       input.closest('.form-group').querySelector('.invalid-feedback, .text-danger');
+                                    
+                                    if (errorElement) {
+                                        errorElement.textContent = data.errors[field][0];
+                                        errorElement.style.display = 'block';
+                                        input.classList.add('is-invalid');
+                                    }
+                                }
                             });
                         }
-                        if ($("#user").val().trim() === '') {
-                            errors.push({
-                                field: 'Ingresar nombre de usuario',
-                                message: 'Complete el usuario.'
-                            });
-                        }
-                        if ($("#email").val().trim() === '') {
-                            errors.push({
-                                field: 'Correo Electrónico',
-                                message: 'Complete el correo electrónico.'
-                            });
-                        }
-                        if ($("#user").val().length < 5 || $("#user").val().length > 60) {
-                            errors.push({
-                                field: 'Ingresar nombre de usuario',
-                                message: 'Debe tener entre 5 y 60 caracteres.'
-                            });
-                        }
-                        if (!/^[a-zA-Z0-9.]+$/.test($("#user").val())) {
-                            errors.push({
-                                field: 'Ingresar nombre de usuario',
-                                message: 'Debe ser alfanumérico y puede contener (a-z, A-Z, 0-9, .).'
-                            });
-                        }
-                        if (!/^\S+@\S+\.\S+$/.test($("#email").val())) {
-                            errors.push({
-                                field: 'E-Mail',
-                                message: 'Formato no válido.'
-                            });
-                        }
-
-                        // Validación del campo "Máximo tamaño de subida"
-                        let maxFileSize = $("#max_file_size").val().trim();
-                        if (maxFileSize === '') {
-                            errors.push({
-                                field: 'Máximo tamaño de subida',
-                                message: 'Este campo es obligatorio.'
-                            });
-                        } else if (isNaN(maxFileSize) || maxFileSize < 0 || maxFileSize > 2048) {
-                            errors.push({
-                                field: 'Máximo tamaño de subida',
-                                message: 'El valor debe ser un número entre 0 y 2048 mb.'
-                            });
-                        }
-                                   // Validación del campo "Teléfono"
-let phone = $("#phone").val().trim();
-if (phone === '') {
-    // No es obligatorio, no se hace nada si está vacío
-} else if (!/^\d+$/.test(phone)) {
-    errors.push({ field: 'Teléfono', message: 'El teléfono solo debe contener números.' });
-} else if (phone.length < 7 || phone.length > 10) {
-    errors.push({ field: 'Teléfono', message: 'El teléfono debe tener entre 7 y 10 caracteres.' });
-}
-                        if (errors.length > 0) {
-                            let errorHtml = errors.map((error, index) =>
-                                `<div style="margin-bottom: 10px;"><b>${index + 1}. ${error.field}:</b> ${error.message}</div>`
-                            ).join('');
-
-                            Swal.fire({
-                                title: 'Errores de validación',
-                                html: `<div style="text-align: left;">${errorHtml}</div>`,
-                                icon: 'error',
-                                confirmButtonText: 'Aceptar',
-                                confirmButtonColor: '#2778c4',
-
-                            });
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    // Si la validación del frontend falla, se detiene el proceso
-                    if (!validateForm()) return;
-
-                    // Enviar la solicitud AJAX si todo está correcto
-                    fetch(form.action, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                            },
-                            body: new FormData(form),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.errors) {
-                                let errorMessages = Object.entries(data.errors).map(([field, messages],
-                                        index) =>
-                                    `<div style="margin-bottom: 10px;"><b>${index + 1}. ${field}:</b> ${messages.join(', ')}</div>`
-                                ).join('');
-
-                                Swal.fire({
-                                    title: 'Errores de validación',
-                                    html: `<div style="text-align: left;">${errorMessages}</div>`,
-                                    icon: 'error',
-                                    confirmButtonText: 'Aceptar', 
-                                    confirmButtonColor: '#2778c4',
-
-                                });
-                            } else if (data.success) {
-                                Swal.fire({
-                                    title: '¡Éxito!',
-                                    text: data.success,
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false,
-                                }).then(() => {
-                                    window.location.reload();
-                                });
+                        return Promise.reject(data);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.close();
+                
+                // Cambiado para buscar 'success' en lugar de 'message'
+                if (data.success) {
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: data.success,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else if (data.message) { // También verificamos 'message' por si acaso
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: data.message,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.close();
+                
+                if (error.errors) {
+                    let errorIndex = 1;
+                    const errorMessages = Object.values(error.errors)
+                        .map(messages => {
+                            const message = messages[0];
+                            const colonIndex = message.indexOf(':');
+                            
+                            if (colonIndex !== -1) {
+                                const beforeColon = message.substring(0, colonIndex);
+                                const colon = ':';
+                                const afterColon = message.substring(colonIndex + 1);
+                                
+                                return `
+                                    <div class="compact-error-line">
+                                        <span class="error-number">${errorIndex++}.</span>
+                                        <span class="error-text">
+                                            <span class="bold-section">${beforeColon}${colon}</span>${afterColon}
+                                        </span>
+                                    </div>
+                                `;
                             } else {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Hubo un problema al actualizar el cliente.',
-                                    icon: 'error',
-                                    confirmButtonText: 'Aceptar', 
-                                    confirmButtonColor: '#2778c4',
-
-                                });
+                                return `
+                                    <div class="compact-error-line">
+                                        <span class="error-number">${errorIndex++}.</span>
+                                        <span class="error-text">${message}</span>
+                                    </div>
+                                `;
                             }
                         })
-                        .catch(error => {
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Hubo un problema al procesar la solicitud.',
-                                icon: 'error',
-                                confirmButtonText: 'Aceptar', 
-                                confirmButtonColor: '#2778c4',
-
-
-                            });
-                        });
-                });
+                        .join('');
+                    
+                    Swal.fire({
+                        title: 'Errores de validación',
+                        html: `<div class="compact-errors-container">${errorMessages}</div>`,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4',
+                        customClass: {
+                            popup: 'compact-swal',
+                            title: 'compact-title',
+                            htmlContainer: 'compact-content'
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: error.message || 'Hubo un problema al actualizar el cliente. Verifica los datos ingresados o inténtalo nuevamente.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#2778c4'
+                    });
+                }
             });
-        </script>
-
-
-
-
-
-
-
+        });
+    });
+</script>
     </div> <!-- main_content -->
     </div> <!-- container-custom -->
 

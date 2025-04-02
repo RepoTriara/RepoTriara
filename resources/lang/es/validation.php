@@ -39,7 +39,7 @@ return [
     'distinct'               => 'El campo :attribute contiene un valor duplicado.',
     'doesnt_end_with'        => 'El campo :attribute no debe finalizar con uno de los siguientes: :values.',
     'doesnt_start_with'      => 'El campo :attribute no debe comenzar con uno de los siguientes: :values.',
-    'email'                  => 'El campo :attribute no es un correo válido.',
+    'email'                  => 'E-Mail: El formato del correo electrónico no es válido.',
     'ends_with'              => 'El campo :attribute debe finalizar con uno de los siguientes valores: :values',
     'enum'                   => 'El campo :attribute no está en la lista de valores permitidos.',
     'exists'                 => 'El campo :attribute no existe.',
@@ -163,8 +163,9 @@ return [
     ],
     'custom'                 => [
         'email'       => [
-            'required' => 'El correo electrónico es obligatorio.',
-            'unique'   => 'El correo electrónico ya ha sido registrado.',
+            'required' => 'E-Mail: El correo electrónico es obligatorio.',
+            'unique'   => 'E-mail: El correo electrónico ya ha sido registrado.',
+            'regex' => 'E-Mail: El formato del correo electrónico no es válido.',
         ],
         'expiry_date' => [
             'after_or_equal' => 'La :attribute debe ser una fecha posterior o igual a hoy.',
@@ -174,22 +175,32 @@ return [
             'required' => 'El rol es obligatorio.',
         ],
         'login'       => [
-            'required' => 'El campo de correo electrónico o usuario es obligatorio.',
+            'required' => 'E-Mail: El campo de correo electrónico o usuario es obligatorio.',
         ],
         'name'        => [
-            'required' => 'El nombre es obligatorio.',
+            'required' => 'Nombre: Este campo es obligatorio, por favor, ingrese el nombre.',
+            'regex'    => 'Nombre: El campo nombre solo puede contener texto.',
+             'min'     => 'Nombre: El campo nombre debe tener mínimo 5 caracteres',
+            'max'     => 'Nombre: El campo nombre no debe exceder los 60 caracteres.',
         ],
         'password'    => [
-            'min'      => 'La contraseña debe tener al menos 8 caracteres.',
-            'required' => 'La contraseña es obligatoria.',
+            'min'      => 'Contraseña: El campo contraseña debe tener mínimo 8 caracteres.',
+            'required' => 'Contraseña: Este campo es obligatorio, ingrese o genere una contraseña.',
+            'regex' => 'Contraseña: El formato del campo contraseña no es válido.',
         ],
         'phone'       => [
-            'regex'    => 'El formato del teléfono es inválido.',
+            'digits_between' => 'Teléfono: El número debe tener entre 7 y 10 dígitos.',
+            'regex'    => 'Teléfono: El formato del teléfono es inválido.',
             'required' => 'El teléfono es obligatorio.',
         ],
         'user'        => [
-            'required' => 'El nombre de usuario es obligatorio.',
-            'unique'   => 'El nombre de usuario ya está en uso.',
+            'required' => ' Ingresar nombre de usuario: Este campo es obligatorio, por favor, ingrese nombre de usuario.',
+            'unique'   => 'Ingresar nombre de usuario: El nombre de usuario ya está en uso.',
         ],
+         'contact' => [
+        'min' => 'Contacto: El campo contacto debe tener mínimo 5 caracteres.',
+        'max' => 'Contacto: El campo contacto no debe exceder los 60 caracteres.',
+        'string' => 'Contacto: El campo contacto debe ser una cadena de texto válida.',
+    ],
     ],
 ];

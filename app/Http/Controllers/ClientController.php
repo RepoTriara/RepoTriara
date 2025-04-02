@@ -111,20 +111,20 @@ class ClientController extends Controller
         // Validar los datos del formulario
         $request->validate([
 
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:60','min:5','regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'], // Solo letras y espacios
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?`~]+$/'],
             'email' => [
             'required',
             'string',
             'email:rfc,dns', // Verifica formato RFC y existencia del dominio
-            'max:255',
+            'max:60',
             'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',
             'unique:' . User::class
             ],
             'address' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string', 'max:32'],
-            'contact' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable','digits_between:7,10'],
+            'contact' => ['nullable', 'string','min:5', 'max:60'],
             'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'], // Validación de rango
             'group_request' => ['nullable', 'array'],
             'group_request.*' => ['integer'],

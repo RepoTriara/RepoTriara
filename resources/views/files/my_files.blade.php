@@ -30,8 +30,7 @@
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.css') }}" />
 </head>
 
-<body class="body logged-in logged-as-client template default-template hide_title menu_hidden backend">
-    <div class="container-custom">
+<body class="body logged-in logged-as-client template default-template ">
 
 
         @if (Auth::user()->level == 0)
@@ -47,7 +46,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Administración del Sistema</h2>
+                            <h2>{{ isset($pageTitle) ? $pageTitle : 'Mis archivos' }}</h2>
                         </div>
                     </div>
                 </div>

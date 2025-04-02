@@ -27,7 +27,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Editar Categoría</h2>
+                            <h2>Editar categoría</h2>
                         </div>
                     </div>
                 </div>

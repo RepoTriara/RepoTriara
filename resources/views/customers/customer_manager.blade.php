@@ -14,8 +14,7 @@
     <script type="text/javascript" src="{{ asset('includes/js/jquery.1.12.4.min.js') }}"></script>
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css"
-        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/footable.css') }}" />
@@ -32,7 +31,7 @@
                 <div class="row">
                     <div id="section_title">
                         <div class="col-xs-12">
-                            <h2>Administración de Clientes</h2>
+                            <h2>Administración de clientes</h2>
                         </div>
                     </div>
                 </div>
@@ -43,9 +42,8 @@
                             <div class="form_actions_limit_results">
                                 <form action="{{ route('customer_manager') }}" method="get" class="form-inline">
                                     <div class="form-group group_float">
-                                        <input type="text" name="search" id="search"
-                                            value="{{ request('search') }}" placeholder="Buscar cliente"
-                                            class="form-control" />
+                                        <input type="text" name="search" id="search" value="{{ request('search') }}"
+                                            placeholder="Buscar cliente" class="form-control" />
                                     </div>
                                     <button type="submit" id="btn_proceed_search"
                                         class="btn btn-sm btn-primary">Búsqueda</button>
@@ -99,7 +97,7 @@
                                     </p>
                                 @else
                                     <p>
-                                        Total de clientes:{{ $filteredClientesCount }}
+                                        Total de clientes: {{ $filteredClientesCount }}
                                     </p>
                                 @endif
                             </div>
@@ -110,47 +108,55 @@
                                         <th><input type="checkbox" id="select_all" class="footable-sort-indicator" />
                                         </th>
 
-                                       <th class="{{ request('orderby') === 'name' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'name' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('customer_manager', ['orderby' => 'name', 'order' => (request('orderby') === 'name' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Nombre Completo</a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                        <th class="{{ request('orderby') === 'name' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'name' ? 'footable-sorted-active active' : '' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'name', 'order' => (request('orderby') === 'name' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Nombre
+                                                completo</a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
                                         <th class="{{ request('orderby') === 'user' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'user' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('customer_manager', ['orderby' => 'user', 'order' => (request('orderby') === 'user' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Usuario</a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'user', 'order' => (request('orderby') === 'user' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Usuario</a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
                                         <th class="{{ request('orderby') === 'email' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'email' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('customer_manager', ['orderby' => 'email', 'order' => (request('orderby') === 'email' && request('order') === 'asc') ? 'desc' : 'asc']) }}">E-mail</a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'email', 'order' => (request('orderby') === 'email' && request('order') === 'asc') ? 'desc' : 'asc']) }}">E-mail</a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
                                         <th data-hide="phone">Cargas</th>
 
-                                        <th data-hide="phone">Archivos Propios</th>
+                                        <th data-hide="phone">Archivos propios</th>
 
-                                        <th data-hide="phone">Archivos Grupos</th>
+                                        <th data-hide="phone">Archivos grupos</th>
 
                                         <th class="{{ request('orderby') === 'active' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'active' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('customer_manager', ['orderby' => 'active', 'order' => (request('orderby') === 'active' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Estado</a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'active', 'order' => (request('orderby') === 'active' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Estado</a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
-                                        <th data-hide="phone">Grupos Activos</th>
+                                        <th data-hide="phone">Grupos activos</th>
                                         <th data-hide="phone,tablet">Notificación</th>
                                         <th class="{{ request('orderby') === 'max_file_size' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'max_file_size' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('customer_manager', ['orderby' => 'max_file_size', 'order' => (request('orderby') === 'max_file_size' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Max. tamaño</a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'max_file_size', 'order' => (request('orderby') === 'max_file_size' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Max.
+                                                tamaño</a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
                                         <th class="{{ request('orderby') === 'timestamp' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'timestamp' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('customer_manager', ['orderby' => 'timestamp', 'order' => (request('orderby') === 'timestamp' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Adicionado</a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('customer_manager', ['orderby' => 'timestamp', 'order' => (request('orderby') === 'timestamp' && request('order') === 'asc') ? 'desc' : 'asc']) }}">Adicionado</a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
                                         <th>Ver</th>
                                         <th>Comportamiento</th>
                                     </tr>
@@ -177,7 +183,7 @@
                                             <td>{{ $client->notification_status }}</td>
                                             <td>
                                                 @if ($client->max_file_size == 0)
-                                                    Defecto @else{{ $client->max_file_size }} MB
+                                                Defecto @else{{ $client->max_file_size }} MB
                                                 @endif
                                             </td>
                                             <td>{{ $client->timestamp ? \Carbon\Carbon::parse($client->timestamp)->format('Y/m/d') : 'No disponible' }}
@@ -190,8 +196,7 @@
                                                         {{ __('Archivos') }}
                                                     </a>
                                                 @else
-                                                    <a href="javascript:void(0);" class="btn disabled-btn"
-                                                        tabindex="-1">
+                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
                                                         {{ __('Archivos') }}
                                                     </a>
                                                 @endif
@@ -202,8 +207,7 @@
                                                         {{ __('Grupos') }}
                                                     </a>
                                                 @else
-                                                    <a href="javascript:void(0);" class="btn disabled-btn"
-                                                        tabindex="-1">
+                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
                                                         {{ __('Grupos') }}
                                                     </a>
                                                 @endif
@@ -214,8 +218,7 @@
                                                         {{ __('Como cliente') }}
                                                     </a>
                                                 @else
-                                                    <a href="javascript:void(0);" class="btn disabled-btn"
-                                                        tabindex="-1">
+                                                    <a href="javascript:void(0);" class="btn disabled-btn" tabindex="-1">
                                                         {{ __('Como cliente') }}
                                                     </a>
                                                 @endif
@@ -289,50 +292,50 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
-           <script>
-    document.getElementById('select_all').addEventListener('click', function() {
-        var isChecked = this.checked;
-        var checkboxes = document.querySelectorAll('input[name="batch[]"]');
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = isChecked;
-        });
-    });
+            <script>
+                document.getElementById('select_all').addEventListener('click', function () {
+                    var isChecked = this.checked;
+                    var checkboxes = document.querySelectorAll('input[name="batch[]"]');
+                    checkboxes.forEach(function (checkbox) {
+                        checkbox.checked = isChecked;
+                    });
+                });
 
-    function goToPageClientes() {
-        // Obtener el valor ingresado en el campo "Vaya a:"
-        const pageInput = document.getElementById('go_to_page_clientes');
-        const page = parseInt(pageInput.value, 10);
+                function goToPageClientes() {
+                    // Obtener el valor ingresado en el campo "Vaya a:"
+                    const pageInput = document.getElementById('go_to_page_clientes');
+                    const page = parseInt(pageInput.value, 10);
 
-        // Obtener el número total de páginas disponibles
-        const lastPage =
+                    // Obtener el número total de páginas disponibles
+                    const lastPage =
             {{ $clientes instanceof \Illuminate\Pagination\LengthAwarePaginator ? $clientes->lastPage() : 1 }};
 
-        // Validar si la página ingresada está dentro del rango válido
-        if (isNaN(page) || page < 1 || page > lastPage) {
-            // Mostrar SweetAlert indicando que la página no existe
-            Swal.fire({
-                title: 'Página inválida',
-                text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
-                icon: 'warning',
-                confirmButtonText: 'Aceptar'
-            }).then(() => {
-                // Limpiar el campo de entrada después del error
-                pageInput.value = '';
-            });
-            return;
-        }
+                    // Validar si la página ingresada está dentro del rango válido
+                    if (isNaN(page) || page < 1 || page > lastPage) {
+                        // Mostrar SweetAlert indicando que la página no existe
+                        Swal.fire({
+                            title: 'Página inválida',
+                            text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+                            icon: 'warning',
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            // Limpiar el campo de entrada después del error
+                            pageInput.value = '';
+                        });
+                        return;
+                    }
 
-        // Redirigir al usuario a la página seleccionada
-        const url = new URL(window.location.href);
-        url.searchParams.set('page', page);
-        window.location.href = url.toString();
-    }
+                    // Redirigir al usuario a la página seleccionada
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('page', page);
+                    window.location.href = url.toString();
+                }
 
-   // Función para mostrar mensaje cuando no hay resultados de búsqueda
-    function showNoResultsMessage(searchTerm) {
-        // Crear y agregar estilos personalizados para el icono
-        const style = document.createElement('style');
-        style.innerHTML = `
+                // Función para mostrar mensaje cuando no hay resultados de búsqueda
+                function showNoResultsMessage(searchTerm) {
+                    // Crear y agregar estilos personalizados para el icono
+                    const style = document.createElement('style');
+                    style.innerHTML = `
             .custom-search-icon {
                 color: #facea8 !important;
                 border: 2px solid #f8bb86 !important;
@@ -342,92 +345,109 @@
                 
             }
         `;
-        document.head.appendChild(style);
+                    document.head.appendChild(style);
 
-        Swal.fire({
-            title: 'Búsqueda sin resultados',
-            text: `No se encontraron clientes que coincidan con: "${searchTerm}"`,
-            icon: 'info',
-            confirmButtonText: 'Aceptar',
-            customClass: {
-                icon: 'custom-search-icon'
-            }
-        });
-    }
-    document.addEventListener('DOMContentLoaded', function() {
-        // Verificar si hay término de búsqueda y no hay resultados
-        @if(request('search') && $clientes->isEmpty())
-            showNoResultsMessage('{{ request('search') }}');
-        @endif
+                    Swal.fire({
+                        title: 'Búsqueda sin resultados',
+                        text: `No se encontraron clientes que coincidan con: "${searchTerm}"`,
+                        icon: 'info',
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            icon: 'custom-search-icon'
+                        }
+                    });
+                }
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Verificar si hay término de búsqueda y no hay resultados
+                    @if(request('search') && $clientes->isEmpty())
+                        showNoResultsMessage('{{ request('search') }}');
+                    @endif
 
-        document.querySelector('form[name="clients_list"]').addEventListener('submit', function(e) {
-            var action = document.getElementById('action').value;
-            var selectedClients = [];
+                    document.querySelector('form[name="clients_list"]').addEventListener('submit', function (e) {
+                        var action = document.getElementById('action').value;
+                        var selectedClients = [];
 
-            document.querySelectorAll('input[name="batch[]"]:checked').forEach(function(checkbox) {
-                selectedClients.push(checkbox.value);
-            });
+                        document.querySelectorAll('input[name="batch[]"]:checked').forEach(function (checkbox) {
+                            selectedClients.push(checkbox.value);
+                        });
 
-            if (action === 'none') {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Debes seleccionar una acción para proceder.',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
+                        if (action === 'none') {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Debes seleccionar una acción para proceder.',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar'
+                            });
+                            return;
+                        }
 
-            if (action === 'delete' && selectedClients.length > 0) {
-                e.preventDefault();
+                        if (action === 'delete' && selectedClients.length > 0) {
+                            e.preventDefault();
 
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡No podrás revertir esta acción!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.submit();
+                            Swal.fire({
+                                title: '¿Estás seguro?',
+                                text: "¡No podrás revertir esta acción!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Sí, eliminar',
+                                cancelButtonText: 'Cancelar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    this.submit();
+                                }
+                            });
+                        } else if (action === 'delete' && selectedClients.length === 0) {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Debes seleccionar al menos un cliente para eliminar.',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar'
+
+                            });
+                        }
+                    });
+
+                    @if (session('success'))
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: '{{ session('success') }}',
+                            icon: 'success',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    @endif
+
+                    @if (session('error'))
+                        Swal.fire({
+                            title: 'Error',
+                            text: '{{ session('error') }}',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    @endif
+    });
+                document.getElementById("do_action").addEventListener("click", function (event) {
+                    let action = document.getElementById("action").value;
+                    let checkboxes = document.querySelectorAll("input[name='batch[]']:checked");
+
+                    if ((action === "activate" || action === "deactivate") && checkboxes.length === 0) {
+                        event.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Debe elegir al menos un cliente antes de activar o desactivar',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Aceptar'
+                        });
                     }
                 });
-            } else if (action === 'delete' && selectedClients.length === 0) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Debes seleccionar al menos un cliente para eliminar.',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                    
-                });
-            }
-        });
+            </script>
 
-        @if (session('success'))
-            Swal.fire({
-                title: 'Éxito',
-                text: '{{ session('success') }}',
-                icon: 'success',
-                timer: 3000,
-                showConfirmButton: false
-            });
-        @endif
 
-        @if (session('error'))
-            Swal.fire({
-                title: 'Error',
-                text: '{{ session('error') }}',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        @endif
-    });
-</script>
 
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
