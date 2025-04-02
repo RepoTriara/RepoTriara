@@ -297,7 +297,7 @@
                                             <td>
                                                 @if ($file->expires && $file->expiry_date)
                                                     @php
-                                                        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
+        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
                                                     @endphp
                                                     @if ($expiryDate->isPast())
                                                         <span class="label label-danger"
@@ -600,6 +600,60 @@
             </div>
         </div>
     </div>
+    <style>
+        /* Ajustes específicos para la tabla de archivos */
+        #files_tbl thead th {
+            text-align: center;
+            white-space: nowrap;
+            padding: 8px 10px;
+            /* Espaciado reducido */
+        }
+    
+        /* Estilo para los encabezados ordenables */
+        #files_tbl thead th a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            /* Espacio mínimo entre texto e icono */
+        }
+    
+        /* Ajuste para los iconos de ordenación */
+        #files_tbl thead th i.fa-sort,
+        #files_tbl thead th i.fa-sort-up,
+        #files_tbl thead th i.fa-sort-down {
+            margin-left: 3px;
+            font-size: 0.85em;
+        }
+    
+        /* Columna de checkbox */
+        #files_tbl thead th.td_checkbox {
+            width: 40px;
+            padding: 8px 5px !important;
+        }
+    
+        /* Columnas no ordenables */
+        #files_tbl thead th:not([class*="footable-sorted"]):not(.td_checkbox) {
+            padding: 8px 10px;
+        }
+    
+        /* Asegurar que las celdas del cuerpo mantengan la alineación */
+        #files_tbl tbody td {
+            vertical-align: middle;
+            text-align: center;
+        }
+    
+        /* Alineación especial para algunas celdas */
+        #files_tbl tbody td:nth-child(4) {
+            /* Columna de título */
+            text-align: left;
+        }
+    
+        #files_tbl tbody td:nth-child(5) {
+            /* Columna de tamaño */
+            text-align: right;
+        }
+    </style>
 </body>
 
 </html>

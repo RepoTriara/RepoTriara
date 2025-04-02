@@ -16,8 +16,7 @@
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('includes/js/footable/css/footable.core.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/footable.css') }}" />
-    <link rel="stylesheet" media="all" type="text/css"
-        href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
 </head>
@@ -43,9 +42,8 @@
                                 <!-- Formulario de búsqueda -->
                                 <form action="{{ route('system_users.index') }}" method="get" class="form-inline">
                                     <div class="form-group group_float">
-                                        <input type="text" name="search" id="search"
-                                            value="{{ request('search') }}" placeholder="Buscar usuario"
-                                            class="form-control" />
+                                        <input type="text" name="search" id="search" value="{{ request('search') }}"
+                                            placeholder="Buscar usuario" class="form-control" />
                                     </div>
                                     <button type="submit" id="btn_proceed_search"
                                         class="btn btn-sm btn-primary">Búsqueda</button>
@@ -105,14 +103,14 @@
                             <div class="clear"></div>
 
                             <div class="form_actions_count">
-                               @if (request()->has('client_id'))
+                                @if (request()->has('client_id'))
                                     <p>
-                                         Total de usuarios: {{ $filteredUsersCount }}
+                                        Total de usuarios: {{ $filteredUsersCount }}
 
                                     </p>
                                 @elseif (request()->has('search') || request()->has('role'))
                                     <p>
-                                         Total de usuarios: {{ $filteredUsersCount }}
+                                        Total de usuarios: {{ $filteredUsersCount }}
 
                                     </p>
                                 @else
@@ -129,68 +127,75 @@
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" id="select_all" /></th>
-                                       <!-- Nombre Completo -->
-<th class="{{ request('orderby') === 'name' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'name' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('system_users.index', ['orderby' => 'name', 'order' => (request('orderby') === 'name' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
-        Nombre completo
-    </a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                        <!-- Nombre Completo -->
+                                        <th class="{{ request('orderby') === 'name' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'name' ? 'footable-sorted-active active' : '' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('system_users.index', ['orderby' => 'name', 'order' => (request('orderby') === 'name' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+                                                Nombre completo
+                                            </a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
-<!-- Usuario -->
-<th class="{{ request('orderby') === 'user' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'user' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('system_users.index', ['orderby' => 'user', 'order' => (request('orderby') === 'user' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
-        Ingresar nombre de usuario
-    </a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                        <!-- Usuario -->
+                                        <th class="{{ request('orderby') === 'user' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'user' ? 'footable-sorted-active active' : '' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('system_users.index', ['orderby' => 'user', 'order' => (request('orderby') === 'user' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+                                                Ingresar nombre de usuario
+                                            </a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
-<!-- E-mail -->
-<th class="{{ request('orderby') === 'email' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'email' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('system_users.index', ['orderby' => 'email', 'order' => (request('orderby') === 'email' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
-        E-mail
-    </a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                        <!-- E-mail -->
+                                        <th class="{{ request('orderby') === 'email' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'email' ? 'footable-sorted-active active' : '' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('system_users.index', ['orderby' => 'email', 'order' => (request('orderby') === 'email' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+                                                E-mail
+                                            </a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
-<!-- Rol -->
-<th class="{{ request('orderby') === 'level' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'level' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('system_users.index', ['orderby' => 'level', 'order' => (request('orderby') === 'level' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
-        Rol
-    </a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                        <!-- Rol -->
+                                        <th class="{{ request('orderby') === 'level' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'level' ? 'footable-sorted-active active' : '' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('system_users.index', ['orderby' => 'level', 'order' => (request('orderby') === 'level' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+                                                Rol
+                                            </a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
-<!-- Estado -->
-<th class="{{ request('orderby') === 'active' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'active' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('system_users.index', ['orderby' => 'active', 'order' => (request('orderby') === 'active' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
-        Estado
-    </a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                        <!-- Estado -->
+                                        <th class="{{ request('orderby') === 'active' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'active' ? 'footable-sorted-active active' : '' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('system_users.index', ['orderby' => 'active', 'order' => (request('orderby') === 'active' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+                                                Estado
+                                            </a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
-<!-- Max. tamaño -->
-<th class="{{ request('orderby') === 'max_file_size' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'max_file_size' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('system_users.index', ['orderby' => 'max_file_size', 'order' => (request('orderby') === 'max_file_size' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
-        Max. tamaño permitido
-    </a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                        <!-- Max. tamaño -->
+                                        <th class="{{ request('orderby') === 'max_file_size' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'max_file_size' ? 'footable-sorted-active active' : '' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('system_users.index', ['orderby' => 'max_file_size', 'order' => (request('orderby') === 'max_file_size' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+                                                Max. tamaño permitido
+                                            </a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
 
-<!-- Adicionado -->
-<th class="{{ request('orderby') === 'timestamp' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'timestamp' ? 'footable-sorted-active active' : '' }}"
-    data-hide="phone,tablet">
-    <a href="{{ route('system_users.index', ['orderby' => 'timestamp', 'order' => (request('orderby') === 'timestamp' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
-        Adicionado
-    </a>
-    <span class="footable-sort-indicator"></span>
-</th>
+                                        <!-- Adicionado -->
+                                        <th class="{{ request('orderby') === 'timestamp' ? (request('order') === 'asc' ? 'footable-sorted-asc' : 'footable-sorted-desc') : '' }} footable-visible {{ request('orderby') === 'timestamp' ? 'footable-sorted-active active' : '' }}"
+                                            data-hide="phone,tablet">
+                                            <a
+                                                href="{{ route('system_users.index', ['orderby' => 'timestamp', 'order' => (request('orderby') === 'timestamp' && request('order') === 'asc') ? 'desc' : 'asc']) }}">
+                                                Adicionado
+                                            </a>
+                                            <span class="footable-sort-indicator"></span>
+                                        </th>
                                         <th>Comportamiento</th>
                                     </tr>
                                 </thead>
@@ -207,8 +212,7 @@
                                                 {{ $user->level == 10 ? 'Administrador De Accesos' : 'Usuario del sistema' }}
                                             </td>
                                             <td>
-                                                <span
-                                                    class="label {{ $user->active ? 'label-success' : 'label-danger' }}">
+                                                <span class="label {{ $user->active ? 'label-success' : 'label-danger' }}">
                                                     {{ $user->active ? 'Activo' : 'Inactivo' }}
                                                 </span>
                                             </td>
@@ -250,8 +254,7 @@
                                                 <div class="form-group">
                                                     <label class="control-label hidden-xs hidden-sm">Vaya a:</label>
                                                     <input type="number" class="form-control"
-                                                        style="width: 4em !important;" name="page"
-                                                        id="go_to_page_users"
+                                                        style="width: 4em !important;" name="page" id="go_to_page_users"
                                                         value="{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->currentPage() : 1 }}"
                                                         min="1"
                                                         max="{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->lastPage() : 1 }}" />
@@ -287,58 +290,58 @@
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="{{ asset('includes/js/footable/footable.min.js') }}"></script>
             <script>
-                document.getElementById('select_all').addEventListener('click', function() {
+                document.getElementById('select_all').addEventListener('click', function () {
                     var isChecked = this.checked;
                     var checkboxes = document.querySelectorAll('input[name="batch[]"]');
-                    checkboxes.forEach(function(checkbox) {
+                    checkboxes.forEach(function (checkbox) {
                         checkbox.checked = isChecked;
                     });
                 });
 
-               function goToPageUsers() {
-    const pageInput = document.getElementById('go_to_page_users');
-    const page = parseInt(pageInput.value);
-    const lastPage = parseInt("{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->lastPage() : 1 }}");
+                function goToPageUsers() {
+                    const pageInput = document.getElementById('go_to_page_users');
+                    const page = parseInt(pageInput.value);
+                    const lastPage = parseInt("{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->lastPage() : 1 }}");
 
-    if (isNaN(page) || page < 1 || page > lastPage) {
-        Swal.fire({
-            title: 'Página inválida',
-            text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
-            icon: 'warning',
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: '#2778c4'
-        });
-        pageInput.value = "{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->currentPage() : 1 }}"; // Optionally reset the input
-        return;
-    }
+                    if (isNaN(page) || page < 1 || page > lastPage) {
+                        Swal.fire({
+                            title: 'Página inválida',
+                            text: `Por favor, ingresa un número de página entre 1 y ${lastPage}.`,
+                            icon: 'warning',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#2778c4'
+                        });
+                        pageInput.value = "{{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->currentPage() : 1 }}"; // Optionally reset the input
+                        return;
+                    }
 
-    const url = new URL(window.location.href);
-    url.searchParams.set('page', page);
-    window.location.href = url.toString();
-}
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('page', page);
+                    window.location.href = url.toString();
+                }
                 document.addEventListener('DOMContentLoaded', function () {
                     // Mostrar mensaje si no hay resultados en la búsqueda
                     @if(request()->has('search') && $users->isEmpty())
-                                Swal.fire({
-                                    title: 'Búsqueda sin resultados',
-                                    text: 'No se encontraron usuarios que coincidan con "{{ request('search') }}"',
-                                    icon: 'info',
-                                    confirmButtonText: 'Aceptar',
-                                    customClass: {
-                                        icon: 'custom-search-icon'
-                                    }
-                                });
-
-                                // Estilo personalizado para el icono
-                                const style = document.createElement('style');
-                                style.innerHTML = `
-                            .custom-search-icon {
-                                color: #facea8 !important;
-                                border: 2px solid #f8bb86 !important;
-                                border-radius: 50%;
+                        Swal.fire({
+                            title: 'Búsqueda sin resultados',
+                            text: 'No se encontraron usuarios que coincidan con "{{ request('search') }}"',
+                            icon: 'info',
+                            confirmButtonText: 'Aceptar',
+                            customClass: {
+                                icon: 'custom-search-icon'
                             }
-                        `;
-                                document.head.appendChild(style);
+                        });
+
+                        // Estilo personalizado para el icono
+                        const style = document.createElement('style');
+                        style.innerHTML = `
+                                .custom-search-icon {
+                                    color: #facea8 !important;
+                                    border: 2px solid #f8bb86 !important;
+                                    border-radius: 50%;
+                                }
+                            `;
+                        document.head.appendChild(style);
                     @endif
 
                     document.querySelector('form[action="{{ route('system_users.bulk_action') }}"]').addEventListener('submit', function (e) {
@@ -349,7 +352,7 @@
                             selectedUsers.push(checkbox.value);
                         });
 
-                          if (action === 'none') {
+                        if (action === 'none') {
                             e.preventDefault();
                             Swal.fire({
                                 title: 'Error',
@@ -386,7 +389,7 @@
                         }
                     });
 
-                     @if(session('success'))
+                    @if(session('success'))
                         Swal.fire({
                             title: 'Éxito',
                             text: '{{ session('success') }}',
@@ -399,6 +402,70 @@
             </script>
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
+    <style>
+        /* Ajustes específicos para la tabla de usuarios */
+        #users_tbl thead th {
+            text-align: center;
+            white-space: nowrap;
+            padding: 8px 10px;
+            /* Espaciado reducido */
+        }
+    
+        /* Estilo para los encabezados ordenables */
+        #users_tbl thead th a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            /* Espacio mínimo entre texto e icono */
+        }
+    
+        /* Ajuste para los indicadores de ordenación */
+        #users_tbl .footable-sort-indicator {
+            margin-left: 3px;
+            font-size: 0.8em;
+        }
+    
+        /* Columna de checkbox */
+        #users_tbl thead th:first-child {
+            width: 40px;
+            padding: 8px 5px !important;
+        }
+    
+        /* Columnas no ordenables */
+        #users_tbl thead th:not([class*="footable-sorted"]):not(:first-child) {
+            padding: 8px 10px;
+        }
+    
+        /* Asegurar que las celdas del cuerpo mantengan la alineación */
+        #users_tbl tbody td {
+            vertical-align: middle;
+            text-align: center;
+        }
+    
+        /* Alineación especial para algunas celdas */
+        #users_tbl tbody td:nth-child(2),
+        /* Nombre completo */
+        #users_tbl tbody td:nth-child(3),
+        /* Usuario */
+        #users_tbl tbody td:nth-child(4) {
+            /* Email */
+            text-align: left;
+        }
+    
+        /* Ajuste para la columna "Comportamiento" */
+        #users_tbl thead th:last-child,
+        #users_tbl tbody td:last-child {
+            width: 100px;
+        }
+    
+        /* Estilo para los labels de estado */
+        #users_tbl tbody td .label {
+            display: inline-block;
+            min-width: 70px;
+            text-align: center;
+        }
+    </style>
 </body>
 
 </html>

@@ -447,7 +447,42 @@
                 });
             </script>
 
+            <style>
+                /* Ajuste específico para los headers ordenables */
+                #users_tbl thead th {
+                    text-align: center;
+                    white-space: nowrap;
+                    padding: 8px 12px;
+                }
 
+                /* Reduce el espacio entre el título y el indicador de orden */
+                #users_tbl thead th a {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 4px;
+                    /* Espacio reducido entre texto e icono */
+                }
+
+                /* Ajusta el tamaño del indicador de ordenación */
+                #users_tbl .footable-sort-indicator {
+                    margin-left: 4px;
+                    /* Espacio mínimo entre texto e icono */
+                    font-size: 0.8em;
+                    /* Tamaño ligeramente reducido */
+                }
+
+                /* Columnas no ordenables mantienen el mismo estilo */
+                #users_tbl thead th:not([class*="footable-sorted"]) {
+                    padding: 8px 12px;
+                }
+
+                /* Columna de checkbox */
+                #users_tbl thead th:first-child {
+                    width: 40px;
+                    padding: 8px;
+                }
+            </style>
 
         </div> <!-- main_content -->
     </div> <!-- container-custom -->

@@ -400,6 +400,75 @@
             </div>
         </div>
     </div>
+    <style>
+        /* Ajustes específicos para la tabla de compañías */
+        #groups_tbl thead th {
+            text-align: center;
+            white-space: nowrap;
+            padding: 8px 10px;
+            /* Espaciado reducido */
+        }
+    
+        /* Estilo para los encabezados ordenables */
+        #groups_tbl thead th a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            /* Espacio mínimo entre texto e icono */
+        }
+    
+        /* Ajuste para los iconos de ordenación */
+        #groups_tbl thead th i.fa-sort,
+        #groups_tbl thead th i.fa-sort-up,
+        #groups_tbl thead th i.fa-sort-down {
+            margin-left: 3px;
+            font-size: 0.85em;
+        }
+    
+        /* Columna de checkbox */
+        #groups_tbl thead th.td_checkbox {
+            width: 40px;
+            padding: 8px 5px !important;
+        }
+    
+        /* Columnas no ordenables */
+        #groups_tbl thead th:not([class*="footable-sorted"]):not(.td_checkbox) {
+            padding: 8px 10px;
+        }
+    
+        /* Asegurar que las celdas del cuerpo mantengan la alineación */
+        #groups_tbl tbody td {
+            vertical-align: middle;
+            text-align: center;
+        }
+    
+        /* Alineación especial para algunas celdas */
+        #groups_tbl tbody td:nth-child(2),
+        /* Columna de nombre */
+        #groups_tbl tbody td:nth-child(3) {
+            /* Columna de descripción */
+            text-align: left;
+        }
+    
+        /* Ajuste específico para la columna "Creado por" */
+        #groups_tbl thead th:nth-child(6) {
+            width: 120px;
+            /* Ancho fijo para esta columna */
+        }
+    
+        /* Ajuste para la columna "Ver" */
+        #groups_tbl thead th:nth-child(8),
+        #groups_tbl tbody td:nth-child(8) {
+            width: 80px;
+        }
+    
+        /* Ajuste para la columna "Comportamiento" */
+        #groups_tbl thead th:nth-child(9),
+        #groups_tbl tbody td:nth-child(9) {
+            width: 80px;
+        }
+    </style>
 </body>
 
 </html>
