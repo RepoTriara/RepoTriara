@@ -44,7 +44,7 @@
             <div class="container-fluid">
 
                 <div class="row">
-                    <div id="section_title">
+                    <div id="section_title" style="margin-top: 30px;">
                         <div class="col-xs-12">
                             <h2>{{ isset($pageTitle) ? $pageTitle : 'Mis archivos' }}</h2>
                         </div>
@@ -272,7 +272,7 @@
             </footer>
             </div> <!-- wrapper -->
 
-        
+
 
     </div>
     <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -320,7 +320,7 @@
     function setupCheckboxes() {
         const selectAllCheckbox = document.getElementById('select_all');
         const fileCheckboxes = document.querySelectorAll('input[name="file_ids"]');
-        
+
         if (selectAllCheckbox && fileCheckboxes.length > 0) {
             // Seleccionar/deseleccionar todos
             selectAllCheckbox.addEventListener('change', function() {
@@ -352,7 +352,7 @@
 
             if (action === 'zip') {
                 e.preventDefault();
-                
+
                 // Verificar si hay archivos seleccionados
                 const selectedFiles = document.querySelectorAll('input[name="file_ids"]:checked');
                 if (selectedFiles.length === 0) {
