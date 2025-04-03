@@ -332,7 +332,63 @@
         });
     });
 </script>
+<style>
+    /* Ajustes específicos para la tabla de categorías */
+    #categories_tbl thead th {
+        text-align: center;
+        white-space: nowrap;
+        padding: 8px 10px; /* Espaciado reducido */
+    }
 
+    /* Estilo para los encabezados ordenables */
+    #categories_tbl thead th a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3px; /* Espacio mínimo entre texto e icono */
+    }
+
+    /* Ajuste para los iconos de ordenación */
+    #categories_tbl thead th i.fa-sort,
+    #categories_tbl thead th i.fa-sort-up,
+    #categories_tbl thead th i.fa-sort-down {
+        margin-left: 3px;
+        font-size: 0.85em;
+    }
+
+    /* Columna de checkbox */
+    #categories_tbl thead th.td_checkbox {
+        width: 40px;
+        padding: 8px 5px !important;
+    }
+
+    /* Columnas no ordenables */
+    #categories_tbl thead th:not([class*="footable-sorted"]):not(.td_checkbox) {
+        padding: 8px 10px;
+    }
+
+    /* Asegurar que las celdas del cuerpo mantengan la alineación */
+    #categories_tbl tbody td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    /* Alineación especial para algunas celdas */
+    #categories_tbl tbody td:nth-child(2) {
+        /* Columna de nombre */
+        text-align: left;
+    }
+
+    #categories_tbl tbody td:nth-child(3) {
+        /* Columna de descripción */
+        text-align: left;
+    }
+
+    /* Espaciado para el botón "Ver Archivos" */
+    #categories_tbl tbody td a.btn {
+        margin-right: 5px; /* Espacio entre botones si los hubiera */
+    }
+</style>
 
         </div> <!-- main_content -->
     </div> <!-- container-custom -->

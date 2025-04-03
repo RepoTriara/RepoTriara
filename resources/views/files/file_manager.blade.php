@@ -73,7 +73,7 @@
                                 @elseif (request()->has('category_id'))
                                     <!-- Filtrado por categoría -> solo se muestra el campo de estado -->
                                     <form action="{{ route('file_manager') }}" method="GET"
-                                        class="form-inline form_filters">
+                                        class="form-inline form_filters m3-4">
                                         @if (request()->has('client_id'))
                                             <input type="hidden" name="client_id" value="{{ request('client_id') }}">
                                         @endif
@@ -85,7 +85,7 @@
                                                 value="{{ request('category_id') }}">
                                         @endif
 
-                                        <div class="form-group group_float">
+                                        <div class="form-group ">
                                             <select name="hidden" id="hidden" class="txtfield form-control">
                                                 <option value="2"
                                                     {{ request('hidden') == '2' ? 'selected' : '' }}>Todos los estados
@@ -122,7 +122,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <button type="submit" id="btn_proceed_filter_clients"
+                                            <button style="margin-right: 10px; type="submit" id="btn_proceed_filter_clients"
                                                 class="btn btn-sm btn-primary">Filtrar</button>
                                         @endif
 
