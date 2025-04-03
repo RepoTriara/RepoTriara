@@ -151,120 +151,117 @@
             <script src="{{ asset('includes/js/js.cookie.js') }}"></script>
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // Estilos para SweetAlert2
+    const style = document.createElement('style');
+    style.textContent = `
+        .compact-swal {
+            max-width: 500px;
+            padding: 1em;
+        }
+        .compact-title {
+            text-align: center;
+            margin-bottom: 8px !important;
+            font-size: 1.3em;
+            padding-bottom: 0;
+        }
+        .compact-content {
+            padding: 0 1em;
+            margin-top: 5px !important;
+        }
+        .compact-errors-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .compact-error-line {
+            font-size: 0.95em;
+            text-align: left;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+        }
+        .error-number {
+            flex-shrink: 0;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        .error-text {
+            word-break: break-word;
+        }
+        .bold-section {
+            font-weight: bold;
+        }
+        .success-swal {
+            max-width: 450px;
+            padding: 1.5em;
+        }
+        .success-title {
+            text-align: center;
+            margin-bottom: 10px !important;
+            font-size: 1.4em;
+            color: #2778c4;
+        }
+    `;
+    document.head.appendChild(style);
+
     // Mensaje de éxito
     @if (session()->has('success'))
         Swal.fire({
-            icon: 'success',
             title: '¡Éxito!',
             text: '{{ session('success') }}',
+            icon: 'success',
             confirmButtonText: 'Aceptar',
-            confirmButtonColor: '#2778c4'
+            confirmButtonColor: '#2778c4',
+            customClass: {
+                popup: 'success-swal',
+                title: 'success-title'
+            }
         });
     @endif
 
-   @if ($errors->any())
-    let errorMessages = '';
-    let uniqueErrors = {};
-
-    // Procesar errores
-    @foreach ($errors->getMessages() as $field => $messages)
-        uniqueErrors['{{ $field }}'] = [];
-        @foreach ($messages as $message)
-            
-            // SECCIÓN MODIFICADA: Manejo especial para campos
-            @if ($field == 'phone')
-                // Mensaje personalizado para errores de teléfono
-                uniqueErrors['{{ $field }}'].push('El teléfono debe ser solo números, entre 7 y 10 dígitos.');
-            @elseif ($field == 'email')
-                // Manejo especial para errores de email - priorizar mensaje de formato
-                if ('{{ $message }}'.includes('formato') || '{{ $message }}'.includes('formato')) {
-                    uniqueErrors['{{ $field }}'] = ['El formato del correo electrónico no es válido.'];
-                } else if (uniqueErrors['{{ $field }}'].length === 0) {
-                    uniqueErrors['{{ $field }}'].push('{{ $message }}');
+    // Mensajes de error
+    @if ($errors->any())
+        @php
+            $errorIndex = 1;
+            $errorMessages = '';
+            foreach ($errors->getMessages() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $colonIndex = strpos($message, ':');
+                    if ($colonIndex !== false) {
+                        $beforeColon = substr($message, 0, $colonIndex);
+                        $afterColon = substr($message, $colonIndex + 1);
+                        $errorMessages .= '
+                            <div class="compact-error-line">
+                                <span class="error-number">'.$errorIndex++.'.</span>
+                                <span class="error-text">
+                                    <span class="bold-section">'.$beforeColon.':</span>'.$afterColon.'
+                                </span>
+                            </div>
+                        ';
+                    } else {
+                        $errorMessages .= '
+                            <div class="compact-error-line">
+                                <span class="error-number">'.$errorIndex++.'.</span>
+                                <span class="error-text">'.$message.'</span>
+                            </div>
+                        ';
+                    }
                 }
-                
-            @else
-                // Mantener otros mensajes de error como están
-                if (!uniqueErrors['{{ $field }}'].includes('{{ $message }}')) {
-                    uniqueErrors['{{ $field }}'].push('{{ $message }}');
-                }
-            @endif
-        @endforeach
-    @endforeach
+            }
+        @endphp
 
-        // Construir bloque de mensajes
-        let allMessages = [];
-        for (const [field, messages] of Object.entries(uniqueErrors)) {
-            allMessages = allMessages.concat(messages);
-        }
-        errorMessages = allMessages.join('<br>');
-
-        // Estilos personalizados (modificación mínima)
-        const style = document.createElement('style');
-        style.textContent = `
-               .custom-swal-popup {
-                max-width: 95% !important;
-                width: 500px !important;
-                min-height: 180px !important;
-                padding: 15px !important;
-            }
-            .custom-swal-title {
-                text-align: center !important;
-                width: 100% !important;
-                font-size: 20px !important;
-                margin-bottom: 10px !important;
-                font-weight: bold !important;
-            }
-            .custom-swal-html {
-                width: 100% !important;
-                font-size: 14px !important;
-                text-align: center !important; /* CENTRADO */
-                padding: 0 10px !important;
-                margin-top: 0 !important;
-                line-height: 1.2 !important;
-                white-space: nowrap !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important; /* CENTRADO */
-            }
-            .custom-swal-confirm {
-                margin-top: 10px !important;
-                display: block !important;
-                margin-left: auto !important;
-                margin-right: auto !important;
-                font-size: 14px !important;
-            }
-            .swal2-warning-custom {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                width: 50px !important;
-                height: 50px !important;
-                font-size: 30px !important;
-                font-weight: bold !important;
-                color: #facea8 !important;
-                border: 2px solid #f8bb86 !important;
-                border-radius: 50% !important;
-                margin: 0 auto 10px auto !important;
-            }
-        `;
-        
-        document.head.appendChild(style);
-          
-        // Mostrar alerta
         Swal.fire({
-            icon: 'warning',
-            title: '<span class="custom-swal-title">Errores en el formulario</span>',
-            html: `<div class="custom-swal-html">${errorMessages}</div>`,
-            confirmButtonText: 'Corregir',
+            title: 'Errores de validación',
+            html: `<div class="compact-errors-container"><?php echo $errorMessages; ?></div>`,
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
             confirmButtonColor: '#2778c4',
             customClass: {
-                popup: 'custom-swal-popup',
-                title: 'custom-swal-title',
-                htmlContainer: 'custom-swal-html',
-                confirmButton: 'custom-swal-confirm'
+                popup: 'compact-swal',
+                title: 'compact-title',
+                htmlContainer: 'compact-content'
             }
         });
     @endif

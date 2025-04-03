@@ -60,16 +60,13 @@
 
                                 <div class="form_actions_left">
                                     <div class="form_actions_limit_results">
-                                        <form action="{{ route('my_files') }}" name="form_search" method="get"
-                                            class="form-inline">
+                                        <form action="{{ route('my_files') }}" method="get" class="form-inline">
+                                            <input type="hidden" name="cliente_id" value="{{ request()->get('cliente_id', Auth::user()->id) }}">
                                             <div class="form-group group_float">
-                                                <input type="text" name="search" id="search"
-                                                    value="{{ request()->get('search') }}"
-                                                    class="form-control"
-                                                    placeholder="Buscar por título o descripción" />
+                                                <input type="text" name="search" id="search" value="{{ request()->get('search') }}" class="form-control"
+                                                    placeholder="Buscar por título o descripción">
                                             </div>
-                                            <button type="submit" id="btn_proceed_search"
-                                                class="btn btn-sm btn-primary">
+                                            <button type="submit" class="btn btn-sm btn-primary">
                                                 Búsqueda
                                             </button>
                                         </form>
@@ -97,11 +94,6 @@
                                             <button type="submit" id="btn_proceed_filter_files"
                                                 class="btn btn-sm btn-primary">Filtrar</button>
                                         </form>
-
-
-
-
-
                                     </div>
                                 </div>
 

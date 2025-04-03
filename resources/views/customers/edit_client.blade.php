@@ -152,7 +152,7 @@
                                             <input type="text" name="max_file_size" id="max_file_size"
                                                 class="form-control"
                                                 value="{{ old('max_file_size', $client->max_file_size) }}" required />
-                                            <span class="input-group-addon">Mb</span>
+                                            <span class="input-group-addon">MB</span>
                                             @error('max_file_size')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
@@ -227,33 +227,21 @@
         <script src="{{ asset('includes/js/main.js') }}"></script>
         <script src="{{ asset('includes/js/js.functions.php') }}"></script>
         <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
-        <script>
-            $(document).ready(function() {
-                $('.chosen-select').chosen({
-                    no_results_text: "No se encontraron resultados para",
-                    width: "100%"
-                });
-            });
-        </script>
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function() {
+        $('.chosen-select').chosen({
+            no_results_text: "No se encontraron resultados para",
+            width: "100%"
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Agregar estilos dinámicamente
+        // Agregar estilos dinámicamente solo para SweetAlert
         const style = document.createElement('style');
         style.textContent = `
-            .is-invalid {
-     
-            }
-            .invalid-feedback, .text-danger {
-          
-                display: none;
-                font-size: 0.875em;
-                margin-top: 3px;
-                text-align: left;
-                width: 100%;
-            }
             .compact-swal {
                 max-width: 500px;
                 padding: 1em;
@@ -262,7 +250,6 @@
                 text-align: center;
                 margin-bottom: 8px !important;
                 font-size: 1.3em;
-            
                 padding-bottom: 0;
             }
             .compact-content {
@@ -275,7 +262,6 @@
                 gap: 5px;
             }
             .compact-error-line {
-                
                 font-size: 0.95em;
                 text-align: left;
                 line-height: 1.4;
@@ -307,15 +293,6 @@
         button.addEventListener('click', function(e) {
             e.preventDefault();
 
-            // Limpiar errores anteriores
-            document.querySelectorAll('.invalid-feedback, .text-danger').forEach(el => {
-                el.textContent = '';
-                el.style.display = 'none';
-            });
-            document.querySelectorAll('.is-invalid').forEach(el => {
-                el.classList.remove('is-invalid');
-            });
-
             // Mostrar loader
             Swal.fire({
                 title: 'Procesando',
@@ -336,32 +313,13 @@
             })
             .then(response => {
                 if (response.status === 422) {
-                    return response.json().then(data => {
-                        if (data.errors) {
-                            Object.keys(data.errors).forEach(field => {
-                                const input = form.querySelector(`[name="${field}"]`);
-                                if (input) {
-                                    const errorElement = input.nextElementSibling || 
-                                                       input.parentNode.nextElementSibling ||
-                                                       input.closest('.form-group').querySelector('.invalid-feedback, .text-danger');
-                                    
-                                    if (errorElement) {
-                                        errorElement.textContent = data.errors[field][0];
-                                        errorElement.style.display = 'block';
-                                        input.classList.add('is-invalid');
-                                    }
-                                }
-                            });
-                        }
-                        return Promise.reject(data);
-                    });
+                    return response.json().then(data => Promise.reject(data));
                 }
                 return response.json();
             })
             .then(data => {
                 Swal.close();
                 
-                // Cambiado para buscar 'success' en lugar de 'message'
                 if (data.success) {
                     Swal.fire({
                         title: '¡Éxito!',
@@ -372,7 +330,7 @@
                     }).then(() => {
                         window.location.reload();
                     });
-                } else if (data.message) { // También verificamos 'message' por si acaso
+                } else if (data.message) {
                     Swal.fire({
                         title: '¡Éxito!',
                         text: data.message,

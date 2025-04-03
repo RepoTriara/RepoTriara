@@ -129,7 +129,7 @@ class UserSystemController extends Controller
     {
         // Validar los datos enviados desde el formulario
         $request->validate([
-            'name' => ['required', 'string', 'max:60','min:5','regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'], // Solo letras y espacios
+            'name' => ['required', 'string', 'max:60','min:5'], 
             'email' => [
             'required',
             'string',
@@ -139,7 +139,7 @@ class UserSystemController extends Controller
             'unique:' . User::class
             ],
             'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
-            'user' => ['required', 'string', 'max:60', 'unique:tbl_users','regex:/^\S*$/u'],
+            'user' => ['required', 'string', 'max:60','min:5', 'unique:tbl_users','regex:/^[a-zA-Z0-9.]+$/u'],
             'level' => ['required', 'in:10,8'], // Validar que level sea 10 o 8
             'notify' => ['nullable', 'boolean'], // Validar que notify sea booleano (0 o 1)
             'active' => ['nullable', 'boolean'], // Validar que active sea booleano (0 o 1)
@@ -176,7 +176,7 @@ class UserSystemController extends Controller
 {
     // Validar los datos del formulario
     $validated = $request->validate([
-        'name' => 'required|string|max:255',
+        'name' => 'required|string|max:60|min:5',
         'user' => 'required|string|max:60',
         'email' => [
                 'required',
@@ -187,7 +187,7 @@ class UserSystemController extends Controller
                 'unique:tbl_users,email,' . ($id ?? 'NULL') . ',id'
             ],
         'level' => 'required|in:10,8',
-        'password' => ['nullable', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
+        'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
 
         'active' => 'boolean',
         'notify' => 'boolean', // ✅ Agregado

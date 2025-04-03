@@ -15,27 +15,27 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
 {
-    return [
-        'name' => [
-        'required',
-        'string',
-        'max:60',
-        'min:5',
-        'regex:/^[a-zA-ZÁÉÍÓÚáéíóúñÑ ]+$/u',
-        'not_regex:/\s{2,}/',
-        ],
-        'email' => [
-            'required',
-            'string',
-            'email:rfc,dns',
-            'max:255',
-            'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',
-            Rule::unique(User::class)->ignore($this->user()->id), // Excluye el usuario actual
-        ],
-        'notify' => ['nullable', 'boolean'],
-        'address' => ['nullable', 'string', 'max:60'],
-        'phone' => ['nullable', 'digits:10'],
-        'password' => ['nullable', 'string', 'min:8'], // Password validation
-    ];
+        return [
+            'name' => [
+                'required',
+                'string',
+                'max:60',
+                'min:5',
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email:rfc,dns',
+                'max:60',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',
+                Rule::unique(User::class)->ignore($this->user()->id), // Excluye el usuario actual
+            ],
+            'notify' => ['nullable', 'boolean'],
+            'address' => ['nullable', 'string', 'max:60'],
+            'phone' => ['nullable', 'digits_between:7,10'],
+            'password' => ['nullable', 'string', 'min:8', 'regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
+
+        ];
 }
+   
 }

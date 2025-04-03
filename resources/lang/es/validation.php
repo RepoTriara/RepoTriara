@@ -179,7 +179,6 @@ return [
         ],
         'name'        => [
             'required' => 'Nombre: Este campo es obligatorio, por favor, ingrese el nombre.',
-            'regex'    => 'Nombre: El campo nombre solo puede contener texto.',
              'min'     => 'Nombre: El campo nombre debe tener mínimo 5 caracteres',
             'max'     => 'Nombre: El campo nombre no debe exceder los 60 caracteres.',
         ],
@@ -196,7 +195,7 @@ return [
         'user'        => [
             'required' => ' Ingresar nombre de usuario: Este campo es obligatorio, por favor, ingrese nombre de usuario.',
             'unique'   => 'Ingresar nombre de usuario: El nombre de usuario ya está en uso.',
-            'regex'    => 'Ingresar nombre de usuario: Este campo es alfanumérico y no puede contener espacios.',
+            'regex'    => 'Ingresar nombre de usuario: Este campo es alfanumérico, solo se permite el punto (.) y no puede contener espacios.',
 
         ],
          'contact' => [

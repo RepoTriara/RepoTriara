@@ -148,7 +148,7 @@
                                             <div class="input-group">
                                                 <input value="0" type="text" name="max_file_size"
                                                     id="max_file_size" class="form-control" readonly />
-                                                <span class="input-group-addon">Mb</span>
+                                                <span class="input-group-addon">MB</span>
                                             </div>
                                             <p class="field_note">Ponga 0 como límite predeterminado (2048 mb)</p>
                                         </div>
