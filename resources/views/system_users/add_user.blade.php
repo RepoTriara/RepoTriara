@@ -89,7 +89,7 @@
                                         <div class="col-sm-8">
                                             <div class="input-group">
                                                 <!--input name="add_user_form_pass" id="add_user_form_pass" class="form-control  password_toggle" type="password" maxlength="" /-->
-                                                <input name="password" id="password"
+                                                <input name="password" id="password" maxlength="60"
                                                     class="form-control  password_toggle" type="password" placeholder="Contraseña" />
                                                 @error('password')
                                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -172,7 +172,7 @@
 
                                     <div class="inside_form_buttons">
                                         <button type="submit" name="submit" id="guardar"
-                                            class="btn btn-wide btn-primary">Adicionar Usuario</button>
+                                            class="btn btn-wide btn-primary">Adicionar usuario</button>
                                     </div>
 
                                     <div class="alert alert-info">La información de cuenta será enviada al correo
@@ -198,20 +198,14 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Agregar estilos dinámicamente
         const style = document.createElement('style');
         style.textContent = `
-           
-            .invalid-feedback, .text-danger {
-                
-                display: none;
-                font-size: 0.875em;
-                margin-top: 3px;
-                text-align: left;
-                width: 100%;
-            }
             .compact-swal {
                 max-width: 500px;
                 padding: 1em;
@@ -220,7 +214,6 @@
                 text-align: center;
                 margin-bottom: 8px !important;
                 font-size: 1.3em;
-               
                 padding-bottom: 0;
             }
             .compact-content {
@@ -233,7 +226,6 @@
                 gap: 5px;
             }
             .compact-error-line {
-                
                 font-size: 0.95em;
                 text-align: left;
                 line-height: 1.4;
@@ -265,15 +257,6 @@
         button.addEventListener('click', function(e) {
             e.preventDefault();
 
-            // Limpiar errores anteriores
-            document.querySelectorAll('.invalid-feedback, .text-danger').forEach(el => {
-                el.textContent = '';
-                el.style.display = 'none';
-            });
-            document.querySelectorAll('.is-invalid').forEach(el => {
-                el.classList.remove('is-invalid');
-            });
-
             // Mostrar loader
             Swal.fire({
                 title: 'Procesando',
@@ -294,35 +277,16 @@
             })
             .then(response => {
                 if (response.status === 422) {
-                    return response.json().then(data => {
-                        if (data.errors) {
-                            Object.keys(data.errors).forEach(field => {
-                                const input = form.querySelector(`[name="${field}"]`);
-                                if (input) {
-                                    const errorElement = input.nextElementSibling || 
-                                                       input.parentNode.nextElementSibling ||
-                                                       input.closest('.form-group').querySelector('.invalid-feedback, .text-danger');
-                                    
-                                    if (errorElement) {
-                                        errorElement.textContent = data.errors[field][0];
-                                        errorElement.style.display = 'block';
-                                        input.classList.add('is-invalid');
-                                    }
-                                }
-                            });
-                        }
-                        return Promise.reject(data);
-                    });
+                    return response.json().then(data => Promise.reject(data));
                 }
                 return response.json();
             })
             .then(data => {
                 Swal.close();
-                
-                if (data.message) {  // Cambiado de data.success a data.message
+                if (data.message) {
                     Swal.fire({
                         title: '¡Éxito!',
-                        text: data.message,  // Mostramos data.message en lugar de data.success
+                        text: data.message,
                         icon: 'success',
                         timer: 2000,
                         showConfirmButton: false,
@@ -333,11 +297,10 @@
             })
             .catch(error => {
                 Swal.close();
-                
                 if (error.errors) {
                     let errorIndex = 1;
-                    const errorMessages = Object.values(error.errors)
-                        .map(messages => {
+                    const errorMessages = Object.entries(error.errors)
+                        .map(([field, messages]) => {
                             const message = messages[0];
                             const colonIndex = message.indexOf(':');
                             
@@ -364,7 +327,7 @@
                             }
                         })
                         .join('');
-                    
+
                     Swal.fire({
                         title: 'Errores de validación',
                         html: `<div class="compact-errors-container">${errorMessages}</div>`,
@@ -390,6 +353,9 @@
         });
     });
 </script>
+
+</script>
+
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 

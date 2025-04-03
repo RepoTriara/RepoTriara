@@ -24,7 +24,7 @@ class ProfileController extends Controller
     /**
      * Actualizar la información del perfil del usuario.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+   public function update(ProfileUpdateRequest $request)
 {
     $user = $request->user();
     $validatedData = $request->validated();
@@ -46,9 +46,13 @@ class ProfileController extends Controller
 
     $user->save();
 
-    // Mensaje de éxito
-    session()->flash('success', 'Perfil actualizado correctamente.');
+    // Verificar si la solicitud espera JSON y responder apropiadamente
+    if ($request->expectsJson()) {
+        return response()->json(['message' => 'Perfil actualizado correctamente.'], 200);
+    }
 
-    return Redirect::route('profile.edit');
+    // Mensaje de éxito para peticiones normales (no JSON)
+    return Redirect::route('profile.edit')->with('success', 'Perfil actualizado correctamente.');
 }
+
 }

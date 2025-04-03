@@ -61,7 +61,7 @@
 
                                     <div class="form-group group_float">
                                         <input type="text" name="search" id="search"
-                                            placeholder="Buscar archivos{{ isset($entityType) ? ' del ' . $entityType : '' }}"
+                                            placeholder="Buscar archivos{{ isset($entityType) ? '  ' . $entityType : '' }}"
                                             value="{{ request('search') }}" class="form-control">
                                     </div>
                                     <button type="submit" id="btn_proceed_search"

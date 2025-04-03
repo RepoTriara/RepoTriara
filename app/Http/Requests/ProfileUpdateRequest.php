@@ -31,7 +31,7 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id), // Excluye el usuario actual
             ],
             'notify' => ['nullable', 'boolean'],
-            'address' => ['nullable', 'string', 'max:60'],
+            'address' => ['nullable', 'string', 'max:60','min:5'],
             'phone' => ['nullable', 'digits_between:7,10'],
             'password' => ['nullable', 'string', 'min:8', 'regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
 

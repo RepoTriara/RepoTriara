@@ -113,7 +113,7 @@ class ClientController extends Controller
 
             'name' => ['required', 'string', 'max:60','min:5'], 
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users','regex:/^[a-zA-Z0-9.]+$/u'],
-            'password' => ['required', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
+            'password' => ['required', 'string', 'min:8', 'max:60', 'regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
             'email' => [
             'required',
             'string',
@@ -122,10 +122,10 @@ class ClientController extends Controller
             'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',
             'unique:' . User::class
             ],
-            'address' => ['nullable', 'string'],
+            'address' => ['nullable', 'string', 'max:60','min:5'],
             'phone' => ['nullable','digits_between:7,10'],
             'contact' => ['nullable', 'string','min:5', 'max:60'],
-            'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'], // Validación de rango
+            'max_file_size' => ['nullable', 'required', 'integer', 'min:0', 'max:2048'], // Validación de rango
             'group_request' => ['nullable', 'array'],
             'group_request.*' => ['integer'],
             'active' => ['nullable', 'boolean'],
@@ -239,7 +239,7 @@ public function update(Request $request, $id)
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:60', 'min:5'],
             'user' => ['required', 'string', 'max:60', 'unique:tbl_users,user,' . $id],
-            'password' => ['nullable', 'string', 'min:8','regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
+            'password' => ['nullable', 'string', 'min:8', 'max:60', 'regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\\|.<>\/?`~]+$/'],
             'email' => [
                 'required',
                 'string',
@@ -248,10 +248,10 @@ public function update(Request $request, $id)
                 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/', // Dominios de 2 a 63 caracteres
                 'unique:tbl_users,email,' . ($id ?? 'NULL') . ',id'
             ],
-            'address' => ['nullable', 'string', 'max:60'],
+            'address' => ['nullable', 'string', 'max:60','min:5'],
             'phone' => ['nullable', 'digits_between:7,10'],
             'contact' => ['nullable', 'string', 'max:60', 'min:5'],
-            'max_file_size' => ['nullable', 'integer', 'min:0', 'max:2048'],
+            'max_file_size' => ['nullable', 'integer', 'required', 'min:0', 'max:2048'],
             'group_request' => ['nullable', 'array'],
             'group_request.*' => ['integer'],
             'active' => ['nullable', 'boolean'],

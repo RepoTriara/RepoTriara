@@ -230,7 +230,7 @@
                                     </div>-
                                 </div>
                                 <div class="inside_form_buttons">
-                                    <button type="submit" id="guardar" class="btn btn-primary">Agregar Cliente
+                                    <button type="submit" id="guardar" class="btn btn-primary">Agregar cliente
 
                                 </div>
                                 <div class="alert alert-info">La información de cuenta será enviada al correo

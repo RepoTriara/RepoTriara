@@ -10,7 +10,7 @@
         </li>
         <li class="">
             <a href="{{ asset('my_files') }}" class="nav_top_level')}}"><i class="fa fa-th-list fa-fw"
-                    aria-hidden="true"></i><span class="menu_label">ver mis archivos</span></a>
+                    aria-hidden="true"></i><span class="menu_label">Ver mis archivos</span></a>
         </li>
     </ul>
     <header id="header" class="navbar navbar-static-top navbar-fixed-top">

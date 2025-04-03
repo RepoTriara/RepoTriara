@@ -185,10 +185,12 @@ return [
         'password'    => [
             'min'      => 'Contraseña: El campo contraseña debe tener mínimo 8 caracteres.',
             'required' => 'Contraseña: Este campo es obligatorio, ingrese o genere una contraseña.',
-            'regex' => 'Contraseña: El formato del campo contraseña no es válido. Solo se permiten los siguientes caracteres: a-z, A-Z, 0-9, !@#$%^&*()_+-=[]{};:".<>/?`~',
+            'regex'    => 'Contraseña: El formato del campo contraseña no es válido. No se permiten espacios y solo se aceptan estos caracteres: a-z, A-Z, 0-9, !@#$%^&*()_+-=[]{};:".<>/?`~',
+            'max'     => 'Contraseña: El campo contraseña no debe exceder los 60 caracteres.',
+
         ],
         'phone'       => [
-            'digits_between' => 'Teléfono: El número debe tener entre 7 y 10 dígitos.',
+            'digits_between' => 'Teléfono: Solo se permite números y este debe tener entre 7 y 10 dígitos.',
             'regex'    => 'Teléfono: El formato del teléfono es inválido.',
             'required' => 'El teléfono es obligatorio.',
         ],
@@ -196,6 +198,7 @@ return [
             'required' => ' Ingresar nombre de usuario: Este campo es obligatorio, por favor, ingrese nombre de usuario.',
             'unique'   => 'Ingresar nombre de usuario: El nombre de usuario ya está en uso.',
             'regex'    => 'Ingresar nombre de usuario: Este campo es alfanumérico, solo se permite el punto (.) y no puede contener espacios.',
+            'min'     => 'Ingresar nombre de usuario: Este campo debe tener mínimo 5 caracteres',
 
         ],
          'contact' => [
@@ -207,7 +210,12 @@ return [
         'integer' => 'Máximo tamaño de subida: El campo debe ser un número entero.',
         'min' => 'Máximo tamaño de subida: El valor no puede ser negativo.',
         'max' => 'Máximo tamaño de subida: El valor no debe ser mayor que 2048.',
+        'required' => 'Máximo tamaño de subida: Este campo es obligatorio.',
     ],
+    'address' => [
+    'max' => 'Dirección: El campo dirección no debe exceder los 60 caracteres.',
+    'min' => 'Dirección: El campo dirección debe tener mínimo 5 caracteres.',
+],
 
     ],
 ];

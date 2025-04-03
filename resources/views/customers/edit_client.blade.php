@@ -166,7 +166,7 @@
                                     <div class="col-sm-8">
                                         <select multiple="multiple" name="group_request[]" id="group-select"
                                             class="form-control chosen-select"
-                                            data-placeholder="Seleccione una o mas opciones. Escriba para buscar">
+                                            data-placeholder="Seleccione una o más opciones. Escriba para buscar">
                                             @foreach ($groups as $group)
                                                 <option value="{{ $group->id }}"
                                                     {{ in_array($group->id, $associatedGroups) ? 'selected' : '' }}>

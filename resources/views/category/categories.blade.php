@@ -51,7 +51,7 @@
                             <!-- Formulario de búsqueda -->
                             <form action="{{ route('categories.index') }}" method="get" class="form-inline">
                                 <div class="form-group group_float">
-                                    <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Buscar categorias"
+                                    <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Buscar categorías"
                                         class="txtfield form_actions_search_box form-control" />
                                 </div>
                                 <button type="submit" id="btn_proceed_search"
