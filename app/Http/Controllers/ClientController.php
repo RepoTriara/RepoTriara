@@ -112,7 +112,7 @@ class ClientController extends Controller
         $request->validate([
 
             'name' => ['required', 'string', 'max:60','min:5'], 
-            'user' => ['required', 'string', 'max:60', 'unique:tbl_users','regex:/^[a-zA-Z0-9.]+$/u'],
+            'user' => ['required', 'string', 'max:60','min:5', 'unique:tbl_users','regex:/^[a-zA-Z0-9.]+$/u'],
             'password' => ['required', 'string', 'min:8', 'max:60', 'regex:/^[a-zA-Z0-9!@#$%^&*()_+´\-=\[\]{};:"\'\\\\|,.<>\/?`~]+$/'],
             'email' => [
             'required',
@@ -238,7 +238,7 @@ public function update(Request $request, $id)
     try {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:60', 'min:5'],
-            'user' => ['required', 'string', 'max:60', 'unique:tbl_users,user,' . $id],
+            'user' => ['required', 'string', 'max:60','min:5', 'unique:tbl_users,user,' . $id],
             'password' => ['nullable', 'string', 'min:8', 'max:60', 'regex:/^[a-zA-Z0-9!@#$%^&*´()_+\-=\[\]{};:"\'\\\\|,.<>\/?`~]+$/'],
             'email' => [
                 'required',
