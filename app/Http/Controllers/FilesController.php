@@ -37,15 +37,15 @@ class FilesController extends Controller
         $sort = $request->get('sort', 'timestamp');
         $direction = $request->get('direction', 'desc');
         $hiddenFilter = $request->get('hidden'); // Capturamos el filtro de estado
- 
+
         // Consulta principal para archivos
         $query = TblFile::query();
- 
+
         // Variables para la vista
         $entity = null;
         $entityType = '';
         $pageTitle = 'Administrar archivos';
- 
+
         // Aplicar filtros según el contexto
         if ($clientId) {
             $entity = User::find($clientId); // Buscamos el cliente por su ID
@@ -59,7 +59,7 @@ class FilesController extends Controller
                     'totalFiles' => 0
                 ]);
             }
- 
+
             $query->whereHas('fileRelations', function ($q) use ($clientId) {
                 $q->where('client_id', $clientId);
             });
@@ -75,7 +75,7 @@ class FilesController extends Controller
                     'totalFiles' => 0
                 ]);
             }
- 
+
             $query->whereHas('fileRelations', function ($q) use ($groupId) {
                 $q->where('group_id', $groupId);
             });
@@ -91,12 +91,12 @@ class FilesController extends Controller
                     'totalFiles' => 0
                 ]);
             }
- 
+
             $query->whereHas('categoryRelations', function ($q) use ($categoryId) {
                 $q->where('cat_id', $categoryId);
             });
         }
- 
+
         // Aplicar búsqueda si existe
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -104,34 +104,34 @@ class FilesController extends Controller
                     ->orWhere('description', 'LIKE', "%$search%");
             });
         }
- 
+
         // Aplicar filtro por cargador
         if ($uploaderFilter) {
             $query->where('uploader', $uploaderFilter);
         }
- 
+
         // Aplicar filtro por estado (hidden)
         if ($hiddenFilter !== null && $hiddenFilter != '2') {
             $query->whereHas('fileRelations', function ($q) use ($hiddenFilter) {
                 $q->where('hidden', $hiddenFilter); // Filtrar por estado oculto/visible
             });
         }
- 
+
         // Ordenamiento
         if ($sort === 'download_count') {
             $query->withCount('downloads as download_count')->orderBy('download_count', $direction);
         } else {
             $query->orderBy($sort, $direction);
         }
- 
+
         // Obtener resultados finales
     $files = $query->paginate(10)->appends($request->except('page'));
         $filteredTotal = $files->total();
         $this->assignFileSizes($files);
- 
+
         // Total general de archivos (sin filtros)
         $totalFiles = TblFile::count();
- 
+
         return view('files.file_manager', [
             'files' => $files,
             'uploaders' => TblFile::distinct()->pluck('uploader'),
@@ -168,9 +168,6 @@ private function assignFileSizes($files)
     }
 }
 
-
-
-
     public function downloadCompressed(Request $request)
     {
         $fileIds = $request->input('batch');
@@ -184,15 +181,7 @@ private function assignFileSizes($files)
             return redirect()->back()->with('error', 'No se encontraron archivos para descargar.');
         }
 
-        // Descargar cada archivo seleccionado individualmente
-        foreach ($files as $file) {
-            $filePath = storage_path('app/' . $file->url);
-            if (file_exists($filePath)) {
-                return response()->download($filePath, $file->filename);
-            } else {
-                return redirect()->back()->with('error', 'No se pudo encontrar el archivo ' . $file->filename . '.');
-            }
-        }
+
     }
 
 
@@ -239,24 +228,7 @@ private function assignFileSizes($files)
     }
 
 
-    public function download(Request $request)
-    {
-        $file = TblFile::where('id', $request->id)
-            ->where('public_token', $request->token)
-            ->first();
 
-        if (!$file || !$file->public_allow) {
-            abort(403, 'Acceso no permitido.');
-        }
-
-        $path = storage_path('app/' . $file->url);
-
-        if (file_exists($path)) {
-            return response()->download($path, $file->filename);
-        }
-
-        return redirect()->back()->withErrors(['error' => 'El archivo no existe.']);
-    }
 
         public function edit($fileId)
     {
@@ -784,18 +756,18 @@ public function store(Request $request)
         $selectedCategories = $request->query('categories', []);
         $sortColumn = $request->query('orderby', 'Timestamp'); // Default: 'Timestamp'
         $sortDirection = $request->query('order', 'desc'); // Default: 'desc'
- 
+
         // Columnas permitidas para ordenamiento
         $allowedColumns = ['filename', 'description', 'Timestamp'];
         if (!in_array($sortColumn, $allowedColumns)) {
             $sortColumn = 'Timestamp';
         }
- 
+
         // Variables para la vista
         $clientId = $request->query('cliente_id', Auth::user()->id); // ID del cliente (default: usuario autenticado)
         $currentUser = Auth::user(); // Usuario autenticado
         $pageTitle = __('Mis archivos'); // Título predeterminado para el cliente autenticado
- 
+
         // Buscar el cliente si se especifica un cliente_id
         $client = User::find($clientId);
         if ($client) {
@@ -807,10 +779,10 @@ public function store(Request $request)
             // Si el cliente no existe, usar el título predeterminado
             $pageTitle = __('Mis archivos');
         }
- 
+
         // Obtener los IDs de los grupos asociados al cliente
         $groupIds = Members::where('client_id', $clientId)->pluck('group_id')->toArray();
- 
+
         // Consulta principal para archivos
         $filesQuery = TblFile::where(function ($query) use ($clientId, $groupIds) {
             $query->whereHas('fileRelations', function ($subQuery) use ($clientId) {
@@ -828,14 +800,14 @@ public function store(Request $request)
                     ->orWhere('expires', 0)
                     ->orWhere('expiry_date', '>', now());
             });
- 
+
         // Aplicar filtro por categorías seleccionadas
         if (!empty($selectedCategories) && !in_array('all', $selectedCategories)) {
             $filesQuery->whereHas('categoryRelations', function ($query) use ($selectedCategories) {
                 $query->whereIn('cat_id', $selectedCategories);
             });
         }
- 
+
         // Aplicar búsqueda si existe
         if ($search) {
             $filesQuery->where(function ($query) use ($search) {
@@ -844,23 +816,23 @@ public function store(Request $request)
                     ->orWhere('Timestamp', 'like', "%$search%");
             });
         }
- 
+
         // Ordenar los resultados
         $filesQuery->orderBy($sortColumn, $sortDirection);
- 
+
         // Obtener resultados finales
         $filteredTotal = $filesQuery->count();
         $files = $filesQuery->paginate(10)->appends($request->except('page'));
- 
+
         // Asignar tamaño y fecha de expiración a cada archivo
         foreach ($files as $file) {
             $file->stored_filename = $file->url;
             $privateFilePath = storage_path('app/private/uploads/' . $file->stored_filename);
             $publicFilePath  = storage_path('app/public/uploads/' . $file->stored_filename);
- 
+
             $realPrivatePath = realpath($privateFilePath);
             $realPublicPath  = realpath($publicFilePath);
- 
+
             if ($realPrivatePath && file_exists($realPrivatePath)) {
                 $file->size = $this->getFormattedFileSize($realPrivatePath);
             } elseif ($realPublicPath && file_exists($realPublicPath)) {
@@ -868,7 +840,7 @@ public function store(Request $request)
             } else {
                 $file->size = '--';
             }
- 
+
             if ($file->expires && $file->expiry_date) {
                 $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
                 $file->isExpired = $expiryDate->isPast();
@@ -878,13 +850,13 @@ public function store(Request $request)
                 $file->formattedExpiryDate = null;
             }
         }
- 
+
         // Obtener categorías relacionadas con los archivos
         $categoryIds = TblCategoryRelation::whereIn('file_id', $files->pluck('id'))
             ->pluck('cat_id')
             ->unique();
         $categories = TblCategory::whereIn('id', $categoryIds)->get();
- 
+
         // Retornar la vista con los datos
         return view('files.my_files', compact('pageTitle', 'files', 'filteredTotal', 'categories'));
     }
@@ -1100,8 +1072,10 @@ public function store(Request $request)
             return back()->with(['error' => 'El archivo ZIP no se pudo generar.']);
         }
 
+
         return response()->download($zipFilePath)->deleteFileAfterSend(true);
     }
+
     public function showDownloadView($id, $token)
     {
         // Buscar el archivo por ID

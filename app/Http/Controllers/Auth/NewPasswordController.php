@@ -31,8 +31,13 @@ class NewPasswordController extends Controller
     {
         $request->validate([
             'token' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => [
+                'required',
+                'string',
+                'email:rfc,dns', // Verifica formato RFC y existencia del dominio
+                'max:60',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',],
+            'password' => ['password' => ['required', 'string', 'min:8', 'max:60', 'regex:/^[a-zA-Z0-9!@#$%^&*´()_+\-=\[\]{};:"\'\\\\|,.<>\/?`~]+$/'], Rules\Password::defaults()],
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we

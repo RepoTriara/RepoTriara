@@ -29,7 +29,12 @@ class PasswordResetLinkController extends Controller
     {
         // Validar la entrada del usuario
         $request->validate([
-            'email' => ['required', 'email'],
+            'email' => [
+                'required',
+                'string',
+                'email:rfc,dns', // Verifica formato RFC y existencia del dominio
+                'max:60',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/',],
         ]);
 
         // Buscar el usuario que solicitó el restablecimiento
@@ -37,7 +42,7 @@ class PasswordResetLinkController extends Controller
 
         if (!$user) {
             // Si no se encuentra el usuario, mostrar un error
-            return back()->withErrors(['email' => __('No se encontró un usuario con esa dirección de correo electrónico.')]);
+            return back()->withErrors(['email' => __('E-mail: No se encontró un usuario con esa dirección de correo electrónico.')]);
         }
 
         // Generar un token para el restablecimiento de contraseña
