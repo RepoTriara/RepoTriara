@@ -23,7 +23,6 @@
         href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
-        <link rel="stylesheet" href="http://localhost/RepoTriara/public/css/styles.css">
 
 </head>
 
