@@ -78,8 +78,7 @@
                                         <div class="form-group">
                                             <label for="password_confirmation">Confirmar Contraseña</label>
                                             <div class="input-group">
-                                                <input type="password" name="password_confirmation" id="password_confirmation" required
-                                                    class="form-control" autocomplete="new-password" maxlength="60" />
+                                                <input type="password" name="password_confirmation" id="password_confirmation" required class="form-control" autocomplete="new-password" maxlength="60" />
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-default toggle-password" data-target="#password_confirmation">
                                                         <i class="fa fa-eye"></i>
