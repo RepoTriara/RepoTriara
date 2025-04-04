@@ -19,6 +19,8 @@
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
+    <link rel="stylesheet" href="http://localhost/RepoTriara/public/css/styles.css">
+
 </head>
 
 <body class="users logged-in logged-as-admin menu_hidden backend">
@@ -417,70 +419,7 @@
             </script>
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
-    <style>
-        /* Ajustes específicos para la tabla de usuarios */
-        #users_tbl thead th {
-            text-align: center;
-            white-space: nowrap;
-            padding: 8px 10px;
-            /* Espaciado reducido */
-        }
     
-        /* Estilo para los encabezados ordenables */
-        #users_tbl thead th a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            /* Espacio mínimo entre texto e icono */
-        }
-    
-        /* Ajuste para los indicadores de ordenación */
-        #users_tbl .footable-sort-indicator {
-            margin-left: 3px;
-            font-size: 0.8em;
-        }
-    
-        /* Columna de checkbox */
-        #users_tbl thead th:first-child {
-            width: 40px;
-            padding: 8px 5px !important;
-        }
-    
-        /* Columnas no ordenables */
-        #users_tbl thead th:not([class*="footable-sorted"]):not(:first-child) {
-            padding: 8px 10px;
-        }
-    
-        /* Asegurar que las celdas del cuerpo mantengan la alineación */
-        #users_tbl tbody td {
-            vertical-align: middle;
-            text-align: center;
-        }
-    
-        /* Alineación especial para algunas celdas */
-        #users_tbl tbody td:nth-child(2),
-        /* Nombre completo */
-        #users_tbl tbody td:nth-child(3),
-        /* Usuario */
-        #users_tbl tbody td:nth-child(4) {
-            /* Email */
-            text-align: left;
-        }
-    
-        /* Ajuste para la columna "Comportamiento" */
-        #users_tbl thead th:last-child,
-        #users_tbl tbody td:last-child {
-            width: 100px;
-        }
-    
-        /* Estilo para los labels de estado */
-        #users_tbl tbody td .label {
-            display: inline-block;
-            min-width: 70px;
-            text-align: center;
-        }
-    </style>
 </body>
 
 </html>

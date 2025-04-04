@@ -166,7 +166,7 @@
     max-width: 100%;
     max-height: 100%;
 }
-/*<style>
+/*Customer_manager*/
 
 /* Ajustes específicos para la tabla de clientes */
 #users_tbl thead th {
@@ -262,3 +262,256 @@
     min-width: 60px;
     padding: 3px 6px;
 }
+/* File_manager*/
+
+/* Ajustes específicos para la tabla de archivos */
+#files_tbl thead th {
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 10px;
+    /* Espaciado reducido */
+}
+
+/* Estilo para los encabezados ordenables */
+#files_tbl thead th a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    /* Espacio mínimo entre texto e icono */
+}
+
+/* Ajuste para los iconos de ordenación */
+#files_tbl thead th i.fa-sort,
+#files_tbl thead th i.fa-sort-up,
+#files_tbl thead th i.fa-sort-down {
+    margin-left: 3px;
+    font-size: 0.85em;
+}
+
+/* Columna de checkbox */
+#files_tbl thead th.td_checkbox {
+    width: 40px;
+    padding: 8px 5px !important;
+}
+
+/* Columnas no ordenables */
+#files_tbl thead th:not([class*="footable-sorted"]):not(.td_checkbox) {
+    padding: 8px 10px;
+}
+
+/* Asegurar que las celdas del cuerpo mantengan la alineación */
+#files_tbl tbody td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Alineación especial para algunas celdas */
+#files_tbl tbody td:nth-child(4) {
+    /* Columna de título */
+    text-align: left;
+}
+
+#files_tbl tbody td:nth-child(5) {
+    /* Columna de tamaño */
+    text-align: right;
+}
+
+
+/* Categorias
+
+/* Ajustes específicos para la tabla de categorías */
+#categories_tbl thead th {
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 10px;
+    /* Espaciado reducido */
+}
+
+/* Estilo para los encabezados ordenables */
+#categories_tbl thead th a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    /* Espacio mínimo entre texto e icono */
+}
+
+/* Ajuste para los iconos de ordenación */
+#categories_tbl thead th i.fa-sort,
+#categories_tbl thead th i.fa-sort-up,
+#categories_tbl thead th i.fa-sort-down {
+    margin-left: 3px;
+    font-size: 0.85em;
+}
+
+/* Columna de checkbox */
+#categories_tbl thead th.td_checkbox {
+    width: 40px;
+    padding: 8px 5px !important;
+}
+
+/* Columnas no ordenables */
+#categories_tbl thead th:not([class*="footable-sorted"]):not(.td_checkbox) {
+    padding: 8px 10px;
+}
+
+/* Asegurar que las celdas del cuerpo mantengan la alineación */
+#categories_tbl tbody td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Alineación especial para algunas celdas */
+#categories_tbl tbody td:nth-child(2) {
+    /* Columna de nombre */
+    text-align: left;
+}
+
+#categories_tbl tbody td:nth-child(3) {
+    /* Columna de descripción */
+    text-align: left;
+}
+
+/* Espaciado para el botón "Ver Archivos" */
+#categories_tbl tbody td a.btn {
+    margin-right: 5px;
+    /* Espacio entre botones si los hubiera */
+}
+
+/* manager_users
+
+ /* Ajustes específicos para la tabla de usuarios */
+ #users_tbl thead th {
+     text-align: center;
+     white-space: nowrap;
+     padding: 8px 10px;
+     /* Espaciado reducido */
+ }
+
+ /* Estilo para los encabezados ordenables */
+ #users_tbl thead th a {
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     gap: 3px;
+     /* Espacio mínimo entre texto e icono */
+ }
+
+ /* Ajuste para los indicadores de ordenación */
+ #users_tbl .footable-sort-indicator {
+     margin-left: 3px;
+     font-size: 0.8em;
+ }
+
+ /* Columna de checkbox */
+ #users_tbl thead th:first-child {
+     width: 40px;
+     padding: 8px 5px !important;
+ }
+
+ /* Columnas no ordenables */
+ #users_tbl thead th:not([class*="footable-sorted"]):not(:first-child) {
+     padding: 8px 10px;
+ }
+
+ /* Asegurar que las celdas del cuerpo mantengan la alineación */
+ #users_tbl tbody td {
+     vertical-align: middle;
+     text-align: center;
+ }
+
+ /* Alineación especial para algunas celdas */
+ #users_tbl tbody td:nth-child(2),
+ /* Nombre completo */
+ #users_tbl tbody td:nth-child(3),
+ /* Usuario */
+ #users_tbl tbody td:nth-child(4) {
+     /* Email */
+     text-align: left;
+ }
+
+ /* Ajuste para la columna "Comportamiento" */
+ #users_tbl thead th:last-child,
+ #users_tbl tbody td:last-child {
+     width: 100px;
+ }
+
+ /* Estilo para los labels de estado */
+ #users_tbl tbody td .label {
+     display: inline-block;
+     min-width: 70px;
+     text-align: center;
+ }
+
+/* manager_compañia
+
+/* Ajustes específicos para la tabla de compañías */
+#groups_tbl thead th {
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 10px;
+    /* Espaciado reducido */
+}
+
+/* Estilo para los encabezados ordenables */
+#groups_tbl thead th a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    /* Espacio mínimo entre texto e icono */
+}
+
+/* Ajuste para los iconos de ordenación */
+#groups_tbl thead th i.fa-sort,
+#groups_tbl thead th i.fa-sort-up,
+#groups_tbl thead th i.fa-sort-down {
+    margin-left: 3px;
+    font-size: 0.85em;
+}
+
+/* Columna de checkbox */
+#groups_tbl thead th.td_checkbox {
+    width: 40px;
+    padding: 8px 5px !important;
+}
+
+/* Columnas no ordenables */
+#groups_tbl thead th:not([class*="footable-sorted"]):not(.td_checkbox) {
+    padding: 8px 10px;
+}
+
+/* Asegurar que las celdas del cuerpo mantengan la alineación */
+#groups_tbl tbody td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Alineación especial para algunas celdas */
+#groups_tbl tbody td:nth-child(2),
+/* Columna de nombre */
+#groups_tbl tbody td:nth-child(3) {
+    /* Columna de descripción */
+    text-align: left;
+}
+
+/* Ajuste específico para la columna "Creado por" */
+#groups_tbl thead th:nth-child(6) {
+    width: 120px;
+    /* Ancho fijo para esta columna */
+}
+
+/* Ajuste para la columna "Ver" */
+#groups_tbl thead th:nth-child(8),
+#groups_tbl tbody td:nth-child(8) {
+    width: 80px;
+}
+
+/* Ajuste para la columna "Comportamiento" */
+#groups_tbl thead th:nth-child(9),
+#groups_tbl tbody td:nth-child(9) {
+    width: 80px;
+}
+
+ 
