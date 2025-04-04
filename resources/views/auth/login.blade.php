@@ -214,8 +214,21 @@
                     }
                 });
             });
-        </script>
 
+        </script>
+@if(session('status'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: '{{ session("status") }}',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#2778c4'
+            });
+        });
+    </script>
+@endif
     </div>
 </body>
 
