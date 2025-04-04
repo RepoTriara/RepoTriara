@@ -300,8 +300,7 @@
                                             @if ($savedFile->public_allow)
                                             <button type="button" class="btn btn-primary btn-sm"
                                                 data-toggle="modal" data-target="#urlModal"
-                                                data-url="{{ route('file.showDownload', ['id' => $savedFile->id, 'token' => $savedFile->public_token]) }}"
->Público</button>
+                                                data-url="{{ route('file.showDownload', ['id' => $savedFile->id, 'token' => $savedFile->public_token]) }}">Público</button>
                                             @else
                                             <button type="button" class="btn btn-secondary btn-sm"
                                                 disabled>Privado</button>
@@ -451,26 +450,25 @@
                         $('.copy-all').click(function() {
                             if (confirm("¿Copiar la selección a todos los archivos?")) {
                                 const type = $(this).data('type');
-                                const selector = $(`select[data-type="${type}"]`);
 
-                                const selected = [];
-                                $(selector).find('option:selected').each(function() {
-                                    selected.push($(this).val());
-                                });
+
+                                const $currentSelect = $(this).closest('.col-sm-6').find(`select[data-type="${type}"]`);
+
+                                const selected = $currentSelect.val();
+
+                                if (!selected || selected.length === 0) {
+                                    alert("No hay elementos seleccionados para copiar.");
+                                    return false;
+                                }
 
                                 $(`select[data-type="${type}"]`).each(function() {
-                                    $(this).find('option').each(function() {
-                                        if ($.inArray($(this).val(), selected) === -1) {
-                                            $(this).removeAttr('selected');
-                                        } else {
-                                            $(this).attr('selected', 'selected');
-                                        }
-                                    });
-                                    $(this).trigger('chosen:updated');
+                                    $(this).val(selected).trigger('chosen:updated');
                                 });
                             }
+
                             return false;
                         });
+
 
                         $('.add-all').click(function(e) {
                             e.preventDefault();
@@ -515,8 +513,8 @@
 
             </div>
             <footer>
-            <div id="footer">Claro Colombia </div>
-        </footer>
+                <div id="footer">Claro Colombia </div>
+            </footer>
             <!-- row -->
         </div>
         <!-- container-fluid -->
