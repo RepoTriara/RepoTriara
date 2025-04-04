@@ -115,105 +115,126 @@
             <script src="{{ asset('includes/js/main.js') }}"></script>
             <script src="{{ asset('includes/js/js.functions.php') }}"></script>
             <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
-                  <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Insertar estilos personalizados para SweetAlert2
-                const style = document.createElement('style');
-                style.textContent = `
-                    .compact-swal {
-                        max-width: 500px;
-                        padding: 1em;
-                    }
-                    .compact-title {
-                        text-align: center;
-                        margin-bottom: 8px !important;
-                        font-size: 1.3em;
-                        padding-bottom: 0;
-                    }
-                    .compact-content {
-                        padding: 0 1em;
-                        margin-top: 5px !important;
-                    }
-                    .compact-errors-container {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 5px;
-                    }
-                    .compact-error-line {
-                        font-size: 0.95em;
-                        text-align: left;
-                        line-height: 1.4;
-                        display: flex;
-                        align-items: flex-start;
-                    }
-                    .error-number {
-                        flex-shrink: 0;
-                        margin-right: 5px;
-                        font-weight: bold;
-                    }
-                    .error-text {
-                        word-break: break-word;
-                    }
-                    .bold-section {
-                        font-weight: bold;
-                    }
-                `;
-                document.head.appendChild(style);
+           <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Insertar estilos personalizados para SweetAlert2
+        const style = document.createElement('style');
+        style.textContent = `
+            .compact-swal {
+                max-width: 500px;
+                padding: 1em;
+            }
+            .compact-title {
+                text-align: center;
+                margin-bottom: 8px !important;
+                font-size: 1.3em;
+                padding-bottom: 0;
+            }
+            .compact-content {
+                padding: 0 1em;
+                margin-top: 5px !important;
+            }
+            .compact-errors-container {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .compact-error-line {
+                font-size: 0.95em;
+                text-align: left;
+                line-height: 1.4;
+                display: flex;
+                align-items: flex-start;
+            }
+            .error-number {
+                flex-shrink: 0;
+                margin-right: 5px;
+                font-weight: bold;
+            }
+            .error-text {
+                word-break: break-word;
+            }
+            .bold-section {
+                font-weight: bold;
+            }
+        `;
+        document.head.appendChild(style);
 
-                // Si existen errores de validación, construir el listado enumerado
-                @if ($errors->any())
-                    let errorIndex = 1;
-                    let errorMessages = '';
-                    @foreach ($errors->all() as $error)
-                        @php
-                            $colonPos = strpos($error, ':');
-                        @endphp
-                        @if ($colonPos !== false)
-                            @php
-                                $beforeColon = trim(substr($error, 0, $colonPos));
-                                $colon = ':';
-                                $afterColon = substr($error, $colonPos + 1);
-                            @endphp
-                            errorMessages += `<div class="compact-error-line">
-                                <span class="error-number">${errorIndex++}.</span>
-                                <span class="error-text">
-                                    <span class="bold-section">{!! addslashes($beforeColon . $colon) !!}</span>{!! addslashes($afterColon) !!}
-                                </span>
-                            </div>`;
-                        @else
-                            errorMessages += `<div class="compact-error-line">
-                                <span class="error-number">${errorIndex++}.</span>
-                                <span class="error-text">{!! addslashes($error) !!}</span>
-                            </div>`;
-                        @endif
-                    @endforeach
-
-                    Swal.fire({
-                        title: 'Errores de validación',
-                        html: `<div class="compact-errors-container">${errorMessages}</div>`,
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#2778c4',
-                        customClass: {
-                            popup: 'compact-swal',
-                            title: 'compact-title',
-                            htmlContainer: 'compact-content'
-                        }
-                    });
+        // Si existen errores de validación, construir el listado enumerado
+        @if ($errors->any())
+            let errorIndex = 1;
+            let errorMessages = '';
+            @foreach ($errors->all() as $error)
+                @php
+                    $colonPos = strpos($error, ':');
+                @endphp
+                @if ($colonPos !== false)
+                    @php
+                        $beforeColon = trim(substr($error, 0, $colonPos));
+                        $colon = ':';
+                        $afterColon = substr($error, $colonPos + 1);
+                    @endphp
+                    errorMessages += `<div class="compact-error-line">
+                        <span class="error-number">${errorIndex++}.</span>
+                        <span class="error-text">
+                            <span class="bold-section">{!! addslashes($beforeColon . $colon) !!}</span>{!! addslashes($afterColon) !!}
+                        </span>
+                    </div>`;
+                @else
+                    errorMessages += `<div class="compact-error-line">
+                        <span class="error-number">${errorIndex++}.</span>
+                        <span class="error-text">{!! addslashes($error) !!}</span>
+                    </div>`;
                 @endif
+            @endforeach
 
-                // Ejemplo adicional: Si existe un mensaje de éxito en la sesión, se muestra
-                @if (session('status'))
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: '{{ session("status") }}',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#2778c4'
-                    });
-                @endif
+            Swal.fire({
+                title: 'Errores de validación',
+                html: `<div class="compact-errors-container">${errorMessages}</div>`,
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#2778c4',
+                customClass: {
+                    popup: 'compact-swal',
+                    title: 'compact-title',
+                    htmlContainer: 'compact-content'
+                }
             });
-        </script>
+        @endif
+
+        // Si existe un mensaje de éxito en la sesión, se muestra
+        @if (session('status'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: '{{ session("status") }}',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#2778c4'
+            });
+        @endif
+
+        // Agregar funcionalidad al botón de toggle para visualizar/ocultar la contraseña
+        $('.toggle-password').on('click', function(e) {
+            e.preventDefault();
+            var target = $(this).data('target');
+            var input = $(target);
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                $(this).html('<i class="fa fa-eye-slash"></i>');
+            } else {
+                input.attr('type', 'password');
+                $(this).html('<i class="fa fa-eye"></i>');
+            }
+        });
+
+        // Evitar que se ingresen espacios en los campos de contraseña
+        $('input[type="password"]').on('keypress', function(e) {
+            if(e.which === 32) { // Código de la tecla espacio
+                e.preventDefault();
+            }
+        });
+    });
+</script>
         </div> <!-- Fin main_content_unlogged -->
     </div> <!-- Fin container-custom -->
 </body>

@@ -22,7 +22,7 @@
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/main.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/mobile.min.css') }}" />
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/styles.css') }}" />
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
@@ -46,21 +46,21 @@
                             </div>
                         </div>
                         <!-- Manejo de errores de validación -->
-  @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
 
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
+                        @if (session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
                         <div class="white-box">
                             <div class="white-box-interior">
                                 <!-- Mensajes de éxito o error generales -->
@@ -86,14 +86,16 @@
                                         <div class="form-group">
                                             <label for="password">Contraseña</label>
                                             <div class="input-group">
-                                                <input type="password" name="password" id="password" required class="form-control" autocomplete="new-password" maxlength="60" />
+                                                <input type="password" name="password" id="password" required
+                                                    class="form-control" autocomplete="new-password" maxlength="60" />
                                                 <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-default toggle-password" data-target="#password">
+                                                    <button type="button" class="btn btn-default toggle-password"
+                                                        data-target="#password">
                                                         <i class="fa fa-eye"></i>
                                                     </button>
                                                 </span>
                                             </div>
-                                             <small id="loginHelp" class="form-text text-muted">
+                                            <small id="loginHelp" class="form-text text-muted">
                                                 Ingrese su contraseña.
                                             </small>
                                         </div>
@@ -130,13 +132,15 @@
         </footer>
 
         <!-- Modal de Carga -->
-        <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel"
+            aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-body text-center">
                         <!-- Barra de Progreso -->
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <!-- Texto de Carga -->
                         <p class="mt-3">Iniciando sesión, por favor espere...</p>
@@ -158,7 +162,7 @@
         <script src="{{ asset('includes/js/chosen/chosen.jquery.min.js') }}"></script>
         <script>
             // Script para manejar la animación y el retraso
-            document.getElementById('loginForm').addEventListener('submit', function (event) {
+            document.getElementById('loginForm').addEventListener('submit', function(event) {
                 event.preventDefault(); // Evitar el envío inmediato del formulario
 
                 // Mostrar el modal de carga
@@ -172,7 +176,7 @@
                 // Animación de la barra de progreso
                 let progress = 0;
                 const progressBar = $('.progress-bar');
-                const interval = setInterval(function () {
+                const interval = setInterval(function() {
                     progress += 10; // Incrementar el progreso
                     progressBar.css('width', progress + '%').attr('aria-valuenow', progress);
 
@@ -180,7 +184,7 @@
                         clearInterval(interval); // Detener la animación
 
                         // Restaurar el botón y ocultar el modal después de 3 segundos
-                        setTimeout(function () {
+                        setTimeout(function() {
                             submitBtn.classList.remove('loading'); // Detener la animación
                             submitBtn.textContent = 'Ingresar'; // Restaurar el texto del botón
                             submitBtn.classList.remove('btn-disabled'); // Habilitar el botón
@@ -195,8 +199,8 @@
                 }, 300); // Intervalo de tiempo para la animación
             });
 
-            $(document).ready(function () {
-                $('.toggle-password').on('click', function () {
+            $(document).ready(function() {
+                $('.toggle-password').on('click', function() {
                     var target = $(this).data('target');
                     var input = $(target);
                     var icon = $(this).find('i');
@@ -211,7 +215,7 @@
                 });
             });
         </script>
-     
+
     </div>
 </body>
 
