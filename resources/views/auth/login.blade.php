@@ -46,7 +46,21 @@
                             </div>
                         </div>
                         <!-- Manejo de errores de validación -->
+  @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
                         <div class="white-box">
                             <div class="white-box-interior">
                                 <!-- Mensajes de éxito o error generales -->
@@ -197,105 +211,7 @@
                 });
             });
         </script>
-      <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Insertar estilos personalizados para SweetAlert2
-        const style = document.createElement('style');
-        style.textContent = `
-            .compact-swal {
-                max-width: 500px;
-                padding: 1em;
-            }
-            .compact-title {
-                text-align: center;
-                margin-bottom: 8px !important;
-                font-size: 1.3em;
-                padding-bottom: 0;
-            }
-            .compact-content {
-                padding: 0 1em;
-                margin-top: 5px !important;
-            }
-            .compact-errors-container {
-                display: flex;
-                flex-direction: column;
-                gap: 5px;
-            }
-            .compact-error-line {
-                font-size: 0.95em;
-                text-align: left;
-                line-height: 1.4;
-                display: flex;
-                align-items: flex-start;
-            }
-            .error-number {
-                flex-shrink: 0;
-                margin-right: 5px;
-                font-weight: bold;
-            }
-            .error-text {
-                word-break: break-word;
-            }
-            .bold-section {
-                font-weight: bold;
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Si existen errores de validación, construir el listado enumerado
-        @if ($errors->any())
-            let errorIndex = 1;
-            let errorMessages = '';
-            @foreach ($errors->all() as $error)
-                @php
-                    $colonPos = strpos($error, ':');
-                @endphp
-                @if ($colonPos !== false)
-                    @php
-                        $beforeColon = trim(substr($error, 0, $colonPos));
-                        $colon = ':';
-                        $afterColon = substr($error, $colonPos + 1);
-                    @endphp
-                    errorMessages += `<div class="compact-error-line">
-                        <span class="error-number">${errorIndex++}.</span>
-                        <span class="error-text">
-                            <span class="bold-section">{!! addslashes($beforeColon . $colon) !!}</span>{!! addslashes($afterColon) !!}
-                        </span>
-                    </div>`;
-                @else
-                    errorMessages += `<div class="compact-error-line">
-                        <span class="error-number">${errorIndex++}.</span>
-                        <span class="error-text">{!! addslashes($error) !!}</span>
-                    </div>`;
-                @endif
-            @endforeach
-
-            Swal.fire({
-                title: 'Errores de validación',
-                html: `<div class="compact-errors-container">${errorMessages}</div>`,
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#2778c4',
-                customClass: {
-                    popup: 'compact-swal',
-                    title: 'compact-title',
-                    htmlContainer: 'compact-content'
-                }
-            });
-        @endif
-
-        // Ejemplo adicional: Si existe un mensaje de éxito en la sesión, se muestra
-        @if (session('status'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: '{{ session("status") }}',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#2778c4'
-            });
-        @endif
-    });
-</script>
+     
     </div>
 </body>
 
