@@ -33,7 +33,7 @@ class ProfileUpdateRequest extends FormRequest
             'notify' => ['nullable', 'boolean'],
             'address' => ['nullable', 'string', 'max:60','min:5'],
             'phone' => ['nullable', 'digits_between:7,10'],
-            'password' => ['nullable', 'string', 'min:8', 'regex:/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:"\'\\\\|,.<>\/?`~]+$/'],
+            'password' => ['nullable', 'string', 'min:8', 'regex:/^[a-zA-Z0-9!@#$%^&*´()_+\-=\[\]{};:"\'\\\\|,.<>\/?`~]+$/'],
 
         ];
 }

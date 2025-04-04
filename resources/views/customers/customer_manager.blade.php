@@ -20,6 +20,8 @@
     <link rel="stylesheet" media="all" type="text/css" href="{{ asset('css/footable.css') }}" />
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('includes/js/footable/css/footable.core.css') }}" />
+    <link rel="stylesheet" href="http://localhost/RepoTriara/public/css/styles.css">
+  
 </head>
 
 <body class="clients logged-in logged-as-admin menu_hidden backend">
@@ -446,86 +448,7 @@
                     }
                 });
             </script>
-<style>
-    /* Ajustes específicos para la tabla de clientes */
-    #users_tbl thead th {
-        text-align: center;
-        white-space: nowrap;
-        padding: 8px 10px;
-    }
-    
-    /* Estilo para los encabezados ordenables */
-    #users_tbl thead th a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 3px;
-    }
-    
-    /* Ajuste para los indicadores de ordenación */
-    #users_tbl .footable-sort-indicator {
-        margin-left: 3px;
-        font-size: 0.8em;
-    }
-    
-    /* Columna de checkbox */
-    #users_tbl thead th:first-child {
-        width: 40px;
-        padding: 8px 5px !important;
-    }
-    
-    /* Asegurar que las celdas del cuerpo mantengan la alineación */
-    #users_tbl tbody td {
-        vertical-align: middle;
-        text-align: center;
-    }
-    
-    /* Alineación especial para columnas de texto */
-    #users_tbl tbody td:nth-child(2), /* Nombre */
-    #users_tbl tbody td:nth-child(3), /* Usuario */
-    #users_tbl tbody td:nth-child(4) { /* Email */
-        text-align: left;
-    }
-    
-    /* Columnas numéricas alineadas a la derecha */
-    #users_tbl tbody td:nth-child(5), /* Cargas */
-    #users_tbl tbody td:nth-child(6), /* Archivos propios */
-    #users_tbl tbody td:nth-child(7), /* Archivos grupos */
-    #users_tbl tbody td:nth-child(9), /* Grupos activos */
-    #users_tbl tbody td:nth-child(11) { /* Max. tamaño */
-        text-align: right;
-    }
-    
-    /* Ajuste para columnas específicas */
-    #users_tbl thead th:nth-child(5), /* Cargas */
-    #users_tbl thead th:nth-child(6), /* Archivos propios */
-    #users_tbl thead th:nth-child(7), /* Archivos grupos */
-    #users_tbl thead th:nth-child(9), /* Grupos activos */
-    #users_tbl thead th:nth-child(10), /* Notificación */
-    #users_tbl thead th:nth-child(11) { /* Max. tamaño */
-        width: 90px;
-    }
-    
-    /* Columnas de acciones */
-    #users_tbl thead th:nth-child(12), /* Ver */
-    #users_tbl thead th:nth-child(13) { /* Comportamiento */
-        width: 120px;
-    }
-    
-    /* Estilo para los botones */
-    #users_tbl tbody td .btn {
-        margin: 2px;
-        padding: 5px 8px;
-        font-size: 12px;
-    }
-    
-    /* Estilo para los labels de estado */
-    #users_tbl tbody td .label {
-        display: inline-block;
-        min-width: 60px;
-        padding: 3px 6px;
-    }
-</style>
+
            
         </div> <!-- main_content -->
     </div> <!-- container-custom -->

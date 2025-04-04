@@ -144,7 +144,7 @@
                                                     value="" />
                                                 <span class="input-group-addon">MB</span>
                                             </div>
-                                            <p class="field_note">Ponga 0 como límite predeterminado (2048 mb)</p>
+                                            <p class="field_note">Ponga 0 como límite predeterminado (2048 MB)</p>
                                         </div>
                                     </div>
 
