@@ -39,7 +39,7 @@ return [
     'distinct'               => 'El campo :attribute contiene un valor duplicado.',
     'doesnt_end_with'        => 'El campo :attribute no debe finalizar con uno de los siguientes: :values.',
     'doesnt_start_with'      => 'El campo :attribute no debe comenzar con uno de los siguientes: :values.',
-    'email'                  => 'E-Mail: El formato del correo electrónico no es válido.',
+    'email'                  => 'El campo :attribute no es un correo válido.',
     'ends_with'              => 'El campo :attribute debe finalizar con uno de los siguientes valores: :values',
     'enum'                   => 'El campo :attribute no está en la lista de valores permitidos.',
     'exists'                 => 'El campo :attribute no existe.',
@@ -162,60 +162,57 @@ return [
         'user'        => 'nombre de usuario',
     ],
     'custom'                 => [
-        'email'       => [
+        'address'       => [
+            'max' => 'Dirección: El campo dirección no debe exceder los 60 caracteres.',
+            'min' => 'Dirección: El campo dirección debe tener mínimo 5 caracteres.',
+        ],
+        'contact'       => [
+            'max'    => 'Contacto: El campo contacto no debe exceder los 60 caracteres.',
+            'min'    => 'Contacto: El campo contacto debe tener mínimo 5 caracteres.',
+            'string' => 'Contacto: El campo contacto debe ser una cadena de texto válida.',
+        ],
+        'email'         => [
+            'regex'    => 'E-Mail: El formato del correo electrónico no es válido.',
             'required' => 'E-Mail: El correo electrónico es obligatorio.',
             'unique'   => 'E-mail: El correo electrónico ya ha sido registrado.',
-            'regex' => 'E-Mail: El formato del correo electrónico no es válido.',
         ],
-        'expiry_date' => [
+        'expiry_date'   => [
             'after_or_equal' => 'La :attribute debe ser una fecha posterior o igual a hoy.',
         ],
-        'level'       => [
+        'level'         => [
             'in'       => 'El rol seleccionado es inválido.',
             'required' => 'El rol es obligatorio.',
         ],
-        'login'       => [
+        'login'         => [
             'required' => 'E-Mail: El campo de correo electrónico o usuario es obligatorio.',
         ],
-        'name'        => [
+        'max_file_size' => [
+            'integer'  => 'Máximo tamaño de subida: El campo debe ser un número entero.',
+            'max'      => 'Máximo tamaño de subida: El valor no debe ser mayor que 2048.',
+            'min'      => 'Máximo tamaño de subida: El valor no puede ser negativo.',
+            'required' => 'Máximo tamaño de subida: Este campo es obligatorio.',
+        ],
+        'name'          => [
+            'max'      => 'Nombre: El campo nombre no debe exceder los 60 caracteres.',
+            'min'      => 'Nombre: El campo nombre debe tener mínimo 5 caracteres',
             'required' => 'Nombre: Este campo es obligatorio, por favor, ingrese el nombre.',
-             'min'     => 'Nombre: El campo nombre debe tener mínimo 5 caracteres',
-            'max'     => 'Nombre: El campo nombre no debe exceder los 60 caracteres.',
         ],
-        'password'    => [
+        'password'      => [
+            'max'      => 'Contraseña: El campo contraseña no debe exceder los 60 caracteres.',
             'min'      => 'Contraseña: El campo contraseña debe tener mínimo 8 caracteres.',
+            'regex'    => 'Contraseña: La contraseña no es válida. No puede contener espacios y solo se permiten letras (a-z, A-Z), números (0-9) y ciertos caracteres especiales como:*!\\\"?$%^&*´()_-+={[}]:;@~#|<,>.?/\'',
             'required' => 'Contraseña: Este campo es obligatorio, ingrese o genere una contraseña.',
-            'regex'    => 'Contraseña: La contraseña no es válida. No puede contener espacios y solo se permiten letras (a-z, A-Z), números (0-9) y ciertos caracteres especiales como:*!\"?$%^&*´()_-+={[}]:;@~#|<,>.?/\'',
-            'max'     => 'Contraseña: El campo contraseña no debe exceder los 60 caracteres.',
-
         ],
-        'phone'       => [
+        'phone'         => [
             'digits_between' => 'Teléfono: Solo se permiten números y este debe tener entre 7 y 10 dígitos.',
-            'regex'    => 'Teléfono: El formato del teléfono es inválido.',
-            'required' => 'El teléfono es obligatorio.',
+            'regex'          => 'Teléfono: El formato del teléfono es inválido.',
+            'required'       => 'El teléfono es obligatorio.',
         ],
-        'user'        => [
+        'user'          => [
+            'min'      => 'Ingresar nombre de usuario: Este campo debe tener mínimo 5 caracteres',
+            'regex'    => 'Ingresar nombre de usuario: Este campo es alfanumérico, solo se permite el punto (.) y no puede contener espacios.',
             'required' => ' Ingresar nombre de usuario: Este campo es obligatorio, por favor, ingrese nombre de usuario.',
             'unique'   => 'Ingresar nombre de usuario: El nombre de usuario ya está en uso.',
-            'regex'    => 'Ingresar nombre de usuario: Este campo es alfanumérico, solo se permite el punto (.) y no puede contener espacios.',
-            'min'     => 'Ingresar nombre de usuario: Este campo debe tener mínimo 5 caracteres',
-
         ],
-         'contact' => [
-        'min' => 'Contacto: El campo contacto debe tener mínimo 5 caracteres.',
-        'max' => 'Contacto: El campo contacto no debe exceder los 60 caracteres.',
-        'string' => 'Contacto: El campo contacto debe ser una cadena de texto válida.', 
-    ],
-        'max_file_size' => [
-        'integer' => 'Máximo tamaño de subida: El campo debe ser un número entero.',
-        'min' => 'Máximo tamaño de subida: El valor no puede ser negativo.',
-        'max' => 'Máximo tamaño de subida: El valor no debe ser mayor que 2048.',
-        'required' => 'Máximo tamaño de subida: Este campo es obligatorio.',
-    ],
-    'address' => [
-    'max' => 'Dirección: El campo dirección no debe exceder los 60 caracteres.',
-    'min' => 'Dirección: El campo dirección debe tener mínimo 5 caracteres.',
-],
-
     ],
 ];
