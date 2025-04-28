@@ -21,7 +21,7 @@
     <link rel="stylesheet" media="all" type="text/css"
         href="{{ asset('includes/js/footable/css/footable.core.css') }}" />
     <link rel="stylesheet" href="http://localhost/RepoTriara/public/css/styles.css">
-  
+
 </head>
 
 <body class="clients logged-in logged-as-admin menu_hidden backend">
@@ -235,7 +235,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="13">No hay clientes registrados.</td>
+                                            <td colspan="13" style="text-align: center;  padding: 20px;">No hay clientes registrados.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -344,7 +344,7 @@
                 border-radius: 50%;
                 padding: 10px;
                 background-color: #fff8ee;
-                
+
             }
         `;
                     document.head.appendChild(style);
@@ -449,7 +449,7 @@
                 });
             </script>
 
-           
+
         </div> <!-- main_content -->
     </div> <!-- container-custom -->
 </body>

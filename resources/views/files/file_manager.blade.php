@@ -123,7 +123,8 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <button style="margin-right: 10px; type="submit" id="btn_proceed_filter_clients"
+                                            <button style="margin-right: 10px; type="submit"
+                                                id="btn_proceed_filter_clients"
                                                 class="btn btn-sm btn-primary">Filtrar</button>
                                         @endif
 
@@ -152,7 +153,7 @@
                             <div class="form_actions_right">
                                 <div class="form_actions">
                                     <div class="form_actions_submit" style="display: flex; align-items: center;">
-                                       
+
                                         <select name="action" id="action" class="txtfield form-control">
                                             <option value="none">Seleccione la acción</option>
                                             <option value="delete">Eliminar</option>
@@ -254,7 +255,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($files as $file)
+                                    @forelse ($files as $file)
                                         <tr>
                                             <td><input type="checkbox" name="batch[]" value="{{ $file->id }}">
                                             </td>
@@ -298,7 +299,7 @@
                                             <td>
                                                 @if ($file->expires && $file->expiry_date)
                                                     @php
-        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
+                                                        $expiryDate = \Carbon\Carbon::parse($file->expiry_date);
                                                     @endphp
                                                     @if ($expiryDate->isPast())
                                                         <span class="label label-danger"
@@ -318,13 +319,15 @@
                                                 @endif
                                             </td>
                                             <td>{{ $file->downloads->count() }} veces</td>
-                                            <!-- Celda para el estado -->
-
                                             <td><a href="{{ route('files.edit', $file->id) }}"
                                                     class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></a>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="13">No hay archivos subidos.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </form>
@@ -363,7 +366,7 @@
                 </div>
             </footer>
         </div>
-        
+
 
         <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('includes/js/jquery.validations.js') }}"></script>
@@ -376,29 +379,29 @@
 
     </div>
 
-   <script>
-        document.getElementById('select_all').addEventListener('click', function () {
+    <script>
+        document.getElementById('select_all').addEventListener('click', function() {
             let isChecked = this.checked;
             let checkboxes = document.querySelectorAll('input[name="batch[]"]');
-            checkboxes.forEach(function (checkbox) {
+            checkboxes.forEach(function(checkbox) {
                 checkbox.checked = isChecked;
             });
         });
- 
- 
- 
-        $(document).ready(function () {
-            $('#urlModal').on('show.bs.modal', function (event) {
+
+
+
+        $(document).ready(function() {
+            $('#urlModal').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 var url = button.data('url');
                 var modal = $(this);
                 modal.find('#publicUrl').val(url);
-                modal.find('#publicUrl').click(function () {
+                modal.find('#publicUrl').click(function() {
                     $(this).select();
                 });
             });
         });
- 
+
         function goToPageFiles() {
             const page = document.getElementById('go_to_page_files').value;
             const url = new URL(window.location.href);
@@ -407,35 +410,35 @@
         }
     </script>
     <script>
-        document.getElementById('select_all').addEventListener('click', function () {
+        document.getElementById('select_all').addEventListener('click', function() {
             let isChecked = this.checked;
             let checkboxes = document.querySelectorAll('input[name="batch[]"]');
-            checkboxes.forEach(function (checkbox) {
+            checkboxes.forEach(function(checkbox) {
                 checkbox.checked = isChecked;
             });
         });
- 
- 
- 
-        $(document).ready(function () {
-            $('#urlModal').on('show.bs.modal', function (event) {
+
+
+
+        $(document).ready(function() {
+            $('#urlModal').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 var url = button.data('url');
                 var modal = $(this);
                 modal.find('#publicUrl').val(url);
-                modal.find('#publicUrl').click(function () {
+                modal.find('#publicUrl').click(function() {
                     $(this).select();
                 });
             });
         });
- 
+
         function goToPageFiles() {
             const pageInput = document.getElementById('go_to_page_files');
             const page = parseInt(pageInput.value);
             const lastPage = parseInt(
                 "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->lastPage() : 1 }}"
             ); // Assuming $files is relevant here
- 
+
             if (isNaN(page) || page < 1 || page > lastPage) {
                 Swal.fire({
                     title: 'Página inválida',
@@ -448,12 +451,12 @@
                     "{{ $files instanceof \Illuminate\Pagination\LengthAwarePaginator ? $files->currentPage() : 1 }}"; // Optionally reset the input
                 return;
             }
- 
+
             const url = new URL(window.location.href);
             url.searchParams.set('page', page);
             window.location.href = url.toString();
         }
- 
+
         function goToPageClientes() {
             const form = document.getElementById('go_to_page_form_clientes');
             const page = document.getElementById('go_to_page_clientes').value;
@@ -463,26 +466,26 @@
         }
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const downloadForm = document.getElementById('bulkActionForm');
             const delay = 3000; // Tiempo de espera (en milisegundos)
-           
-              // Mostrar mensaje si no hay resultados en la búsqueda
-            @if(request()->has('search') && $files->isEmpty())
-                    Swal.fire({
-                        title: 'Búsqueda sin resultados',
-                        text: 'No se encontraron archivos que coincidan con "{{ request('search') }}"' +
-                            '@if(request()->has('client_id')) para este cliente' +
-                            '@elseif(request()->has('group_id')) en esta compañía' +
-                            '@elseif(request()->has('category_id')) en esta categoría' +
-                            '@endif',
-                        icon: 'info',
-                        confirmButtonText: 'Aceptar',
-                     customClass: {
-                            icon: 'custom-search-icon'
-                        }
-                    });
- 
+
+            // Mostrar mensaje si no hay resultados en la búsqueda
+            @if (request()->has('search') && $files->isEmpty())
+                Swal.fire({
+                    title: 'Búsqueda sin resultados',
+                    text: 'No se encontraron archivos que coincidan con "{{ request('search') }}"' +
+                        '@if (request()->has('client_id')) para este cliente' +
+                        '@elseif (request()->has('group_id')) en esta compañía' +
+                        '@elseif (request()->has('category_id')) en esta categoría' +
+                        '@endif',
+                    icon: 'info',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        icon: 'custom-search-icon'
+                    }
+                });
+
                 // Añadir estilos al icono
                 const style = document.createElement('style');
                 style.innerHTML = `
@@ -494,11 +497,11 @@
                 `;
                 document.head.appendChild(style);
             @endif
- 
-            downloadForm.onsubmit = function (e) {
+
+            downloadForm.onsubmit = function(e) {
                 const action = document.getElementById('action').value;
                 const selectedFiles = document.querySelectorAll('input[name="batch[]"]:checked');
- 
+
                 if (action === 'none' || selectedFiles.length === 0) {
                     e.preventDefault();
                     Swal.fire({
@@ -509,7 +512,7 @@
                     });
                     return;
                 }
- 
+
                 if (action === 'delete') {
                     e.preventDefault();
                     Swal.fire({
@@ -528,7 +531,7 @@
                     });
                 } else if (action === 'zip') {
                     e.preventDefault();
- 
+
                     Swal.fire({
                         title: 'Por favor, espera',
                         html: `
@@ -540,24 +543,24 @@
                         allowOutsideClick: false,
                         showConfirmButton: false
                     });
- 
+
                     setTimeout(() => {
                         Swal.close();
                         e.target.submit();
                     }, delay);
                 }
             };
- 
+
             // Verificar si hay un mensaje de éxito o error desde el backend
-            @if(session('success'))
+            @if (session('success'))
                 Swal.fire({
                     title: '¡Éxito!',
                     text: '{{ session('
-                                success ') }}',
+                                                    success ') }}',
                     icon: 'success',
                     confirmButtonText: 'Aceptar'
                 });
-            @elseif(session('error'))
+            @elseif (session('error'))
                 Swal.fire({
                     title: 'Error',
                     text: '{{ session('error') }}',
@@ -565,12 +568,12 @@
                     confirmButtonText: 'Aceptar'
                 });
             @endif
- 
+
             // Funcionalidad para seleccionar todos los checkboxes
-            document.getElementById('select_all').addEventListener('click', function () {
+            document.getElementById('select_all').addEventListener('click', function() {
                 var isChecked = this.checked;
                 var checkboxes = document.querySelectorAll('input[name="file_ids[]"]');
-                checkboxes.forEach(function (checkbox) {
+                checkboxes.forEach(function(checkbox) {
                     checkbox.checked = isChecked;
                 });
             });
@@ -601,7 +604,7 @@
             </div>
         </div>
     </div>
-    
+
 </body>
 
 </html>
