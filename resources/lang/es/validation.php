@@ -200,7 +200,7 @@ return [
         'password'      => [
             'max'      => 'Contraseña: El campo contraseña no debe exceder los 60 caracteres.',
             'min'      => 'Contraseña: El campo contraseña debe tener mínimo 8 caracteres.',
-            'regex'    => 'Contraseña: La contraseña no es válida. No puede contener espacios y solo se permiten letras (a-z, A-Z), números (0-9) y ciertos caracteres especiales como:*!\\\"?$%^&*´()_-+={[}]:;@~#|<,>.?/\'',
+            'regex'    => 'Contraseña: La contraseña no es válida. No puede contener espacios y solo se permiten letras (a-z, A-Z), números (0-9) y ciertos caracteres especiales como:*!\\\\\"?$%^&*´()_-+={[}]:;@~#|<,>.?/\'',
             'required' => 'Contraseña: Este campo es obligatorio, ingrese o genere una contraseña.',
         ],
         'phone'         => [
